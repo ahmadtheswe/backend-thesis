@@ -1,0 +1,11 @@
+server:
+  port: 9090
+spring:
+  r2dbc:
+    url: 'r2dbc:postgresql://postgres@localhost:5432/image'
+    password: 'postgres'
+  h2:
+    console:
+      enabled: true
+lombok:
+  addLombokGeneratedAnnotation: true
