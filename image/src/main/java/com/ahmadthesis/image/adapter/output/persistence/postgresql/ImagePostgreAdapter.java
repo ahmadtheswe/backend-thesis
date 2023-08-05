@@ -4,8 +4,10 @@ import com.ahmadthesis.image.adapter.output.persistence.postgresql.converter.Ima
 import com.ahmadthesis.image.adapter.output.persistence.postgresql.sql.R2DBCImageRepository;
 import com.ahmadthesis.image.application.port.output.ImageDatabase;
 import com.ahmadthesis.image.domain.entity.image.Image;
+import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
+@Repository
 public class ImagePostgreAdapter implements ImageDatabase {
     private final R2DBCImageRepository repository;
     private final ImageConverter converter;
