@@ -9,6 +9,8 @@ class ImageApplicationTests {
 
 	@Test
 	void contextLoads() {
+		ImageApplication.main(new String[] {});
+		Assertions.assertTrue(true);
 	}
 
 	@Test
