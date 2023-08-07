@@ -9,3 +9,6 @@ spring:
       enabled: true
 lombok:
   addLombokGeneratedAnnotation: true
+
+directory:
+  image: 'E:\thesis_project\upload'
