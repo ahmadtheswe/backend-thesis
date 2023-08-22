@@ -25,7 +25,6 @@ class ImageConverterTest {
         imageEntity.setId(id);
         imageEntity.setUploaderId(uploaderId);
         imageEntity.setTitle("image 1");
-        imageEntity.setFormat("jpg");
         imageEntity.setFilename("image_1.jpg");
         imageEntity.setOriginalImageDir("d://image//image_1.jpg");
         imageEntity.setMediaType("jpg");
@@ -36,7 +35,6 @@ class ImageConverterTest {
         imagePostgre.setId(id);
         imagePostgre.setUploaderId(uploaderId);
         imagePostgre.setTitle("image 1");
-        imagePostgre.setFormat("jpg");
         imagePostgre.setFilename("image_1.jpg");
         imagePostgre.setOriginalImageDir("d://image//image_1.jpg");
         imagePostgre.setMediaType("jpg");
@@ -57,7 +55,6 @@ class ImageConverterTest {
         Assertions.assertEquals(imagePostgre.getId(), converted.getId());
         Assertions.assertEquals(imagePostgre.getUploaderId(), converted.getUploaderId());
         Assertions.assertEquals(imagePostgre.getTitle(), converted.getTitle());
-        Assertions.assertEquals(imagePostgre.getFormat(), converted.getFormat());
         Assertions.assertEquals(imagePostgre.getFilename(), converted.getFilename());
         Assertions.assertEquals(imagePostgre.getOriginalImageDir(), converted.getOriginalImageDir());
         Assertions.assertEquals(imagePostgre.getMediaType(), converted.getMediaType());
@@ -78,7 +75,6 @@ class ImageConverterTest {
         Assertions.assertEquals(imageEntity.getId(), converted.getId());
         Assertions.assertEquals(imageEntity.getUploaderId(), converted.getUploaderId());
         Assertions.assertEquals(imageEntity.getTitle(), converted.getTitle());
-        Assertions.assertEquals(imageEntity.getFormat(), converted.getFormat());
         Assertions.assertEquals(imageEntity.getFilename(), converted.getFilename());
         Assertions.assertEquals(imageEntity.getOriginalImageDir(), converted.getOriginalImageDir());
         Assertions.assertEquals(imageEntity.getMediaType(), converted.getMediaType());

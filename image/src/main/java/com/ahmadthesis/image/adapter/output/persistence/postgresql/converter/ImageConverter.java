@@ -11,7 +11,6 @@ public class ImageConverter {
         image.setId(postgre.getId());
         image.setUploaderId(postgre.getUploaderId());
         image.setTitle(postgre.getTitle());
-        image.setFormat(postgre.getFormat());
         image.setOriginalImageDir(postgre.getOriginalImageDir());
         image.setCreatedAt(postgre.getCreatedAt());
         image.setLatestAccess(postgre.getLatestAccess());
@@ -27,7 +26,6 @@ public class ImageConverter {
         postgre.setId(domain.getId());
         postgre.setUploaderId(domain.getUploaderId());
         postgre.setTitle(domain.getTitle());
-        postgre.setFormat(domain.getFormat());
         postgre.setOriginalImageDir(domain.getOriginalImageDir());
         postgre.setCreatedAt(domain.getCreatedAt());
         postgre.setLatestAccess(domain.getLatestAccess());

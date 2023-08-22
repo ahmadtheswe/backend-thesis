@@ -7,13 +7,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.util.Pair;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
 import java.nio.file.Path;
+
 
 @SpringBootTest
 public class ImageUploadServiceImplTest {
@@ -26,6 +30,7 @@ public class ImageUploadServiceImplTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         imageUploadService = new ImageUploadServiceImpl();
+        ReflectionTestUtils.setField(imageUploadService, "UPLOAD_DIRECTORY", "/test");
     }
 
     @Test
@@ -36,11 +41,11 @@ public class ImageUploadServiceImplTest {
         Mockito.doNothing().when(mockMultipartFile).transferTo(Mockito.any(Path.class));
 
         // Act
-        Mono<String> result = imageUploadService.storeImage(mockMultipartFile);
+        Mono<Pair<Boolean, String>> result = imageUploadService.storeImage(mockMultipartFile);
 
         // Assert
         StepVerifier.create(result)
-                .expectNextMatches(fileName -> fileName.contains("test.jpg"))
+                .expectNextMatches(resultPair -> resultPair.getFirst().equals(true) && resultPair.getSecond().contains("test.jpg"))
                 .verifyComplete();
 
         Mockito.verify(mockMultipartFile, Mockito.times(1)).getOriginalFilename();
@@ -55,11 +60,11 @@ public class ImageUploadServiceImplTest {
         Mockito.doThrow(new IOException("Test IOException")).when(mockMultipartFile).transferTo(Mockito.any(Path.class));
 
         // Act
-        Mono<String> result = imageUploadService.storeImage(mockMultipartFile);
+        Mono<Pair<Boolean, String>> result = imageUploadService.storeImage(mockMultipartFile);
 
         // Assert
         StepVerifier.create(result)
-                .expectNextCount(0)
+                .expectNextMatches(resultPair -> resultPair.getFirst().equals(false) && resultPair.getSecond().isEmpty())
                 .verifyComplete();
 
         Mockito.verify(mockMultipartFile, Mockito.times(1)).getOriginalFilename();

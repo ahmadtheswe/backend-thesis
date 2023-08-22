@@ -12,3 +12,7 @@ lombok:
 
 directory:
   image: 'E:\thesis_project\upload'
+
+time:
+  zone: 'Asia/Jakarta'
+  pattern: 'yyyy-MM-dd HH:mm:ss z'
