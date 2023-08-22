@@ -43,7 +43,6 @@ public class ImagePostgreAdapterTest {
         imageEntity.setId(id);
         imageEntity.setUploaderId(uploaderId);
         imageEntity.setTitle("image 1");
-        imageEntity.setFormat("jpg");
         imageEntity.setFilename("image_1.jpg");
         imageEntity.setOriginalImageDir("d://image//image_1.jpg");
         imageEntity.setMediaType("jpg");
@@ -55,7 +54,6 @@ public class ImagePostgreAdapterTest {
         imagePostgre.setId(id);
         imagePostgre.setUploaderId(uploaderId);
         imagePostgre.setTitle("image 1");
-        imagePostgre.setFormat("jpg");
         imagePostgre.setFilename("image_1.jpg");
         imagePostgre.setOriginalImageDir("d://image//image_1.jpg");
         imagePostgre.setMediaType("jpg");
@@ -87,7 +85,6 @@ public class ImagePostgreAdapterTest {
         imageEntity.setId(id);
         imageEntity.setUploaderId(uploaderId);
         imageEntity.setTitle("image 1");
-        imageEntity.setFormat("jpg");
         imageEntity.setFilename("image_1.jpg");
         imageEntity.setOriginalImageDir("d://image//image_1.jpg");
         imageEntity.setMediaType("jpg");
@@ -99,7 +96,6 @@ public class ImagePostgreAdapterTest {
         imagePostgre.setId(id);
         imagePostgre.setUploaderId(uploaderId);
         imagePostgre.setTitle("image 1");
-        imagePostgre.setFormat("jpg");
         imagePostgre.setFilename("image_1.jpg");
         imagePostgre.setOriginalImageDir("d://image//image_1.jpg");
         imagePostgre.setMediaType("jpg");

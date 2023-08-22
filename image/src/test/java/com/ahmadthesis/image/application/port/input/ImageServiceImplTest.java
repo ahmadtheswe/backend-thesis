@@ -39,7 +39,6 @@ public class ImageServiceImplTest {
         image.setId(id);
         image.setUploaderId(uploaderId);
         image.setTitle("image 1");
-        image.setFormat("jpg");
         image.setFilename("image_1.jpg");
         image.setOriginalImageDir("d://image//image_1.jpg");
         image.setMediaType("jpg");
@@ -69,7 +68,6 @@ public class ImageServiceImplTest {
         image.setId(id);
         image.setUploaderId(uploaderId);
         image.setTitle("image 1");
-        image.setFormat("jpg");
         image.setFilename("image_1.jpg");
         image.setOriginalImageDir("d://image//image_1.jpg");
         image.setMediaType("jpg");

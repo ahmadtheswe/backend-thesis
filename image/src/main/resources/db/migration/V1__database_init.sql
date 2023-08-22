@@ -6,10 +6,12 @@ CREATE TABLE "public"."image"
     "id"                 character varying(36) PRIMARY KEY,
     "uploader_id"        character varying(36) NOT NULL,
     "title"              character varying(40),
-    "format"             character varying(6),
+    filename             varchar(100),
+    "media_type"         character varying(6),
     "original_image_dir" text,
     "created_at"         timestamp(0),
-    "latest_access"      timestamp(0)
+    "latest_access"      timestamp(0),
+    is_public            boolean
 );
 
 CREATE TABLE "public"."image_history"
@@ -18,5 +20,7 @@ CREATE TABLE "public"."image_history"
     "image_id"    character varying(36) NOT NULL,
     "accessor_id" character varying(36) NOT NULL,
     "activity"    character varying(10),
-    "created_at"  timestamp(0)
+    "created_at"  timestamp(0),
+    constraint fk_image_history
+        foreign key (image_id) references "public"."image" (id)
 );
