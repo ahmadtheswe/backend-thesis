@@ -24,7 +24,7 @@ public class ImageMapper {
                 .title(saveImageRequest.getTitle())
                 .mediaType(saveImageRequest.getMediaType())
                 .filename(saveImageRequest.getFilename())
-//                                .originalImageDir()
+                .originalImageDir(saveImageRequest.getUploadDir())
                 .createdAt(dateUtils.now())
                 .isPublic(saveImageRequest.getIsPublic())
                 .build();
