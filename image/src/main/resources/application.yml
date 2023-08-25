@@ -7,8 +7,6 @@ spring:
   h2:
     console:
       enabled: true
-lombok:
-  addLombokGeneratedAnnotation: true
 
 directory:
   image: 'E:\thesis_project\upload'

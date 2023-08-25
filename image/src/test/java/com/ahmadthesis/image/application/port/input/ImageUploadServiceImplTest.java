@@ -9,13 +9,17 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.util.Pair;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 
@@ -69,5 +73,33 @@ public class ImageUploadServiceImplTest {
 
         Mockito.verify(mockMultipartFile, Mockito.times(1)).getOriginalFilename();
         Mockito.verify(mockMultipartFile, Mockito.times(1)).transferTo(Mockito.any(Path.class));
+    }
+
+    @Test
+    @DisplayName("should upload file successfully")
+    public void uploadTest() throws IOException {
+        // Arrange
+        Path tempFilePath = Files.createTempFile("test-upload", ".jpg");
+        FilePart filePart = Mockito.mock(FilePart.class);
+
+        Mockito.when(filePart.filename()).thenReturn("test.jpg");
+        Mockito.when(filePart.transferTo(Mockito.any(Path.class))).thenReturn(Mono.empty());
+        Mockito.when(filePart.content()).thenReturn(Flux.empty());
+
+        ImageUploadServiceImpl imageUploadService = new ImageUploadServiceImpl();
+        ReflectionTestUtils.setField(imageUploadService, "UPLOAD_DIRECTORY", tempFilePath.getParent().toString());
+
+        // Act
+        Mono<Void> result = imageUploadService.upload(filePart);
+
+        // Assert
+        StepVerifier.create(result)
+                .verifyComplete();
+
+        Mockito.verify(filePart, Mockito.times(1)).filename();
+        Mockito.verify(filePart, Mockito.times(1)).transferTo(Mockito.any(Path.class));
+
+        // Clean up
+        Files.deleteIfExists(tempFilePath);
     }
 }

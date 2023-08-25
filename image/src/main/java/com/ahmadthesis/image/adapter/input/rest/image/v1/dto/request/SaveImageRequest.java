@@ -14,4 +14,5 @@ public class SaveImageRequest {
     private Boolean isPublic;
     private String filename;
     private String mediaType;
+    private String uploadDir;
 }
