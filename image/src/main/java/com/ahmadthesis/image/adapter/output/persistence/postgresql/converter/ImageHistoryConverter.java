@@ -7,25 +7,25 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ImageHistoryConverter {
-    public ImageHistory convertAdapterToDomain(ImageHistoryPostgre postgre) {
-        ImageHistory imageHistory = new ImageHistory();
-        imageHistory.setId(postgre.getId());
-        imageHistory.setImageId(postgre.getImageId());
-        imageHistory.setAccessorId(postgre.getAccessorId());
-        imageHistory.setActivity(Activity.valueOf(postgre.getActivity()));
-        imageHistory.setCreatedAt(postgre.getCreatedAt());
+  public ImageHistory convertAdapterToDomain(ImageHistoryPostgre postgre) {
+    ImageHistory imageHistory = new ImageHistory();
+    imageHistory.setId(postgre.getId());
+    imageHistory.setImageId(postgre.getImageId());
+    imageHistory.setAccessorId(postgre.getAccessorId());
+    imageHistory.setActivity(Activity.valueOf(postgre.getActivity()));
+    imageHistory.setCreatedAt(postgre.getCreatedAt());
 
-        return imageHistory;
-    }
+    return imageHistory;
+  }
 
-    public ImageHistoryPostgre convertDomainToAdapter(ImageHistory domain) {
-        ImageHistoryPostgre postgre = new ImageHistoryPostgre();
-        postgre.setId(domain.getId());
-        postgre.setImageId(domain.getImageId());
-        postgre.setAccessorId(domain.getAccessorId());
-        postgre.setActivity(domain.getActivity().name());
-        postgre.setCreatedAt(domain.getCreatedAt());
+  public ImageHistoryPostgre convertDomainToAdapter(ImageHistory domain) {
+    ImageHistoryPostgre postgre = new ImageHistoryPostgre();
+    postgre.setId(domain.getId());
+    postgre.setImageId(domain.getImageId());
+    postgre.setAccessorId(domain.getAccessorId());
+    postgre.setActivity(domain.getActivity().name());
+    postgre.setCreatedAt(domain.getCreatedAt());
 
-        return postgre;
-    }
+    return postgre;
+  }
 }

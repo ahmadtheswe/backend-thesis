@@ -13,60 +13,60 @@ import java.util.UUID;
 
 @SpringBootTest
 class ImageHistoryConverterTest {
-    private ImageHistoryConverter converter;
-    private final ImageHistory imageHistoryEntity = new ImageHistory();
-    private final ImageHistoryPostgre imageHistoryPostgre = new ImageHistoryPostgre();
+  private ImageHistoryConverter converter;
+  private final ImageHistory imageHistoryEntity = new ImageHistory();
+  private final ImageHistoryPostgre imageHistoryPostgre = new ImageHistoryPostgre();
 
-    @BeforeEach
-    void setup() {
-        converter = new ImageHistoryConverter();
+  @BeforeEach
+  void setup() {
+    converter = new ImageHistoryConverter();
 
-        String id = UUID.randomUUID().toString();
-        String imageId = UUID.randomUUID().toString();
-        String accessorId = UUID.randomUUID().toString();
+    String id = UUID.randomUUID().toString();
+    String imageId = UUID.randomUUID().toString();
+    String accessorId = UUID.randomUUID().toString();
 
-        imageHistoryEntity.setId(id);
-        imageHistoryEntity.setImageId(imageId);
-        imageHistoryEntity.setAccessorId(accessorId);
-        imageHistoryEntity.setActivity(Activity.DOWNLOAD);
-        imageHistoryEntity.setCreatedAt(1691224239866L);
+    imageHistoryEntity.setId(id);
+    imageHistoryEntity.setImageId(imageId);
+    imageHistoryEntity.setAccessorId(accessorId);
+    imageHistoryEntity.setActivity(Activity.DOWNLOAD);
+    imageHistoryEntity.setCreatedAt(1691224239866L);
 
-        imageHistoryPostgre.setId(id);
-        imageHistoryPostgre.setImageId(imageId);
-        imageHistoryPostgre.setAccessorId(accessorId);
-        imageHistoryPostgre.setActivity("DOWNLOAD");
-        imageHistoryPostgre.setCreatedAt(1691224239866L);
-    }
+    imageHistoryPostgre.setId(id);
+    imageHistoryPostgre.setImageId(imageId);
+    imageHistoryPostgre.setAccessorId(accessorId);
+    imageHistoryPostgre.setActivity("DOWNLOAD");
+    imageHistoryPostgre.setCreatedAt(1691224239866L);
+  }
 
-    @Test
-    @DisplayName("should convert ImageHistory to ImageHistoryPostgre")
-    void convertImageHistoryToImageHistoryPostgre() {
-        // Assign
+  @Test
+  @DisplayName("should convert ImageHistory to ImageHistoryPostgre")
+  void convertImageHistoryToImageHistoryPostgre() {
+    // Assign
 
-        // Act
-        ImageHistoryPostgre converted = converter.convertDomainToAdapter(imageHistoryEntity);
+    // Act
+    ImageHistoryPostgre converted = converter.convertDomainToAdapter(imageHistoryEntity);
 
-        // Assert
-        Assertions.assertEquals(imageHistoryPostgre.getId(), converted.getId());
-        Assertions.assertEquals(imageHistoryPostgre.getImageId(), converted.getImageId());
-        Assertions.assertEquals(imageHistoryPostgre.getAccessorId(), converted.getAccessorId());
-        Assertions.assertEquals(imageHistoryPostgre.getActivity(), converted.getActivity());
-        Assertions.assertEquals(imageHistoryPostgre.getCreatedAt(), converted.getCreatedAt());
-    }
+    // Assert
+    Assertions.assertEquals(imageHistoryPostgre.getId(), converted.getId());
+    Assertions.assertEquals(imageHistoryPostgre.getImageId(), converted.getImageId());
+    Assertions.assertEquals(imageHistoryPostgre.getAccessorId(), converted.getAccessorId());
+    Assertions.assertEquals(imageHistoryPostgre.getActivity(), converted.getActivity());
+    Assertions.assertEquals(imageHistoryPostgre.getCreatedAt(), converted.getCreatedAt());
+  }
 
-    @Test
-    @DisplayName("should convert ImageHistoryPostgre to ImageHistory")
-    void convertImageHistoryPostgreToImageHistory() {
-        // Assign
+  @Test
+  @DisplayName("should convert ImageHistoryPostgre to ImageHistory")
+  void convertImageHistoryPostgreToImageHistory() {
+    // Assign
 
-        // Act
-        ImageHistory converted = converter.convertAdapterToDomain(imageHistoryPostgre);
+    // Act
+    ImageHistory converted = converter.convertAdapterToDomain(imageHistoryPostgre);
 
-        // Assert
-        Assertions.assertEquals(imageHistoryEntity.getId(), converted.getId());
-        Assertions.assertEquals(imageHistoryEntity.getImageId(), converted.getImageId());
-        Assertions.assertEquals(imageHistoryEntity.getAccessorId(), converted.getAccessorId());
-        Assertions.assertEquals(imageHistoryEntity.getActivity(), converted.getActivity());
-        Assertions.assertEquals(imageHistoryEntity.getCreatedAt(), converted.getCreatedAt());
-    }
+    // Assert
+    Assertions.assertEquals(imageHistoryEntity.getId(), converted.getId());
+    Assertions.assertEquals(imageHistoryEntity.getImageId(), converted.getImageId());
+    Assertions.assertEquals(imageHistoryEntity.getAccessorId(), converted.getAccessorId());
+    Assertions.assertEquals(imageHistoryEntity.getActivity(), converted.getActivity());
+    Assertions.assertEquals(imageHistoryEntity.getCreatedAt(), converted.getCreatedAt());
+  }
 }

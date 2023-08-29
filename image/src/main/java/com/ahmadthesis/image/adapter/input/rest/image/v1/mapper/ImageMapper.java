@@ -9,24 +9,24 @@ import java.util.UUID;
 
 @Component
 public class ImageMapper {
-    private final DateUtils dateUtils;
+  private final DateUtils dateUtils;
 
-    public ImageMapper(
-            DateUtils dateUtils
-    ) {
-        this.dateUtils = dateUtils;
-    }
+  public ImageMapper(
+          DateUtils dateUtils
+  ) {
+    this.dateUtils = dateUtils;
+  }
 
-    public Image mapRequestToImage(SaveImageRequest saveImageRequest) {
-        return Image.builder()
-                .id(UUID.randomUUID().toString())
-                .uploaderId(UUID.randomUUID().toString())
-                .title(saveImageRequest.getTitle())
-                .mediaType(saveImageRequest.getMediaType())
-                .filename(saveImageRequest.getFilename())
-                .originalImageDir(saveImageRequest.getUploadDir())
-                .createdAt(dateUtils.now())
-                .isPublic(saveImageRequest.getIsPublic())
-                .build();
-    }
+  public Image mapRequestToImage(SaveImageRequest saveImageRequest) {
+    return Image.builder()
+            .id(UUID.randomUUID().toString())
+            .uploaderId(UUID.randomUUID().toString())
+            .title(saveImageRequest.getTitle())
+            .mediaType(saveImageRequest.getMediaType())
+            .filename(saveImageRequest.getFilename())
+            .originalImageDir(saveImageRequest.getUploadDir())
+            .createdAt(dateUtils.now())
+            .isPublic(saveImageRequest.getIsPublic())
+            .build();
+  }
 }

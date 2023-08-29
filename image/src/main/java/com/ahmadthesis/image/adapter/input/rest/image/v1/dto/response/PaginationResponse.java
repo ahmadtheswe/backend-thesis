@@ -9,8 +9,8 @@ import java.util.List;
 @Data
 @Generated
 @NoArgsConstructor
-public class PaginationResponse <T>{
-    private List<T> data;
-    private PaginationInfo paginationInfo;
-    private List<String> messages;
+public class PaginationResponse<T> {
+  private List<T> data;
+  private PaginationInfo paginationInfo;
+  private List<String> messages;
 }

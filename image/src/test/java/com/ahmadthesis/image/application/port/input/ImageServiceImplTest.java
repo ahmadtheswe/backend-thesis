@@ -17,87 +17,87 @@ import java.util.UUID;
 
 @SpringBootTest
 public class ImageServiceImplTest {
-    @Mock
-    private ImageDatabase database;
+  @Mock
+  private ImageDatabase database;
 
-    private ImageService service;
+  private ImageService service;
 
-    @BeforeEach
-    void setup() {
-        database = Mockito.mock(ImagePostgreAdapter.class);
-        service = new ImageServiceImpl(database);
-    }
+  @BeforeEach
+  void setup() {
+    database = Mockito.mock(ImagePostgreAdapter.class);
+    service = new ImageServiceImpl(database);
+  }
 
-    @Test
-    @DisplayName("should save image data to database")
-    void saveImageDataToDatabaseTest() {
-        // Arrange
-        String id = UUID.randomUUID().toString();
-        String uploaderId = UUID.randomUUID().toString();
+  @Test
+  @DisplayName("should save image data to database")
+  void saveImageDataToDatabaseTest() {
+    // Arrange
+    String id = UUID.randomUUID().toString();
+    String uploaderId = UUID.randomUUID().toString();
 
-        Image image = new Image();
-        image.setId(id);
-        image.setUploaderId(uploaderId);
-        image.setTitle("image 1");
-        image.setFilename("image_1.jpg");
-        image.setOriginalImageDir("d://image//image_1.jpg");
-        image.setMediaType("jpg");
-        image.setCreatedAt(1691224239866L);
-        image.setLatestAccess(1691224239866L);
-        image.setIsPublic(true);
+    Image image = new Image();
+    image.setId(id);
+    image.setUploaderId(uploaderId);
+    image.setTitle("image 1");
+    image.setFilename("image_1.jpg");
+    image.setOriginalImageDir("d://image//image_1.jpg");
+    image.setMediaType("jpg");
+    image.setCreatedAt(1691224239866L);
+    image.setLatestAccess(1691224239866L);
+    image.setIsPublic(true);
 
-        // Act
-        Mockito.when(database.save(image)).thenReturn(Mono.just(image));
-        Mono<Image> savedImage = service.save(image);
-        Mockito.verify(database, Mockito.times(1)).save(image);
+    // Act
+    Mockito.when(database.save(image)).thenReturn(Mono.just(image));
+    Mono<Image> savedImage = service.save(image);
+    Mockito.verify(database, Mockito.times(1)).save(image);
 
-        // Assert
-        StepVerifier.create(savedImage)
-                .expectNext(image)
-                .verifyComplete();
-    }
+    // Assert
+    StepVerifier.create(savedImage)
+            .expectNext(image)
+            .verifyComplete();
+  }
 
-    @Test
-    @DisplayName("should return image data from database if id exist")
-    void getImageByIdSuccessTest() {
-        // Arrange
-        String id = UUID.randomUUID().toString();
-        String uploaderId = UUID.randomUUID().toString();
+  @Test
+  @DisplayName("should return image data from database if id exist")
+  void getImageByIdSuccessTest() {
+    // Arrange
+    String id = UUID.randomUUID().toString();
+    String uploaderId = UUID.randomUUID().toString();
 
-        Image image = new Image();
-        image.setId(id);
-        image.setUploaderId(uploaderId);
-        image.setTitle("image 1");
-        image.setFilename("image_1.jpg");
-        image.setOriginalImageDir("d://image//image_1.jpg");
-        image.setMediaType("jpg");
-        image.setCreatedAt(1691224239866L);
-        image.setLatestAccess(1691224239866L);
-        image.setIsPublic(true);
+    Image image = new Image();
+    image.setId(id);
+    image.setUploaderId(uploaderId);
+    image.setTitle("image 1");
+    image.setFilename("image_1.jpg");
+    image.setOriginalImageDir("d://image//image_1.jpg");
+    image.setMediaType("jpg");
+    image.setCreatedAt(1691224239866L);
+    image.setLatestAccess(1691224239866L);
+    image.setIsPublic(true);
 
-        // Act
-        Mockito.when(database.getImageById(id)).thenReturn(Mono.just(image));
-        Mono<Image> foundImage = service.getImageById(id);
+    // Act
+    Mockito.when(database.getImageById(id)).thenReturn(Mono.just(image));
+    Mono<Image> foundImage = service.getImageById(id);
 
-        // Assert
-        StepVerifier.create(foundImage)
-                .expectNext(image)
-                .verifyComplete();
-    }
+    // Assert
+    StepVerifier.create(foundImage)
+            .expectNext(image)
+            .verifyComplete();
+  }
 
-    @Test
-    @DisplayName("should not return image data from database if id not exist")
-    void getImageByIdFailedTest() {
-        // Arrange
-        String id = UUID.randomUUID().toString();
+  @Test
+  @DisplayName("should not return image data from database if id not exist")
+  void getImageByIdFailedTest() {
+    // Arrange
+    String id = UUID.randomUUID().toString();
 
-        // Act
-        Mockito.when(database.getImageById(id)).thenReturn(Mono.empty());
-        Mono<Image> notFoundImage = service.getImageById(id);
+    // Act
+    Mockito.when(database.getImageById(id)).thenReturn(Mono.empty());
+    Mono<Image> notFoundImage = service.getImageById(id);
 
-        // Assert
-        StepVerifier.create(notFoundImage)
-                .expectComplete()
-                .verify();
-    }
+    // Assert
+    StepVerifier.create(notFoundImage)
+            .expectComplete()
+            .verify();
+  }
 }

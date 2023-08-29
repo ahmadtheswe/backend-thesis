@@ -15,22 +15,22 @@ import java.nio.file.Paths;
 @Service
 public class ImageUploadServiceImpl implements ImageUploadService {
 
-    @Value("${directory.image}")
-    private String UPLOAD_DIRECTORY;
+  @Value("${directory.image}")
+  private String UPLOAD_DIRECTORY;
 
-    @Override
-    public Mono<Pair<Boolean, String>> storeImage(MultipartFile file) {
-        String fileName = file.getOriginalFilename();
-        Path filePath = Paths.get(UPLOAD_DIRECTORY, fileName);
+  @Override
+  public Mono<Pair<Boolean, String>> storeImage(MultipartFile file) {
+    String fileName = file.getOriginalFilename();
+    Path filePath = Paths.get(UPLOAD_DIRECTORY, fileName);
 
-        return Mono.fromCallable(() -> {
-            file.transferTo(filePath);
-            return Pair.of(true, filePath.toString());
-        }).onErrorResume(Exception.class, ex -> Mono.just(Pair.of(false, "")));
-    }
+    return Mono.fromCallable(() -> {
+      file.transferTo(filePath);
+      return Pair.of(true, filePath.toString());
+    }).onErrorResume(Exception.class, ex -> Mono.just(Pair.of(false, "")));
+  }
 
-    @Override
-    public Mono<Void> upload(FilePart filePart) {
-        return filePart.transferTo(Paths.get(UPLOAD_DIRECTORY + File.separator + filePart.filename()));
-    }
+  @Override
+  public Mono<Void> upload(FilePart filePart) {
+    return filePart.transferTo(Paths.get(UPLOAD_DIRECTORY + File.separator + filePart.filename()));
+  }
 }

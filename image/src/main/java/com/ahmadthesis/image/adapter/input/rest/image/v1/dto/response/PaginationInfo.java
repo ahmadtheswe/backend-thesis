@@ -8,9 +8,9 @@ import lombok.*;
 @Generated
 @NoArgsConstructor
 public class PaginationInfo {
-    private int currentPage;
-    private int pageSize;
-    private String sortBy;
-    private long totalPages;
-    private long totalItems;
+  private int currentPage;
+  private int pageSize;
+  private String sortBy;
+  private long totalPages;
+  private long totalItems;
 }

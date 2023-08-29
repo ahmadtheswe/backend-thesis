@@ -10,6 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class DataResponse<T> {
-    private T data;
-    private List<String> messages;
+  private T data;
+  private List<String> messages;
 }

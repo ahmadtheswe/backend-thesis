@@ -68,3 +68,5 @@ flyway {
 	password = flywayPassword
 	locations = ["filesystem:src/main/resources/db/migration"]
 }
+
+defaultTasks 'flywayMigrate'

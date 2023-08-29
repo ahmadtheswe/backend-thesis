@@ -12,23 +12,24 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public class ImageHistoryPostgreAdapter implements ImageHistoryDatabase {
-    private final R2DBCImageHistoryRepository repository;
-    private final ImageHistoryConverter converter;
-    public ImageHistoryPostgreAdapter(R2DBCImageHistoryRepository repository, ImageHistoryConverter converter) {
-        this.repository = repository;
-        this.converter = converter;
-    }
+  private final R2DBCImageHistoryRepository repository;
+  private final ImageHistoryConverter converter;
+
+  public ImageHistoryPostgreAdapter(R2DBCImageHistoryRepository repository, ImageHistoryConverter converter) {
+    this.repository = repository;
+    this.converter = converter;
+  }
 
 
-    @Override
-    public Mono<ImageHistory> save(ImageHistory imageHistory) {
-        return repository.save(converter.convertDomainToAdapter(imageHistory))
-                .map(converter::convertAdapterToDomain);
-    }
+  @Override
+  public Mono<ImageHistory> save(ImageHistory imageHistory) {
+    return repository.save(converter.convertDomainToAdapter(imageHistory))
+            .map(converter::convertAdapterToDomain);
+  }
 
-    @Override
-    public Flux<ImageHistory> getHistoryByImageId(String imageId) {
-        return repository.getImageHistoryPostgreByImageId(imageId)
-                .map(converter::convertAdapterToDomain);
-    }
+  @Override
+  public Flux<ImageHistory> getHistoryByImageId(String imageId) {
+    return repository.getImageHistoryPostgreByImageId(imageId)
+            .map(converter::convertAdapterToDomain);
+  }
 }

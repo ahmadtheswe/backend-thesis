@@ -16,18 +16,18 @@ import org.springframework.data.relational.core.mapping.Table;
 @Generated
 @Table("public.\"image_history\"")
 public class ImageHistoryPostgre implements Persistable<String> {
-    @Id
-    private String id;
-    @Column("image_id")
-    private String imageId;
-    private String accessorId;
-    private String activity;
-    private Long createdAt;
-    @Transient
-    private ImagePostgre imagePostgre;
+  @Id
+  private String id;
+  @Column("image_id")
+  private String imageId;
+  private String accessorId;
+  private String activity;
+  private Long createdAt;
+  @Transient
+  private ImagePostgre imagePostgre;
 
-    @Override
-    public boolean isNew() {
-        return true;
-    }
+  @Override
+  public boolean isNew() {
+    return true;
+  }
 }

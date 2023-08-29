@@ -15,40 +15,40 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ImageMapperTest {
-    private ImageMapper imageMapper;
+  private ImageMapper imageMapper;
 
-    @Mock
-    private DateUtils mockDateUtils;
+  @Mock
+  private DateUtils mockDateUtils;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        imageMapper = new ImageMapper(mockDateUtils);
-    }
+  @BeforeEach
+  public void setUp() {
+    MockitoAnnotations.openMocks(this);
+    imageMapper = new ImageMapper(mockDateUtils);
+  }
 
-    @Test
-    @DisplayName("should map SaveImageRequest to Image")
-    public void mapRequestToImageTest() {
-        // Arrange
-        SaveImageRequest request = SaveImageRequest.builder()
-                .title("Test Image")
-                .mediaType("image/jpeg")
-                .filename("test.jpg")
-                .uploadDir("/uploads")
-                .isPublic(true)
-                .build();
+  @Test
+  @DisplayName("should map SaveImageRequest to Image")
+  public void mapRequestToImageTest() {
+    // Arrange
+    SaveImageRequest request = SaveImageRequest.builder()
+            .title("Test Image")
+            .mediaType("image/jpeg")
+            .filename("test.jpg")
+            .uploadDir("/uploads")
+            .isPublic(true)
+            .build();
 
-        Mockito.when(mockDateUtils.now()).thenReturn(1679827200000L); // Example timestamp
+    Mockito.when(mockDateUtils.now()).thenReturn(1679827200000L); // Example timestamp
 
-        // Act
-        Image result = imageMapper.mapRequestToImage(request);
+    // Act
+    Image result = imageMapper.mapRequestToImage(request);
 
-        // Assert
-        assertEquals("Test Image", result.getTitle());
-        assertEquals("image/jpeg", result.getMediaType());
-        assertEquals("test.jpg", result.getFilename());
-        assertEquals("/uploads", result.getOriginalImageDir());
-        assertEquals(1679827200000L, result.getCreatedAt());
-        assertEquals(true, result.getIsPublic());
-    }
+    // Assert
+    assertEquals("Test Image", result.getTitle());
+    assertEquals("image/jpeg", result.getMediaType());
+    assertEquals("test.jpg", result.getFilename());
+    assertEquals("/uploads", result.getOriginalImageDir());
+    assertEquals(1679827200000L, result.getCreatedAt());
+    assertEquals(true, result.getIsPublic());
+  }
 }

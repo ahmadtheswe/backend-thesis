@@ -9,28 +9,29 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class ImageServiceImpl implements ImageService {
-    private final ImageDatabase database;
-    public ImageServiceImpl(ImageDatabase database) {
-        this.database = database;
-    }
+  private final ImageDatabase database;
 
-    @Override
-    public Mono<Image> save(Image image) {
-        return database.save(image);
-    }
+  public ImageServiceImpl(ImageDatabase database) {
+    this.database = database;
+  }
 
-    @Override
-    public Mono<Image> getImageById(String id) {
-        return database.getImageById(id);
-    }
+  @Override
+  public Mono<Image> save(Image image) {
+    return database.save(image);
+  }
 
-    @Override
-    public Flux<Image> getImagesPagination(Integer size, Integer page, String sortBy) {
-        return database.getImages(size, page, sortBy);
-    }
+  @Override
+  public Mono<Image> getImageById(String id) {
+    return database.getImageById(id);
+  }
 
-    @Override
-    public Mono<Long> getImagesCount() {
-        return database.getTotalImagesCount();
-    }
+  @Override
+  public Flux<Image> getImagesPagination(Integer size, Integer page, String sortBy) {
+    return database.getImages(size, page, sortBy);
+  }
+
+  @Override
+  public Mono<Long> getImagesCount() {
+    return database.getTotalImagesCount();
+  }
 }

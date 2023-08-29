@@ -9,11 +9,11 @@ import org.springframework.http.codec.multipart.FilePart;
 @Generated
 @NoArgsConstructor
 public class SaveImageRequest {
-    private String id;
-    private FilePart image;
-    private String title;
-    private Boolean isPublic;
-    private String filename;
-    private String mediaType;
-    private String uploadDir;
+  private String id;
+  private FilePart image;
+  private String title;
+  private Boolean isPublic;
+  private String filename;
+  private String mediaType;
+  private String uploadDir;
 }

@@ -9,18 +9,19 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class ImageHistoryServiceImpl implements ImageHistoryService {
-    private final ImageHistoryDatabase database;
-    public ImageHistoryServiceImpl(ImageHistoryDatabase database) {
-        this.database = database;
-    }
+  private final ImageHistoryDatabase database;
 
-    @Override
-    public Mono<ImageHistory> save(ImageHistory imageHistory) {
-        return database.save(imageHistory);
-    }
+  public ImageHistoryServiceImpl(ImageHistoryDatabase database) {
+    this.database = database;
+  }
 
-    @Override
-    public Flux<ImageHistory> getHistoryByImageId(String imageId) {
-        return database.getHistoryByImageId(imageId);
-    }
+  @Override
+  public Mono<ImageHistory> save(ImageHistory imageHistory) {
+    return database.save(imageHistory);
+  }
+
+  @Override
+  public Flux<ImageHistory> getHistoryByImageId(String imageId) {
+    return database.getHistoryByImageId(imageId);
+  }
 }

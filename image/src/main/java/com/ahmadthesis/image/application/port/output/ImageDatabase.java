@@ -5,8 +5,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ImageDatabase {
-    Mono<Image> save(Image image);
-    Mono<Image> getImageById(String id);
-    Flux<Image> getImages(Integer size, Integer page, String sortBy);
-    Mono<Long> getTotalImagesCount();
+  Mono<Image> save(Image image);
+
+  Mono<Image> getImageById(String id);
+
+  Flux<Image> getImages(Integer size, Integer page, String sortBy);
+
+  Mono<Long> getTotalImagesCount();
 }

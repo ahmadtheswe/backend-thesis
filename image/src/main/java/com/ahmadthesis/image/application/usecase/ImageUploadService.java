@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
 public interface ImageUploadService {
-    Mono<Pair<Boolean, String>> storeImage(MultipartFile file);
-    Mono<Void> upload(FilePart filePart);
+  Mono<Pair<Boolean, String>> storeImage(MultipartFile file);
+
+  Mono<Void> upload(FilePart filePart);
 }

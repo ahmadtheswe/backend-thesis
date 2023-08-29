@@ -11,22 +11,22 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 
 @Configuration("ImageRouter")
 public class ImageRouter {
-    private final ImageHandler handler;
+  private final ImageHandler handler;
 
-    public ImageRouter(
-            ImageHandler handler
-    ) {
-        this.handler = handler;
-    }
+  public ImageRouter(
+          ImageHandler handler
+  ) {
+    this.handler = handler;
+  }
 
-    @Bean
-    RouterFunction<ServerResponse> imageRouters() {
-        return RouterFunctions
-                .route(POST("/image/v1")
-                        .and(accept(MediaType.MULTIPART_FORM_DATA)), handler::uploadImage)
-                .andRoute(GET("/image/v1/detail")
-                        .and(accept(MediaType.APPLICATION_JSON)), handler::getImageById)
-                .andRoute(GET("/image/v1")
-                        .and(accept(MediaType.APPLICATION_JSON)), handler::getImagesPagination);
-    }
+  @Bean
+  RouterFunction<ServerResponse> imageRouters() {
+    return RouterFunctions
+            .route(POST("/image/v1")
+                    .and(accept(MediaType.MULTIPART_FORM_DATA)), handler::uploadImage)
+            .andRoute(GET("/image/v1/detail")
+                    .and(accept(MediaType.APPLICATION_JSON)), handler::getImageById)
+            .andRoute(GET("/image/v1")
+                    .and(accept(MediaType.APPLICATION_JSON)), handler::getImagesPagination);
+  }
 }

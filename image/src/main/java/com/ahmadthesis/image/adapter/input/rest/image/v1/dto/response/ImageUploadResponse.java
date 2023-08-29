@@ -8,6 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ImageUploadResponse {
-    private String id;
-    private String title;
+  private String id;
+  private String title;
 }

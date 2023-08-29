@@ -20,78 +20,78 @@ import java.util.List;
 
 @Component("ImageHandler")
 public class ImageHandler {
-    private final ImageUploadService imageUploadService;
-    private final ImageService imageService;
-    private final ImageHistoryService imageHistoryService;
-    private final ImageRestConverter converter;
-    private final ImageMapper mapper;
+  private final ImageUploadService imageUploadService;
+  private final ImageService imageService;
+  private final ImageHistoryService imageHistoryService;
+  private final ImageRestConverter converter;
+  private final ImageMapper mapper;
 
-    public ImageHandler(
-            ImageUploadService imageUploadService,
-            ImageService imageService,
-            ImageHistoryService imageHistoryService,
-            ImageRestConverter converter,
-            ImageMapper mapper
-    ) {
-        this.imageUploadService = imageUploadService;
-        this.imageService = imageService;
-        this.imageHistoryService = imageHistoryService;
-        this.converter = converter;
-        this.mapper = mapper;
+  public ImageHandler(
+          ImageUploadService imageUploadService,
+          ImageService imageService,
+          ImageHistoryService imageHistoryService,
+          ImageRestConverter converter,
+          ImageMapper mapper
+  ) {
+    this.imageUploadService = imageUploadService;
+    this.imageService = imageService;
+    this.imageHistoryService = imageHistoryService;
+    this.converter = converter;
+    this.mapper = mapper;
+  }
+
+  Mono<ServerResponse> uploadImage(ServerRequest request) {
+    return converter.extractUploadRequest(request).flatMap(saveImageRequest ->
+            imageUploadService.upload(saveImageRequest.getImage())
+                    .then(Mono.defer(() -> {
+                      Image image = mapper.mapRequestToImage(saveImageRequest);
+                      return imageService.save(image)
+                              .flatMap(response -> ServerResponse.ok().bodyValue(
+                                      new DataResponse<>(
+                                              converter.generateUploadResponse(image),
+                                              new ArrayList<>()
+                                      )
+                              ));
+                    })));
+  }
+
+  Mono<ServerResponse> getImageById(ServerRequest request) {
+    final String imageId = request.queryParam("id").orElse(null);
+    if (imageId == null) {
+      return ServerResponse.status(HttpStatus.BAD_REQUEST).bodyValue(
+              new DataResponse<>(null, List.of("Image ID should not be null"))
+      );
     }
+    return imageService.getImageById(imageId)
+            .flatMap(image -> ServerResponse.ok().bodyValue(
+                    new DataResponse<>(
+                            image,
+                            new ArrayList<>()
+                    )
+            ));
+  }
 
-    Mono<ServerResponse> uploadImage(ServerRequest request) {
-        return converter.extractUploadRequest(request).flatMap(saveImageRequest ->
-                imageUploadService.upload(saveImageRequest.getImage())
-                        .then(Mono.defer(() -> {
-                            Image image = mapper.mapRequestToImage(saveImageRequest);
-                            return imageService.save(image)
-                                    .flatMap(response -> ServerResponse.ok().bodyValue(
-                                            new DataResponse<>(
-                                                    converter.generateUploadResponse(image),
-                                                    new ArrayList<>()
-                                            )
-                                    ));
-                        })));
-    }
+  Mono<ServerResponse> getImagesPagination(ServerRequest request) {
+    return converter.generatePaginationRequest(request)
+            .flatMap(paginationRequest -> {
+              Flux<Image> imageFlux = imageService.getImagesPagination(
+                      paginationRequest.getSize(),
+                      paginationRequest.getPage(),
+                      paginationRequest.getSortBy());
 
-    Mono<ServerResponse> getImageById(ServerRequest request) {
-        final String imageId = request.queryParam("id").orElse(null);
-        if (imageId == null) {
-            return ServerResponse.status(HttpStatus.BAD_REQUEST).bodyValue(
-                    new DataResponse<>(null, List.of("Image ID should not be null"))
-            );
-        }
-        return imageService.getImageById(imageId)
-                .flatMap(image -> ServerResponse.ok().bodyValue(
-                        new DataResponse<>(
-                                image,
-                                new ArrayList<>()
-                        )
-                ));
-    }
+              Mono<Long> totalImagesMono = imageService.getImagesCount();
 
-    Mono<ServerResponse> getImagesPagination(ServerRequest request) {
-        return converter.generatePaginationRequest(request)
-                .flatMap(paginationRequest -> {
-                    Flux<Image> imageFlux = imageService.getImagesPagination(
-                            paginationRequest.getSize(),
-                            paginationRequest.getPage(),
-                            paginationRequest.getSortBy());
-
-                    Mono<Long> totalImagesMono = imageService.getImagesCount();
-
-                    return imageFlux.collectList()
-                            .zipWith(totalImagesMono)
-                            .flatMap(tuple -> ServerResponse.ok()
-                                    .bodyValue(
-                                            new PaginationResponse<>(
-                                                    tuple.getT1(),
-                                                    converter.generatePaginationInfo(paginationRequest, tuple.getT2()),
-                                                    new ArrayList<>()
-                                            )
-                                    ));
-                });
-    }
+              return imageFlux.collectList()
+                      .zipWith(totalImagesMono)
+                      .flatMap(tuple -> ServerResponse.ok()
+                              .bodyValue(
+                                      new PaginationResponse<>(
+                                              tuple.getT1(),
+                                              converter.generatePaginationInfo(paginationRequest, tuple.getT2()),
+                                              new ArrayList<>()
+                                      )
+                              ));
+            });
+  }
 
 }

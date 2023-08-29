@@ -12,36 +12,37 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public class ImagePostgreAdapter implements ImageDatabase {
-    private final R2DBCImageRepository repository;
-    private final ImageConverter converter;
-    public ImagePostgreAdapter(R2DBCImageRepository repository, ImageConverter converter) {
-        this.repository = repository;
-        this.converter = converter;
-    }
+  private final R2DBCImageRepository repository;
+  private final ImageConverter converter;
 
-    @Override
-    public Mono<Image> save(Image image) {
-        return this.repository.save(converter.convertDomainToAdapter(image))
-                .map(converter::convertAdapterToDomain);
-    }
+  public ImagePostgreAdapter(R2DBCImageRepository repository, ImageConverter converter) {
+    this.repository = repository;
+    this.converter = converter;
+  }
 
-    @Override
-    public Mono<Image> getImageById(String id) {
-        return this.repository.findById(id)
-                .map(converter::convertAdapterToDomain);
-    }
+  @Override
+  public Mono<Image> save(Image image) {
+    return this.repository.save(converter.convertDomainToAdapter(image))
+            .map(converter::convertAdapterToDomain);
+  }
 
-    @Override
-    public Flux<Image> getImages(Integer size, Integer page, String sortBy) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortBy));
-        return this.repository.findAll()
-                .skip((long) pageRequest.getPageNumber() * pageRequest.getPageSize())
-                .take(pageRequest.getPageSize())
-                .map(converter::convertAdapterToDomain);
-    }
+  @Override
+  public Mono<Image> getImageById(String id) {
+    return this.repository.findById(id)
+            .map(converter::convertAdapterToDomain);
+  }
 
-    @Override
-    public Mono<Long> getTotalImagesCount() {
-        return repository.count();
-    }
+  @Override
+  public Flux<Image> getImages(Integer size, Integer page, String sortBy) {
+    PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortBy));
+    return this.repository.findAll()
+            .skip((long) pageRequest.getPageNumber() * pageRequest.getPageSize())
+            .take(pageRequest.getPageSize())
+            .map(converter::convertAdapterToDomain);
+  }
+
+  @Override
+  public Mono<Long> getTotalImagesCount() {
+    return repository.count();
+  }
 }

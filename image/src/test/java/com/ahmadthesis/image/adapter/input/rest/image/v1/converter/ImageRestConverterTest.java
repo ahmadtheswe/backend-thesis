@@ -16,35 +16,35 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ImageRestConverterTest {
-    private ImageRestConverter imageRestConverter;
+  private ImageRestConverter imageRestConverter;
 
-    @Value("${directory.image}")
-    private String UPLOAD_DIR;
+  @Value("${directory.image}")
+  private String UPLOAD_DIR;
 
-    @Mock
-    private ServerRequest mockServerRequest;
+  @Mock
+  private ServerRequest mockServerRequest;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        imageRestConverter = new ImageRestConverter();
-        ReflectionTestUtils.setField(imageRestConverter, "UPLOAD_DIR", "uploads");
-    }
+  @BeforeEach
+  public void setUp() {
+    MockitoAnnotations.openMocks(this);
+    imageRestConverter = new ImageRestConverter();
+    ReflectionTestUtils.setField(imageRestConverter, "UPLOAD_DIR", "uploads");
+  }
 
-    @Test
-    @DisplayName("should convert Image to ImageUploadResponse")
-    public void uploadResponseTest() {
-        // Arrange
-        Image image = Image.builder()
-                .id("123")
-                .title("Test Image")
-                .build();
+  @Test
+  @DisplayName("should convert Image to ImageUploadResponse")
+  public void uploadResponseTest() {
+    // Arrange
+    Image image = Image.builder()
+            .id("123")
+            .title("Test Image")
+            .build();
 
-        // Act
-        ImageUploadResponse result = imageRestConverter.generateUploadResponse(image);
+    // Act
+    ImageUploadResponse result = imageRestConverter.generateUploadResponse(image);
 
-        // Assert
-        assertEquals("123", result.getId());
-        assertEquals("Test Image", result.getTitle());
-    }
+    // Assert
+    assertEquals("123", result.getId());
+    assertEquals("Test Image", result.getTitle());
+  }
 }

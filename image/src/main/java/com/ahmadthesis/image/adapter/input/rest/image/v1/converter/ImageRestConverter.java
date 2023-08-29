@@ -20,68 +20,68 @@ import java.util.Objects;
 @Component
 public class ImageRestConverter {
 
-    @Value("${directory.image}")
-    private String UPLOAD_DIR;
+  @Value("${directory.image}")
+  private String UPLOAD_DIR;
 
-    public ImageUploadResponse generateUploadResponse(Image image) {
-        return ImageUploadResponse.builder()
-                .id(image.getId())
-                .title(image.getTitle())
-                .build();
-    }
+  public ImageUploadResponse generateUploadResponse(Image image) {
+    return ImageUploadResponse.builder()
+            .id(image.getId())
+            .title(image.getTitle())
+            .build();
+  }
 
-    public Mono<SaveImageRequest> extractUploadRequest(ServerRequest request) {
-        return request.multipartData().flatMap(stringPartMultiValueMap -> {
-            FilePart image = (FilePart) stringPartMultiValueMap.getFirst("image");
-            String id = null;
-            Part idPart = stringPartMultiValueMap.getFirst("id");
-            if (idPart != null) {
-                id = FilePartParser.parsePartToString(idPart);
-            }
-            String title = FilePartParser.parsePartToString(
-                    Objects.requireNonNull(stringPartMultiValueMap.getFirst("title")));
-            Boolean isPublic = Boolean.valueOf(FilePartParser
-                    .parsePartToString(Objects.requireNonNull(stringPartMultiValueMap.getFirst("isPublic"))));
-            String filename = Objects.requireNonNull(image).filename();
-            String mediaType = getExtensionByStringHandling(filename);
-            String uploadDir = Paths.get(UPLOAD_DIR + File.separator + filename).toString();
+  public Mono<SaveImageRequest> extractUploadRequest(ServerRequest request) {
+    return request.multipartData().flatMap(stringPartMultiValueMap -> {
+      FilePart image = (FilePart) stringPartMultiValueMap.getFirst("image");
+      String id = null;
+      Part idPart = stringPartMultiValueMap.getFirst("id");
+      if (idPart != null) {
+        id = FilePartParser.parsePartToString(idPart);
+      }
+      String title = FilePartParser.parsePartToString(
+              Objects.requireNonNull(stringPartMultiValueMap.getFirst("title")));
+      Boolean isPublic = Boolean.valueOf(FilePartParser
+              .parsePartToString(Objects.requireNonNull(stringPartMultiValueMap.getFirst("isPublic"))));
+      String filename = Objects.requireNonNull(image).filename();
+      String mediaType = getExtensionByStringHandling(filename);
+      String uploadDir = Paths.get(UPLOAD_DIR + File.separator + filename).toString();
 
-            return Mono.just(SaveImageRequest.builder()
-                    .id(id)
-                    .image(image)
-                    .title(title)
-                    .isPublic(isPublic)
-                    .filename(filename)
-                    .mediaType(mediaType)
-                    .uploadDir(uploadDir)
-                    .build());
-        });
-    }
+      return Mono.just(SaveImageRequest.builder()
+              .id(id)
+              .image(image)
+              .title(title)
+              .isPublic(isPublic)
+              .filename(filename)
+              .mediaType(mediaType)
+              .uploadDir(uploadDir)
+              .build());
+    });
+  }
 
-    private String getExtensionByStringHandling(String filename) {
-        return filename.substring(filename.lastIndexOf(".") + 1);
-    }
+  private String getExtensionByStringHandling(String filename) {
+    return filename.substring(filename.lastIndexOf(".") + 1);
+  }
 
-    public Mono<PaginationRequest> generatePaginationRequest(ServerRequest request) {
-        return Mono.just(
-                PaginationRequest.builder()
-                        .size(request.queryParam("size").map(Integer::parseInt).orElse(5))
-                        .page(request.queryParam("page").map(Integer::parseInt).orElse(0))
-                        .sortBy(request.queryParam("sortBy").orElse("id"))
-                        .build()
-        );
-    }
+  public Mono<PaginationRequest> generatePaginationRequest(ServerRequest request) {
+    return Mono.just(
+            PaginationRequest.builder()
+                    .size(request.queryParam("size").map(Integer::parseInt).orElse(5))
+                    .page(request.queryParam("page").map(Integer::parseInt).orElse(0))
+                    .sortBy(request.queryParam("sortBy").orElse("id"))
+                    .build()
+    );
+  }
 
-    public PaginationInfo generatePaginationInfo(
-            PaginationRequest paginationRequest,
-            Long totalItems) {
+  public PaginationInfo generatePaginationInfo(
+          PaginationRequest paginationRequest,
+          Long totalItems) {
 
-        return PaginationInfo.builder()
-                .currentPage(paginationRequest.getPage())
-                .pageSize(paginationRequest.getSize())
-                .sortBy(paginationRequest.getSortBy())
-                .totalPages((totalItems + paginationRequest.getSize() - 1) / paginationRequest.getSize())
-                .totalItems(totalItems)
-                .build();
-    }
+    return PaginationInfo.builder()
+            .currentPage(paginationRequest.getPage())
+            .pageSize(paginationRequest.getSize())
+            .sortBy(paginationRequest.getSortBy())
+            .totalPages((totalItems + paginationRequest.getSize() - 1) / paginationRequest.getSize())
+            .totalItems(totalItems)
+            .build();
+  }
 }

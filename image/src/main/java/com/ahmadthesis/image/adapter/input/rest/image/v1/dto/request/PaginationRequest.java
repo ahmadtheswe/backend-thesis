@@ -8,7 +8,7 @@ import lombok.*;
 @Generated
 @NoArgsConstructor
 public class PaginationRequest {
-    private Integer page;
-    private Integer size;
-    private String sortBy;
+  private Integer page;
+  private Integer size;
+  private String sortBy;
 }

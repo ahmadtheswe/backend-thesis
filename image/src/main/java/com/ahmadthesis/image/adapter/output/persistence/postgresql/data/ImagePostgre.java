@@ -12,19 +12,19 @@ import org.springframework.data.relational.core.mapping.Table;
 @Generated
 @Table("public.\"image\"")
 public class ImagePostgre implements Persistable<String> {
-    @Id
-    private String id;
-    private String uploaderId;
-    private String title;
-    private String filename;
-    private String originalImageDir;
-    private String mediaType;
-    private Long createdAt;
-    private Long latestAccess;
-    private Boolean isPublic;
+  @Id
+  private String id;
+  private String uploaderId;
+  private String title;
+  private String filename;
+  private String originalImageDir;
+  private String mediaType;
+  private Long createdAt;
+  private Long latestAccess;
+  private Boolean isPublic;
 
-    @Override
-    public boolean isNew() {
-        return true;
-    }
+  @Override
+  public boolean isNew() {
+    return true;
+  }
 }
