@@ -1,4 +1,4 @@
-package com.ahmadthesis.image.adapter.input.rest.image.v1.dto;
+package com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response;
 
 import lombok.*;
 

@@ -23,6 +23,10 @@ public class ImageRouter {
     RouterFunction<ServerResponse> imageRouters() {
         return RouterFunctions
                 .route(POST("/image/v1")
-                        .and(accept(MediaType.MULTIPART_FORM_DATA)), handler::uploadImage);
+                        .and(accept(MediaType.MULTIPART_FORM_DATA)), handler::uploadImage)
+                .andRoute(GET("/image/v1/detail")
+                        .and(accept(MediaType.APPLICATION_JSON)), handler::getImageById)
+                .andRoute(GET("/image/v1")
+                        .and(accept(MediaType.APPLICATION_JSON)), handler::getImagesPagination);
     }
 }

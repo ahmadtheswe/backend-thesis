@@ -4,11 +4,12 @@ import lombok.*;
 import org.springframework.http.codec.multipart.FilePart;
 
 @AllArgsConstructor
-@NoArgsConstructor
+@Builder
 @Data
 @Generated
-@Builder
+@NoArgsConstructor
 public class SaveImageRequest {
+    private String id;
     private FilePart image;
     private String title;
     private Boolean isPublic;

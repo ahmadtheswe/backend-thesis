@@ -1,13 +1,15 @@
 package com.ahmadthesis.image.adapter.input.rest.image.v1.converter;
 
 import com.ahmadthesis.image.adapter.input.rest.common.parser.FilePartParser;
-import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.ImageUploadResponse;
+import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.ImageUploadResponse;
+import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.PaginationRequest;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.SaveImageRequest;
+import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.PaginationInfo;
 import com.ahmadthesis.image.domain.entity.image.Image;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.http.codec.multipart.Part;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import reactor.core.publisher.Mono;
 
@@ -21,16 +23,21 @@ public class ImageRestConverter {
     @Value("${directory.image}")
     private String UPLOAD_DIR;
 
-    public ImageUploadResponse uploadResponse(Image image) {
+    public ImageUploadResponse generateUploadResponse(Image image) {
         return ImageUploadResponse.builder()
                 .id(image.getId())
                 .title(image.getTitle())
                 .build();
     }
 
-    public Mono<SaveImageRequest> extract(ServerRequest request) {
+    public Mono<SaveImageRequest> extractUploadRequest(ServerRequest request) {
         return request.multipartData().flatMap(stringPartMultiValueMap -> {
             FilePart image = (FilePart) stringPartMultiValueMap.getFirst("image");
+            String id = null;
+            Part idPart = stringPartMultiValueMap.getFirst("id");
+            if (idPart != null) {
+                id = FilePartParser.parsePartToString(idPart);
+            }
             String title = FilePartParser.parsePartToString(
                     Objects.requireNonNull(stringPartMultiValueMap.getFirst("title")));
             Boolean isPublic = Boolean.valueOf(FilePartParser
@@ -40,6 +47,7 @@ public class ImageRestConverter {
             String uploadDir = Paths.get(UPLOAD_DIR + File.separator + filename).toString();
 
             return Mono.just(SaveImageRequest.builder()
+                    .id(id)
                     .image(image)
                     .title(title)
                     .isPublic(isPublic)
@@ -54,7 +62,26 @@ public class ImageRestConverter {
         return filename.substring(filename.lastIndexOf(".") + 1);
     }
 
-    public String extractMediaType(MultipartFile file) {
-        return file.getContentType();
+    public Mono<PaginationRequest> generatePaginationRequest(ServerRequest request) {
+        return Mono.just(
+                PaginationRequest.builder()
+                        .size(request.queryParam("size").map(Integer::parseInt).orElse(5))
+                        .page(request.queryParam("page").map(Integer::parseInt).orElse(0))
+                        .sortBy(request.queryParam("sortBy").orElse("id"))
+                        .build()
+        );
+    }
+
+    public PaginationInfo generatePaginationInfo(
+            PaginationRequest paginationRequest,
+            Long totalItems) {
+
+        return PaginationInfo.builder()
+                .currentPage(paginationRequest.getPage())
+                .pageSize(paginationRequest.getSize())
+                .sortBy(paginationRequest.getSortBy())
+                .totalPages((totalItems + paginationRequest.getSize() - 1) / paginationRequest.getSize())
+                .totalItems(totalItems)
+                .build();
     }
 }
