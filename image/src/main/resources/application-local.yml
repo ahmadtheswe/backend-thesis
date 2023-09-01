@@ -1,8 +1,8 @@
 server:
-  port: 9090
+  port: 9091
 spring:
   r2dbc:
-    url: 'r2dbc:postgresql://postgres@db:5432/image'
+    url: 'r2dbc:postgresql://postgres@localhost:5432/image'
     password: 'postgres'
   h2:
     console:
@@ -17,7 +17,7 @@ logging:
           PARAM: DEBUG
 
 directory:
-  image: '/home/ahmad/image/uploads'
+  image: 'E:\thesis_project\upload'
 
 time:
   zone: 'Asia/Jakarta'

@@ -52,7 +52,11 @@ public class ImageHandler {
                                               new ArrayList<>()
                                       )
                               ));
-                    })));
+                    }))
+                    .onErrorResume(throwable -> {
+                      return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                              .bodyValue("An error occurred during image upload or processing.");
+                    }));
   }
 
   Mono<ServerResponse> getImageById(ServerRequest request) {

@@ -2,13 +2,37 @@ version: '3'
 services:
   image-be:
     ports:
-      - 9090:9090
+      - '9090:9090'
     image: image-be
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/image
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    depends_on:
+      - db
     build:
       context: .
       dockerfile: Dockerfile
     container_name: image-be
     restart: always
-    network_mode: compose_network
     volumes:
-      - /home/ahmad/image/uploads:/home/ahmad/image/uploads
+      - image_uploads:/home/ahmad/image/uploads
+
+  db:
+    image: 'postgres:12'
+    container_name: postgres-db
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=image
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+
+volumes:
+  postgres_db:
+    driver: local
+  image_uploads:
+    driver: local
