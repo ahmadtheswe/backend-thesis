@@ -16,7 +16,8 @@ services:
     container_name: image-be
     restart: always
     volumes:
-      - image_uploads:/home/ahmad/image/uploads
+      - /home/ahmad/image/uploads:/home/ahmad/image/uploads
+      - /home/ahmad/image/logs:/home/ahmad/image/logs
 
   db:
     image: 'postgres:12'
