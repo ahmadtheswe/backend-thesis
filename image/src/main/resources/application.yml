@@ -15,6 +15,12 @@ logging:
         postgresql:
           QUERY: DEBUG
           PARAM: DEBUG
+    root: info
+    com:
+      ahmadthesis:
+        image: debug
+  file:
+    name: '/home/ahmad/image/logs/application.log'
 
 directory:
   image: '/home/ahmad/image/uploads'

@@ -15,6 +15,12 @@ logging:
         postgresql:
           QUERY: DEBUG
           PARAM: DEBUG
+    root: info
+    com:
+      ahmadthesis:
+        image: debug
+  file:
+    name: 'E:\thesis_project\logs\application.log'
 
 directory:
   image: 'E:\thesis_project\upload'
