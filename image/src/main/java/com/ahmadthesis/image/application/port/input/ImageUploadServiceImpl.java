@@ -30,7 +30,8 @@ public class ImageUploadServiceImpl implements ImageUploadService {
   }
 
   @Override
-  public Mono<Void> upload(FilePart filePart) {
-    return filePart.transferTo(Paths.get(UPLOAD_DIRECTORY + File.separator + filePart.filename()));
+  public Mono<Void> upload(FilePart filePart, String filename) {
+    return filePart.transferTo(Paths.get(UPLOAD_DIRECTORY
+            + File.separator + filename));
   }
 }

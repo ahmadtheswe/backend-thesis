@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.UUID;
 
 @Component
 public class ImageRestConverter {
@@ -42,8 +43,8 @@ public class ImageRestConverter {
               Objects.requireNonNull(stringPartMultiValueMap.getFirst("title")));
       Boolean isPublic = Boolean.valueOf(FilePartParser
               .parsePartToString(Objects.requireNonNull(stringPartMultiValueMap.getFirst("isPublic"))));
-      String filename = Objects.requireNonNull(image).filename();
-      String mediaType = getExtensionByStringHandling(filename);
+      String mediaType = getExtensionByStringHandling(Objects.requireNonNull(image).filename());
+      String filename = UUID.randomUUID() + "." + getExtensionByStringHandling(mediaType);
       String uploadDir = Paths.get(UPLOAD_DIR + File.separator + filename).toString();
 
       return Mono.just(SaveImageRequest.builder()
@@ -83,5 +84,9 @@ public class ImageRestConverter {
             .totalPages((totalItems + paginationRequest.getSize() - 1) / paginationRequest.getSize())
             .totalItems(totalItems)
             .build();
+  }
+
+  public Mono<String> extractIdRequest(ServerRequest request) {
+    return Mono.just(request.queryParam("id").orElse(""));
   }
 }

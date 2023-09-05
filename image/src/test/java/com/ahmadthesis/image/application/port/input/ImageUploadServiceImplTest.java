@@ -7,9 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.util.Pair;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -82,7 +80,7 @@ public class ImageUploadServiceImplTest {
     Path tempFilePath = Files.createTempFile("test-upload", ".jpg");
     FilePart filePart = Mockito.mock(FilePart.class);
 
-    Mockito.when(filePart.filename()).thenReturn("test.jpg");
+//    Mockito.when(filePart.filename()).thenReturn("test.jpg");
     Mockito.when(filePart.transferTo(Mockito.any(Path.class))).thenReturn(Mono.empty());
     Mockito.when(filePart.content()).thenReturn(Flux.empty());
 
@@ -90,13 +88,13 @@ public class ImageUploadServiceImplTest {
     ReflectionTestUtils.setField(imageUploadService, "UPLOAD_DIRECTORY", tempFilePath.getParent().toString());
 
     // Act
-    Mono<Void> result = imageUploadService.upload(filePart);
+    Mono<Void> result = imageUploadService.upload(filePart, "test.jpg");
 
     // Assert
     StepVerifier.create(result)
             .verifyComplete();
 
-    Mockito.verify(filePart, Mockito.times(1)).filename();
+//    Mockito.verify(filePart, Mockito.times(1)).filename();
     Mockito.verify(filePart, Mockito.times(1)).transferTo(Mockito.any(Path.class));
 
     // Clean up
