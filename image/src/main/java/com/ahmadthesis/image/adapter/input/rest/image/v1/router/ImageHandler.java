@@ -8,6 +8,8 @@ import com.ahmadthesis.image.application.usecase.ImageHistoryService;
 import com.ahmadthesis.image.application.usecase.ImageService;
 import com.ahmadthesis.image.application.usecase.ImageUploadService;
 import com.ahmadthesis.image.domain.entity.image.Image;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -15,6 +17,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +45,7 @@ public class ImageHandler {
 
   Mono<ServerResponse> uploadImage(ServerRequest request) {
     return converter.extractUploadRequest(request).flatMap(saveImageRequest ->
-            imageUploadService.upload(saveImageRequest.getImage())
+            imageUploadService.upload(saveImageRequest.getImage(), saveImageRequest.getFilename())
                     .then(Mono.defer(() -> {
                       Image image = mapper.mapRequestToImage(saveImageRequest);
                       return imageService.save(image)
@@ -96,6 +99,25 @@ public class ImageHandler {
                                       )
                               ));
             });
+  }
+
+  Mono<ServerResponse> viewImageFile(ServerRequest request) {
+    return converter.extractIdRequest(request)
+            .flatMap(imageService::getImageById)
+            .flatMap(image -> {
+              File file = new File(image.getOriginalImageDir());
+              Resource resource = new FileSystemResource(file);
+              return ServerResponse.ok()
+                      .bodyValue(resource);
+            })
+            .switchIfEmpty(Mono.defer(() -> ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(
+                    new DataResponse<>(
+                            null,
+                            new ArrayList<>() {{
+                              add(HttpStatus.NOT_FOUND.toString());
+                            }}
+                    )
+            )));
   }
 
 }

@@ -27,6 +27,8 @@ public class ImageRouter {
             .andRoute(GET("/image/v1/detail")
                     .and(accept(MediaType.APPLICATION_JSON)), handler::getImageById)
             .andRoute(GET("/image/v1")
-                    .and(accept(MediaType.APPLICATION_JSON)), handler::getImagesPagination);
+                    .and(accept(MediaType.APPLICATION_JSON)), handler::getImagesPagination)
+            .andRoute(GET("/image/v1/view")
+                    .and(accept(MediaType.APPLICATION_OCTET_STREAM)), handler::viewImageFile);
   }
 }
