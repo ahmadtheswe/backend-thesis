@@ -3,7 +3,7 @@ name: Test Project Image
 on:
   pull_request:
     paths:
-      - 'image/**'
+      - image/**
     branches:
       - master
 
