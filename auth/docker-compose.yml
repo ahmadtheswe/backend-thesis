@@ -1,0 +1,39 @@
+version: '3'
+services:
+  image-be:
+    ports:
+      - '9095:9095'
+    image: auth-be
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/auth
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auth-be
+    restart: always
+    volumes:
+      - /home/ahmad/auth/uploads:/home/ahmad/auth/uploads
+      - /home/ahmad/auth/logs:/home/ahmad/auth/logs
+
+  db:
+    image: 'postgres:12'
+    container_name: postgres-db
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=auth
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+
+volumes:
+  postgres_db:
+    driver: local
+  image_uploads:
+    driver: local

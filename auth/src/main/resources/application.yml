@@ -1,0 +1,30 @@
+server:
+  port: 9095
+spring:
+  r2dbc:
+    url: 'r2dbc:postgresql://postgres@db:5432/auth'
+    password: 'postgres'
+  h2:
+    console:
+      enabled: true
+
+logging:
+  level:
+    io:
+      r2dbc:
+        postgresql:
+          QUERY: DEBUG
+          PARAM: DEBUG
+    root: info
+    com:
+      ahmadthesis:
+        auth: debug
+  file:
+    name: '/home/ahmad/auth/logs/application.log'
+
+directory:
+  image: '/home/ahmad/auth/uploads'
+
+time:
+  zone: 'Asia/Jakarta'
+  pattern: 'yyyy-MM-dd HH:mm:ss z'
