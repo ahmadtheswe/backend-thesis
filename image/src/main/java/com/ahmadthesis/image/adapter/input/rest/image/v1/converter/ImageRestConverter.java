@@ -34,28 +34,28 @@ public class ImageRestConverter {
   public Mono<SaveImageRequest> extractUploadRequest(ServerRequest request) {
     return request.multipartData().flatMap(stringPartMultiValueMap -> {
       FilePart image = (FilePart) stringPartMultiValueMap.getFirst("image");
-      String id = null;
-      Part idPart = stringPartMultiValueMap.getFirst("id");
-      if (idPart != null) {
-        id = FilePartParser.parsePartToString(idPart);
-      }
-      String title = FilePartParser.parsePartToString(
+      Mono<String> titleMono = FilePartParser.parsePartToString(
               Objects.requireNonNull(stringPartMultiValueMap.getFirst("title")));
-      Boolean isPublic = Boolean.valueOf(FilePartParser
-              .parsePartToString(Objects.requireNonNull(stringPartMultiValueMap.getFirst("isPublic"))));
+      Mono<Boolean> isPublicMono = FilePartParser.parsePartToString(
+                      Objects.requireNonNull(stringPartMultiValueMap.getFirst("isPublic")))
+              .map(Boolean::valueOf);
       String mediaType = getExtensionByStringHandling(Objects.requireNonNull(image).filename());
       String filename = UUID.randomUUID() + "." + getExtensionByStringHandling(mediaType);
       String uploadDir = Paths.get(UPLOAD_DIR + File.separator + filename).toString();
 
-      return Mono.just(SaveImageRequest.builder()
-              .id(id)
-              .image(image)
-              .title(title)
-              .isPublic(isPublic)
-              .filename(filename)
-              .mediaType(mediaType)
-              .uploadDir(uploadDir)
-              .build());
+      return titleMono.flatMap(title ->
+              isPublicMono.map(isPublic ->
+                      SaveImageRequest.builder()
+                              .image(image)
+                              .title(title)
+                              .isPublic(isPublic)
+                              .filename(filename)
+                              .mediaType(mediaType)
+                              .uploadDir(uploadDir)
+                              .build()
+              )
+
+      );
     });
   }
 
