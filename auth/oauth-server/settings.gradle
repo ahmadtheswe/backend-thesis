@@ -5,8 +5,4 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-
-rootProject.name = 'oauth-monorepo'
-
-include (':oauth-server')
-include (':oauth-client')
+rootProject.name = 'oauth-server'
