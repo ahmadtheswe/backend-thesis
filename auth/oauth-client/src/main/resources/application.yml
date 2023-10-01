@@ -1,12 +1,42 @@
 server:
   port: 9095
 spring:
-  r2dbc:
-    url: 'r2dbc:postgresql://postgres@db:5432/auth'
+  datasource:
+    url: 'jdbc:postgresql://localhost:5444/auth'
+    username: 'postgres'
     password: 'postgres'
-  h2:
-    console:
-      enabled: true
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: 'org.hibernate.dialect.PostgreSQLDialect'
+
+  security:
+    oauth2:
+      client:
+        registration:
+          api-client-oidc:
+            provider: spring
+            client-id: api-client
+            client-secret: secret
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://127.0.0.1:9095/login/oauth2/code/{registrationId}"
+            scope: openid
+            client-name: api-client-oidc
+          api-client-authorization-code:
+            provider: spring
+            client-id: api-client
+            client-secret: secret
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://127.0.0.1:9095/authorized"
+            scope: api.read
+            client-name: api-client-authorization-code
+        provider:
+          spring:
+            issuer-uri: http://localhost:9096
 
 logging:
   level:

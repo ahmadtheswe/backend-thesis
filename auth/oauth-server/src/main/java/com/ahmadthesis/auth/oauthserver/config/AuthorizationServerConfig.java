@@ -30,6 +30,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration(proxyBeanMethods = false)
 public class AuthorizationServerConfig {
+
   private final PasswordEncoder passwordEncoder;
 
   @Value("${oauth2-setup.uri.host}")
@@ -48,14 +49,14 @@ public class AuthorizationServerConfig {
   @Bean
   @Order(Ordered.HIGHEST_PRECEDENCE)
   public SecurityFilterChain authServerSecurityFilterChain(HttpSecurity http)
-    throws Exception {
+      throws Exception {
     OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
     return http.formLogin(Customizer.withDefaults()).build();
   }
 
   @Bean
   public RegisteredClientRepository registeredClientRepository() {
-    RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
+    final RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
         .clientId("api-client")
         .clientSecret(passwordEncoder.encode("secret"))
         .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
@@ -69,20 +70,21 @@ public class AuthorizationServerConfig {
         .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
         .build();
 
+    // we can change this to db
     return new InMemoryRegisteredClientRepository(registeredClient);
   }
 
   @Bean
   public JWKSource<SecurityContext> jwkSource() {
-    RSAKey rsaKey = generateRsa();
-    JWKSet jwkSet = new JWKSet(rsaKey);
+    final RSAKey rsaKey = generateRsa();
+    final JWKSet jwkSet = new JWKSet(rsaKey);
     return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
   }
 
   private static RSAKey generateRsa() {
-    KeyPair keyPair = generateRsaKey();
-    RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-    RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+    final KeyPair keyPair = generateRsaKey();
+    final RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+    final RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
     return new RSAKey.Builder(publicKey)
         .privateKey(privateKey)
         .keyID(UUID.randomUUID().toString())
@@ -90,9 +92,9 @@ public class AuthorizationServerConfig {
   }
 
   private static KeyPair generateRsaKey() {
-    KeyPair keyPair;
+    final KeyPair keyPair;
     try {
-      KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+      final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
       keyPairGenerator.initialize(2048);
       keyPair = keyPairGenerator.generateKeyPair();
     } catch (Exception ex) {

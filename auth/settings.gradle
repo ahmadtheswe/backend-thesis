@@ -6,7 +6,10 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'oauth-monorepo'
+rootProject.name = 'auth-monorepo'
 
 include (':oauth-server')
 include (':oauth-client')
+include (':oauth-resource-server')
+include (':keycloak-client')
+

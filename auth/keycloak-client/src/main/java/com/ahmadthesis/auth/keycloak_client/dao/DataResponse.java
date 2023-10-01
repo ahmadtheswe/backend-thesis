@@ -1,18 +1,17 @@
-package com.ahmadthesis.auth.oauthclient.adapter.input.rest.common.dto;
+package com.ahmadthesis.auth.keycloak_client.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Generated;
 import lombok.NoArgsConstructor;
 
 @Data
-@Generated
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class DataResponse<T> {
   private T data;
-  private List<String> messages;
+  private List<String> messages = new ArrayList<>();
 }

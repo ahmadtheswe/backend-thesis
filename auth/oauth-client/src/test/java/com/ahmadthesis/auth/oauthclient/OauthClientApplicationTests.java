@@ -1,4 +1,4 @@
-package com.ahmadthesis.auth;
+package com.ahmadthesis.auth.oauthclient;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
