@@ -1,5 +1,5 @@
 server:
-  port: 9096
+  port: 8051
 spring:
   datasource:
     url: 'jdbc:postgresql://localhost:5444/auth'
@@ -16,9 +16,9 @@ spring:
 
 oauth2-setup:
   uri:
-    host: 'http://127.0.0.1:9096'
-    login: 'http://127.0.0.1:9095/login/oauth2/code/api-client-oidc'
-    authorized: 'http://127.0.0.1:9095/authorized'
+    host: 'http://auth-server:8051'
+    login: 'http://127.0.0.1:8061/login/oauth2/code/api-client-oidc'
+    authorized: 'http://127.0.0.1:8061/authorized'
 
 logging:
   level:

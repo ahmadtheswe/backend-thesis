@@ -1,5 +1,5 @@
 server:
-  port: 9095
+  port: 8061
 spring:
   datasource:
     url: 'jdbc:postgresql://localhost:5444/auth'
@@ -23,7 +23,7 @@ spring:
             client-id: api-client
             client-secret: secret
             authorization-grant-type: authorization_code
-            redirect-uri: "http://127.0.0.1:9095/login/oauth2/code/{registrationId}"
+            redirect-uri: "http://127.0.0.1:8061/login/oauth2/code/{registrationId}"
             scope: openid
             client-name: api-client-oidc
           api-client-authorization-code:
@@ -31,12 +31,12 @@ spring:
             client-id: api-client
             client-secret: secret
             authorization-grant-type: authorization_code
-            redirect-uri: "http://127.0.0.1:9095/authorized"
+            redirect-uri: "http://127.0.0.1:8061/authorized"
             scope: api.read
             client-name: api-client-authorization-code
         provider:
           spring:
-            issuer-uri: http://localhost:9096
+            issuer-uri: 'http://auth-server:8051'
 
 logging:
   level:

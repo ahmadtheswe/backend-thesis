@@ -10,8 +10,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-@EnableWebSecurity
 @Configuration
+@EnableWebSecurity
 public class WebSecurityConfig {
 
   private static final String[] WHITE_LIST_URLS = {
@@ -31,6 +31,11 @@ public class WebSecurityConfig {
     return http.cors(AbstractHttpConfigurer::disable)
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/oauth/authorize").permitAll()
+            .requestMatchers("/api/oauth/authorize").permitAll()
+            .requestMatchers("/oauth/check_token").permitAll()
+            .requestMatchers("/api/oauth/check_token").permitAll()
+            .requestMatchers("/oauth/**").permitAll()
             .requestMatchers(WHITE_LIST_URLS).permitAll()
             .requestMatchers("/api/**").authenticated())
         .oauth2Login(oauth2login ->

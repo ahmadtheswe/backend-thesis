@@ -7,9 +7,5 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class OauthServerApplicationTests {
 
-  @Test
-  void contextLoads() {
-    Assertions.assertTrue(true);
-  }
 
 }

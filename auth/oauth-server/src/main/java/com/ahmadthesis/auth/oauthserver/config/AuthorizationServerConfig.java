@@ -14,13 +14,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
-import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
@@ -28,8 +32,11 @@ import org.springframework.security.oauth2.server.authorization.settings.Authori
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration(proxyBeanMethods = false)
+@Configuration
+@EnableWebSecurity
 public class AuthorizationServerConfig {
+
+  private final JdbcTemplate jdbcTemplate;
 
   private final PasswordEncoder passwordEncoder;
 
@@ -42,8 +49,17 @@ public class AuthorizationServerConfig {
   @Value("${oauth2-setup.uri.authorized}")
   private String authorizedUri;
 
-  public AuthorizationServerConfig(PasswordEncoder passwordEncoder) {
+  public AuthorizationServerConfig(
+      JdbcTemplate jdbcTemplate,
+      PasswordEncoder passwordEncoder) {
+    this.jdbcTemplate = jdbcTemplate;
     this.passwordEncoder = passwordEncoder;
+  }
+
+  @Bean
+  public AuthenticationManager authenticationManager(
+      AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    return authenticationConfiguration.getAuthenticationManager();
   }
 
   @Bean
@@ -56,22 +72,30 @@ public class AuthorizationServerConfig {
 
   @Bean
   public RegisteredClientRepository registeredClientRepository() {
-    final RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-        .clientId("api-client")
-        .clientSecret(passwordEncoder.encode("secret"))
-        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-        .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-        .authorizationGrantType(AuthorizationGrantType.PASSWORD)
-        .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-        .redirectUri(loginUri)
-        .redirectUri(authorizedUri)
-        .scope(OidcScopes.OPENID)
-        .scope("api.read")
-        .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
-        .build();
+    final String clientId = "api-client";
+    final JdbcRegisteredClientRepository repository = new JdbcRegisteredClientRepository(
+        jdbcTemplate);
+    RegisteredClient existingClient = repository.findByClientId(clientId);
+    if (existingClient == null) {
+      final RegisteredClient registeredClient = RegisteredClient.withId(
+              UUID.randomUUID().toString())
+          .clientId(clientId)
+          .clientSecret(passwordEncoder.encode("secret"))
+          .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+          .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+          .authorizationGrantType(AuthorizationGrantType.PASSWORD)
+          .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+          .redirectUri(loginUri)
+          .redirectUri(authorizedUri)
+          .scope(OidcScopes.OPENID)
+          .scope("api.read")
+          .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+          .build();
 
-    // we can change this to db
-    return new InMemoryRegisteredClientRepository(registeredClient);
+      repository.save(registeredClient);
+    }
+
+    return repository;
   }
 
   @Bean

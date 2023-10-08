@@ -5,6 +5,6 @@
 
 |     Project name      | Local Port | Docker Port |
 |:---------------------:|:----------:|:-----------:|
-|     oauth-client      |    9091    |    9095     |
-| oauth-resource-server |    9070    |    9072     |
-|     oauth-server      |    9092    |    9060     |
+|     oauth-server      |    8050    |    8051     |
+|     oauth-client      |    8060    |    8061     |
+| oauth-resource-server |    8070    |    8071     |

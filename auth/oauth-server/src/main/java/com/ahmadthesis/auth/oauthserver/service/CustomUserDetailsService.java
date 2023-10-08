@@ -1,40 +1,33 @@
 package com.ahmadthesis.auth.oauthserver.service;
 
-import com.ahmadthesis.auth.oauthserver.entity.UserEntity;
-import com.ahmadthesis.auth.oauthserver.repository.UserRepository;
+import com.ahmadthesis.auth.oauthserver.entity.Users;
+import com.ahmadthesis.auth.oauthserver.repository.UsersRepository;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
 public class CustomUserDetailsService implements UserDetailsService {
 
-  private final UserRepository userRepository;
+  private final UsersRepository usersRepository;
 
-  public CustomUserDetailsService(UserRepository userRepository) {
-    this.userRepository = userRepository;
+  public CustomUserDetailsService(UsersRepository usersRepository) {
+    this.usersRepository = usersRepository;
   }
 
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder(11);
-  }
 
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    UserEntity user = userRepository.findByEmail(email);
+    Users user = usersRepository.findByEmail(email);
     if (user == null) {
       throw new UsernameNotFoundException("User not found!");
     }
