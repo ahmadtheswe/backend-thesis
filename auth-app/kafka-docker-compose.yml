@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  postgres-keycloak:
+    image: postgres:12
+    restart: unless-stopped
+    container_name: postgres-keycloak
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - local-keycloak
+    ports:
+      - "5444:5432"
+
+  keycloak:
+    depends_on:
+      - postgres-keycloak
+    container_name: local-keycloak
+    image: quay.io/keycloak/keycloak:latest
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres-keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KC_LOG_LEVEL: INFO
+      KC_HTTP_ENABLED: 'true'
+      KC_HEALTH_ENABLED: 'true'
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KEYCLOAK_LOGLEVEL: INFO
+    ports:
+      - "28080:8080"
+    restart: unless-stopped
+    networks:
+      - local-keycloak
+
+networks:
+  local-keycloak:
