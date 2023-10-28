@@ -11,7 +11,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Builder
 @Generated
 @Table("public.\"ownership\"")
-public class OwnershipPostgre implements Persistable<String> {
+public class OwnershipEntity implements Persistable<String> {
   @Id
   private String id;
   private String imageId;

@@ -1,7 +1,7 @@
 package com.ahmadthesis.image.adapter.input.rest.image.v1.converter;
 
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.ImageUploadResponse;
-import com.ahmadthesis.image.domain.entity.image.Image;
+import com.ahmadthesis.image.domain.image.Image;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,19 +1,14 @@
 package com.ahmadthesis.image.adapter.output.persistence.postgresql;
 
-import com.ahmadthesis.image.adapter.output.persistence.postgresql.converter.ImageConverter;
 import com.ahmadthesis.image.adapter.output.persistence.postgresql.data.ImageEntity;
 import com.ahmadthesis.image.adapter.output.persistence.postgresql.sql.R2DBCImageRepository;
-import com.ahmadthesis.image.application.port.output.ImageDatabase;
-import com.ahmadthesis.image.domain.entity.image.Image;
-import org.junit.jupiter.api.BeforeEach;
+import com.ahmadthesis.image.domain.image.Image;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 

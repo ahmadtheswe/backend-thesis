@@ -1,11 +1,9 @@
 package com.ahmadthesis.image.adapter.output.persistence.postgresql.converter;
 
 import com.ahmadthesis.image.adapter.output.persistence.postgresql.data.ImageHistoryEntity;
-import com.ahmadthesis.image.domain.entity.image.ImageHistory;
+import com.ahmadthesis.image.domain.image.ImageHistory;
 import com.ahmadthesis.image.domain.objectvalue.image.Activity;
-import org.springframework.stereotype.Component;
 
-@Component
 public final class ImageHistoryConverter {
   public static ImageHistory convertEntityToDomain(final ImageHistoryEntity entity) {
     final ImageHistory imageHistory = new ImageHistory();

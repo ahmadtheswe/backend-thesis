@@ -1,10 +1,8 @@
 package com.ahmadthesis.image.adapter.output.persistence.postgresql.converter;
 
 import com.ahmadthesis.image.adapter.output.persistence.postgresql.data.ImageEntity;
-import com.ahmadthesis.image.domain.entity.image.Image;
-import org.springframework.stereotype.Component;
+import com.ahmadthesis.image.domain.image.Image;
 
-@Component
 public final class ImageConverter {
   public static Image convertAdapterToDomain(ImageEntity postgre) {
     Image image = new Image();

@@ -1,7 +1,7 @@
 package com.ahmadthesis.image.adapter.output.persistence.postgresql.converter;
 
 import com.ahmadthesis.image.adapter.output.persistence.postgresql.data.ImageHistoryEntity;
-import com.ahmadthesis.image.domain.entity.image.ImageHistory;
+import com.ahmadthesis.image.domain.image.ImageHistory;
 import com.ahmadthesis.image.domain.objectvalue.image.Activity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

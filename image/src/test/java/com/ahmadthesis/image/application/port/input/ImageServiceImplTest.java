@@ -3,7 +3,7 @@ package com.ahmadthesis.image.application.port.input;
 import com.ahmadthesis.image.adapter.output.persistence.postgresql.ImagePostgreAdapter;
 import com.ahmadthesis.image.application.port.output.ImageDatabase;
 import com.ahmadthesis.image.application.usecase.ImageService;
-import com.ahmadthesis.image.domain.entity.image.Image;
+import com.ahmadthesis.image.domain.image.Image;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,31 +1,18 @@
 package com.ahmadthesis.image.adapter.input.rest.image.v1.mapper;
 
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.SaveImageRequest;
-import com.ahmadthesis.image.domain.entity.image.Image;
+import com.ahmadthesis.image.domain.image.Image;
 import com.ahmadthesis.image.global.utils.dates.DateUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class ImageMapperTest {
-  private ImageMapper imageMapper;
-
-  @Mock
-  private DateUtils mockDateUtils;
-
-  @BeforeEach
-  public void setUp() {
-    MockitoAnnotations.openMocks(this);
-    imageMapper = new ImageMapper(mockDateUtils);
-  }
-
   @Test
   @DisplayName("should map SaveImageRequest to Image")
   public void mapRequestToImageTest() {
@@ -38,10 +25,10 @@ class ImageMapperTest {
             .isPublic(true)
             .build();
 
-    Mockito.when(mockDateUtils.now()).thenReturn(1679827200000L); // Example timestamp
+    Mockito.when(DateUtils.now()).thenReturn(1679827200000L); // Example timestamp
 
     // Act
-    Image result = imageMapper.mapRequestToImage(request);
+    Image result = ImageMapper.mapRequestToImage(request);
 
     // Assert
     assertEquals("Test Image", result.getTitle());

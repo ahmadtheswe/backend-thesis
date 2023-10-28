@@ -4,10 +4,9 @@ import com.ahmadthesis.image.adapter.input.rest.common.dto.DataResponse;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.converter.ImageRestConverter;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.PaginationResponse;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.mapper.ImageMapper;
-import com.ahmadthesis.image.application.usecase.ImageHistoryService;
 import com.ahmadthesis.image.application.usecase.ImageService;
 import com.ahmadthesis.image.application.usecase.ImageUploadService;
-import com.ahmadthesis.image.domain.entity.image.Image;
+import com.ahmadthesis.image.domain.image.Image;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -27,19 +26,16 @@ import java.util.List;
 public class ImageAdminHandler {
   private final ImageUploadService imageUploadService;
   private final ImageService imageService;
-  private final ImageHistoryService imageHistoryService;
-  private final ImageRestConverter converter;
-  private final ImageMapper mapper;
 
   Mono<ServerResponse> uploadImage(final ServerRequest request) {
-    return converter.extractUploadRequest(request).flatMap(saveImageRequest ->
+    return ImageRestConverter.extractUploadRequest(request).flatMap(saveImageRequest ->
             imageUploadService.upload(saveImageRequest.getImage(), saveImageRequest.getFilename())
                     .then(Mono.defer(() -> {
-                      final Image image = mapper.mapRequestToImage(saveImageRequest);
+                      final Image image = ImageMapper.mapRequestToImage(saveImageRequest);
                       return imageService.save(image)
                               .flatMap(response -> ServerResponse.ok().bodyValue(
                                       new DataResponse<>(
-                                              converter.generateUploadResponse(image),
+                                              ImageRestConverter.generateUploadResponse(image),
                                               new ArrayList<>()
                                       )
                               ));
@@ -65,7 +61,7 @@ public class ImageAdminHandler {
   }
 
   Mono<ServerResponse> getImagesPagination(final ServerRequest request) {
-    return converter.generatePaginationRequest(request)
+    return ImageRestConverter.generatePaginationRequest(request)
             .flatMap(paginationRequest -> {
               final Flux<Image> imageFlux = imageService.getImagesPagination(
                       paginationRequest.getSize(),
@@ -80,7 +76,8 @@ public class ImageAdminHandler {
                               .bodyValue(
                                       new PaginationResponse<>(
                                               tuple.getT1(),
-                                              converter.generatePaginationInfo(paginationRequest, tuple.getT2()),
+                                              ImageRestConverter
+                                                      .generatePaginationInfo(paginationRequest, tuple.getT2()),
                                               new ArrayList<>()
                                       )
                               ));
@@ -88,7 +85,7 @@ public class ImageAdminHandler {
   }
 
   Mono<ServerResponse> viewImageFile(final ServerRequest request) {
-    return converter.extractIdRequest(request)
+    return ImageRestConverter.extractIdRequest(request)
             .flatMap(imageService::getImageById)
             .flatMap(image -> {
               final File file = new File(image.getOriginalImageDir());

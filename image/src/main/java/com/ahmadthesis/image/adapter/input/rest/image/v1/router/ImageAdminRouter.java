@@ -16,7 +16,7 @@ public class ImageAdminRouter {
   private final ImageAdminHandler handler;
 
   @Bean
-  RouterFunction<ServerResponse> imageRouters() {
+  RouterFunction<ServerResponse> imageAdminRouters() {
     return RouterFunctions
             .route(POST("/image/v1/admin")
                     .and(accept(MediaType.MULTIPART_FORM_DATA)), handler::uploadImage)

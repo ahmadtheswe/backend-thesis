@@ -1,4 +1,4 @@
-package com.ahmadthesis.image.domain.entity.image;
+package com.ahmadthesis.image.domain.image;
 
 import com.ahmadthesis.image.domain.objectvalue.image.Activity;
 import lombok.AllArgsConstructor;

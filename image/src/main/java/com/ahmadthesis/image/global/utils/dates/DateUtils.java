@@ -9,19 +9,19 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Component
-public class DateUtils {
+public final class DateUtils {
   @Value("${time.zone}")
-  private String timezone;
+  private static String timezone;
 
   @Value("${time.pattern}")
-  private String pattern;
+  private static String pattern;
 
-  public Long now() {
+  public static Long now() {
     ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneId.of(timezone));
     return zonedDateTime.toInstant().toEpochMilli();
   }
 
-  public String millisecondsToDateString(Long millis) {
+  public static String millisecondsToDateString(Long millis) {
     ZonedDateTime zonedDateTime = Instant.ofEpochMilli(millis).atZone(ZoneId.of(timezone));
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
     return zonedDateTime.format(dateTimeFormatter);

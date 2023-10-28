@@ -5,10 +5,9 @@ import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.ImageUploa
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.PaginationRequest;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.SaveImageRequest;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.PaginationInfo;
-import com.ahmadthesis.image.domain.entity.image.Image;
+import com.ahmadthesis.image.domain.image.Image;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.codec.multipart.FilePart;
-import org.springframework.http.codec.multipart.Part;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import reactor.core.publisher.Mono;
@@ -19,19 +18,19 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Component
-public class ImageRestConverter {
+public final class ImageRestConverter {
 
   @Value("${directory.image}")
-  private String UPLOAD_DIR;
+  private static String UPLOAD_DIR;
 
-  public ImageUploadResponse generateUploadResponse(Image image) {
+  public static ImageUploadResponse generateUploadResponse(Image image) {
     return ImageUploadResponse.builder()
             .id(image.getId())
             .title(image.getTitle())
             .build();
   }
 
-  public Mono<SaveImageRequest> extractUploadRequest(ServerRequest request) {
+  public static Mono<SaveImageRequest> extractUploadRequest(ServerRequest request) {
     return request.multipartData().flatMap(stringPartMultiValueMap -> {
       FilePart image = (FilePart) stringPartMultiValueMap.getFirst("image");
       Mono<String> titleMono = FilePartParser.parsePartToString(
@@ -59,11 +58,11 @@ public class ImageRestConverter {
     });
   }
 
-  private String getExtensionByStringHandling(String filename) {
+  private static String getExtensionByStringHandling(String filename) {
     return filename.substring(filename.lastIndexOf(".") + 1);
   }
 
-  public Mono<PaginationRequest> generatePaginationRequest(ServerRequest request) {
+  public static Mono<PaginationRequest> generatePaginationRequest(ServerRequest request) {
     return Mono.just(
             PaginationRequest.builder()
                     .size(request.queryParam("size").map(Integer::parseInt).orElse(5))
@@ -73,7 +72,7 @@ public class ImageRestConverter {
     );
   }
 
-  public PaginationInfo generatePaginationInfo(
+  public static PaginationInfo generatePaginationInfo(
           PaginationRequest paginationRequest,
           Long totalItems) {
 
@@ -86,7 +85,7 @@ public class ImageRestConverter {
             .build();
   }
 
-  public Mono<String> extractIdRequest(ServerRequest request) {
+  public static Mono<String> extractIdRequest(ServerRequest request) {
     return Mono.just(request.queryParam("id").orElse(""));
   }
 }

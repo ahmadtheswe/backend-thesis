@@ -1,4 +1,5 @@
-CREATE TABLE "public"."ownership"
+drop table if exists "ownership";
+create table "public"."ownership"
 (
     "id"          character varying(36) PRIMARY KEY,
     "image_id"    character varying(36) NOT NULL,

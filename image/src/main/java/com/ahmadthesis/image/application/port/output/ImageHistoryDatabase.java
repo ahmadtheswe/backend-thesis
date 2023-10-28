@@ -1,6 +1,6 @@
 package com.ahmadthesis.image.application.port.output;
 
-import com.ahmadthesis.image.domain.entity.image.ImageHistory;
+import com.ahmadthesis.image.domain.image.ImageHistory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

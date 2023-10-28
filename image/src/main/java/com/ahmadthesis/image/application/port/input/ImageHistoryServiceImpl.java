@@ -2,7 +2,7 @@ package com.ahmadthesis.image.application.port.input;
 
 import com.ahmadthesis.image.application.port.output.ImageHistoryDatabase;
 import com.ahmadthesis.image.application.usecase.ImageHistoryService;
-import com.ahmadthesis.image.domain.entity.image.ImageHistory;
+import com.ahmadthesis.image.domain.image.ImageHistory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
