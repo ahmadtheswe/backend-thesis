@@ -1,5 +1,5 @@
 server:
-  port: 9091
+  port: 9092
 spring:
   r2dbc:
     url: 'r2dbc:postgresql://postgres@localhost:5432/image'
@@ -11,7 +11,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: 'http://auth-server:8050'
+          issuer-uri: http://localhost:28080/realms/image-project
+          jwk-set-uri: http://localhost:28080/realms/image-project/protocol/openid-connect/certs
 
 logging:
   level:

@@ -1,7 +1,7 @@
 package com.ahmadthesis.image.adapter.output.persistence.postgresql;
 
 import com.ahmadthesis.image.adapter.output.persistence.postgresql.converter.ImageHistoryConverter;
-import com.ahmadthesis.image.adapter.output.persistence.postgresql.data.ImageHistoryPostgre;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.data.ImageHistoryEntity;
 import com.ahmadthesis.image.adapter.output.persistence.postgresql.sql.R2DBCImageHistoryRepository;
 import com.ahmadthesis.image.application.port.output.ImageHistoryDatabase;
 import com.ahmadthesis.image.domain.entity.image.ImageHistory;
@@ -9,9 +9,11 @@ import com.ahmadthesis.image.domain.objectvalue.image.Activity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -21,29 +23,23 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-@SpringBootTest
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
 public class ImageHistoryPostgreAdapterTest {
+  @InjectMocks
+  private ImageHistoryPostgreAdapter database;
+
   @Mock
   private R2DBCImageHistoryRepository repository;
 
-  @InjectMocks
-  private ImageHistoryConverter converter;
-
-  private ImageHistoryDatabase database;
-
-  @BeforeEach
-  void setup() {
-    repository = Mockito.mock(R2DBCImageHistoryRepository.class);
-    converter = Mockito.spy(new ImageHistoryConverter());
-    database = new ImageHistoryPostgreAdapter(repository, converter);
-  }
 
   @Test
   @DisplayName("should save image history to database")
   void imageHistorySaveTest() {
     // Arrange
     ImageHistory imageHistoryEntity = new ImageHistory();
-    ImageHistoryPostgre imageHistoryPostgre = new ImageHistoryPostgre();
+    ImageHistoryEntity imageHistoryPostgre = new ImageHistoryEntity();
 
     String id = UUID.randomUUID().toString();
     String imageId = UUID.randomUUID().toString();
@@ -62,10 +58,9 @@ public class ImageHistoryPostgreAdapterTest {
     imageHistoryPostgre.setCreatedAt(1691224239866L);
 
     // Act
-    Mockito.when(converter.convertDomainToAdapter(imageHistoryEntity)).thenReturn(imageHistoryPostgre);
-    Mockito.when(repository.save(imageHistoryPostgre)).thenReturn(Mono.just(imageHistoryPostgre));
+    when(repository.save(imageHistoryPostgre)).thenReturn(Mono.just(imageHistoryPostgre));
     Mono<ImageHistory> savedImageHistory = database.save(imageHistoryEntity);
-    Mockito.verify(repository, Mockito.times(1)).save(imageHistoryPostgre);
+    verify(repository, times(1)).save(imageHistoryPostgre);
 
     // Assert
     StepVerifier.create(savedImageHistory)
@@ -80,7 +75,7 @@ public class ImageHistoryPostgreAdapterTest {
     String imageId = UUID.randomUUID().toString();
 
     ImageHistory imageHistoryEntity1 = new ImageHistory();
-    ImageHistoryPostgre imageHistoryPostgre1 = new ImageHistoryPostgre();
+    ImageHistoryEntity imageHistoryPostgre1 = new ImageHistoryEntity();
 
     String id1 = UUID.randomUUID().toString();
     String accessorId = UUID.randomUUID().toString();
@@ -99,7 +94,7 @@ public class ImageHistoryPostgreAdapterTest {
 
 
     ImageHistory imageHistoryEntity2 = new ImageHistory();
-    ImageHistoryPostgre imageHistoryPostgre2 = new ImageHistoryPostgre();
+    ImageHistoryEntity imageHistoryPostgre2 = new ImageHistoryEntity();
 
     String id2 = UUID.randomUUID().toString();
 
@@ -116,10 +111,10 @@ public class ImageHistoryPostgreAdapterTest {
     imageHistoryPostgre2.setCreatedAt(1691224239866L);
 
     List<ImageHistory> imageHistories = Arrays.asList(imageHistoryEntity1, imageHistoryEntity2);
-    List<ImageHistoryPostgre> imageHistoryPostgres = Arrays.asList(imageHistoryPostgre1, imageHistoryPostgre2);
+    List<ImageHistoryEntity> imageHistoryEntities = Arrays.asList(imageHistoryPostgre1, imageHistoryPostgre2);
 
     // Act
-    Mockito.when(repository.getImageHistoryPostgreByImageId(imageId)).thenReturn(Flux.fromIterable(imageHistoryPostgres));
+    when(repository.getImageHistoryPostgreByImageId(imageId)).thenReturn(Flux.fromIterable(imageHistoryEntities));
     Flux<ImageHistory> imageHistoryFlux = database.getHistoryByImageId(imageId);
 
     // Assert

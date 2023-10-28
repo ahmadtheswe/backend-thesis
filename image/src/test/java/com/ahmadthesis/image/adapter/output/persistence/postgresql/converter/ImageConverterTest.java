@@ -1,6 +1,6 @@
 package com.ahmadthesis.image.adapter.output.persistence.postgresql.converter;
 
-import com.ahmadthesis.image.adapter.output.persistence.postgresql.data.ImagePostgre;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.data.ImageEntity;
 import com.ahmadthesis.image.domain.entity.image.Image;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,14 +12,11 @@ import java.util.UUID;
 
 @SpringBootTest
 class ImageConverterTest {
-  private ImageConverter converter;
-  private final Image imageEntity = new Image();
-  private final ImagePostgre imagePostgre = new ImagePostgre();
+  private final Image image = new Image();
+  private final ImageEntity imageEntity = new ImageEntity();
 
   @BeforeEach
   void setUp() {
-    converter = new ImageConverter();
-
     String id = UUID.randomUUID().toString();
     String uploaderId = UUID.randomUUID().toString();
 
@@ -33,15 +30,15 @@ class ImageConverterTest {
     imageEntity.setLatestAccess(1691224239866L);
     imageEntity.setIsPublic(true);
 
-    imagePostgre.setId(id);
-    imagePostgre.setUploaderId(uploaderId);
-    imagePostgre.setTitle("image 1");
-    imagePostgre.setFilename("image_1.jpg");
-    imagePostgre.setOriginalImageDir("d://image//image_1.jpg");
-    imagePostgre.setMediaType("jpg");
-    imagePostgre.setCreatedAt(1691224239866L);
-    imagePostgre.setLatestAccess(1691224239866L);
-    imagePostgre.setIsPublic(true);
+    image.setId(id);
+    image.setUploaderId(uploaderId);
+    image.setTitle("image 1");
+    image.setFilename("image_1.jpg");
+    image.setOriginalImageDir("d://image//image_1.jpg");
+    image.setMediaType("jpg");
+    image.setCreatedAt(1691224239866L);
+    image.setLatestAccess(1691224239866L);
+    image.setIsPublic(true);
   }
 
   @Test
@@ -50,18 +47,18 @@ class ImageConverterTest {
     // Arrange
 
     // Act
-    ImagePostgre converted = converter.convertDomainToAdapter(imageEntity);
+    final ImageEntity converted = ImageConverter.convertDomainToAdapter(image);
 
     // Assert
-    Assertions.assertEquals(imagePostgre.getId(), converted.getId());
-    Assertions.assertEquals(imagePostgre.getUploaderId(), converted.getUploaderId());
-    Assertions.assertEquals(imagePostgre.getTitle(), converted.getTitle());
-    Assertions.assertEquals(imagePostgre.getFilename(), converted.getFilename());
-    Assertions.assertEquals(imagePostgre.getOriginalImageDir(), converted.getOriginalImageDir());
-    Assertions.assertEquals(imagePostgre.getMediaType(), converted.getMediaType());
-    Assertions.assertEquals(imagePostgre.getCreatedAt(), converted.getCreatedAt());
-    Assertions.assertEquals(imagePostgre.getLatestAccess(), converted.getLatestAccess());
-    Assertions.assertEquals(imagePostgre.getIsPublic(), converted.getIsPublic());
+    Assertions.assertEquals(imageEntity.getId(), converted.getId());
+    Assertions.assertEquals(imageEntity.getUploaderId(), converted.getUploaderId());
+    Assertions.assertEquals(imageEntity.getTitle(), converted.getTitle());
+    Assertions.assertEquals(imageEntity.getFilename(), converted.getFilename());
+    Assertions.assertEquals(imageEntity.getOriginalImageDir(), converted.getOriginalImageDir());
+    Assertions.assertEquals(imageEntity.getMediaType(), converted.getMediaType());
+    Assertions.assertEquals(imageEntity.getCreatedAt(), converted.getCreatedAt());
+    Assertions.assertEquals(imageEntity.getLatestAccess(), converted.getLatestAccess());
+    Assertions.assertEquals(imageEntity.getIsPublic(), converted.getIsPublic());
   }
 
   @Test
@@ -70,7 +67,7 @@ class ImageConverterTest {
     // Arrange
 
     // Act
-    Image converted = converter.convertAdapterToDomain(imagePostgre);
+    Image converted = ImageConverter.convertAdapterToDomain(imageEntity);
 
     // Assert
     Assertions.assertEquals(imageEntity.getId(), converted.getId());
