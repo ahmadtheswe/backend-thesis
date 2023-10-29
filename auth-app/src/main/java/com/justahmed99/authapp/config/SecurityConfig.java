@@ -1,5 +1,7 @@
 package com.justahmed99.authapp.config;
 
+import java.util.Arrays;
+import java.util.Collections;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -8,12 +10,14 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.config.web.server.ServerHttpSecurity.CorsSpec;
 import org.springframework.security.config.web.server.ServerHttpSecurity.CsrfSpec;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Mono;
 
 @Configuration
@@ -24,7 +28,7 @@ public class SecurityConfig {
   public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) throws Exception {
     return http
         .csrf(CsrfSpec::disable)
-        .cors(CorsSpec::disable)
+        .cors(corsSpec -> corsSpec.configurationSource(corsConfigurationSource()))
         .exceptionHandling(
             exceptionHandlingSpec -> exceptionHandlingSpec.authenticationEntryPoint(
                 authenticationEntryPoint()
@@ -34,6 +38,7 @@ public class SecurityConfig {
             authorizeExchangeSpec
                 .pathMatchers("/api/user/registration/**").permitAll()
                 .pathMatchers("/api/user/login/**").permitAll()
+                .pathMatchers("/api/user/logout/**").authenticated()
                 .pathMatchers("/public/**").permitAll()
                 .pathMatchers("/admin/**").hasRole("ADMIN")
                 .pathMatchers("/regular/**").hasRole("REGULAR")
@@ -55,6 +60,16 @@ public class SecurityConfig {
   @Bean
   public Converter<Jwt, Mono<AbstractAuthenticationToken>> jwtAuthenticationConverter() {
     return new CustomJwtAuthenticationConverter();
+  }
+
+  private CorsConfigurationSource corsConfigurationSource() {
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    CorsConfiguration config = new CorsConfiguration();
+    config.setAllowedOrigins(Collections.singletonList("*"));
+    config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    config.setAllowedHeaders(Collections.singletonList("*"));
+    source.registerCorsConfiguration("/**", config);
+    return source;
   }
 
 }

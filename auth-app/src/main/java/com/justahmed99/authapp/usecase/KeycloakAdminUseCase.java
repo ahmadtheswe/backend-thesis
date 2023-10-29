@@ -11,6 +11,10 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -21,7 +25,8 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
   private final KeycloakAdminPersister keycloakAdminPersister;
 
   @Override
-  public Mono<ResponseEntity<ReturnDataDTO<String>>> createRegularUser(RegistrationRequestDTO dto) {
+  public Mono<ResponseEntity<ReturnDataDTO<String>>> createRegularUser(
+      final RegistrationRequestDTO dto) {
     return RegistrationConverter.fromRegistrationRequestDTO(dto)
         .map(keycloakAdminPersister::createRegularUser)
         .map(success -> {
@@ -44,7 +49,7 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
   }
 
   @Override
-  public Mono<ResponseEntity<ReturnDataDTO<Map<String, String>>>> login(LoginRequestDTO dto) {
+  public Mono<ResponseEntity<ReturnDataDTO<Map<String, String>>>> login(final LoginRequestDTO dto) {
     return LoginConverter.fromLoginRequestDTO(dto)
         .map(keycloakAdminPersister::login)
         .map(tokenMap -> ResponseEntity.ok(
@@ -61,5 +66,17 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
 
           return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse));
         });
+  }
+
+  @Override
+  public Mono<ResponseEntity<Void>> logout() {
+    return ReactiveSecurityContextHolder.getContext()
+        .map(SecurityContext::getAuthentication)
+        .map(Authentication::getPrincipal)
+        .cast(Jwt.class)
+        .flatMap(jwt -> Mono.fromRunnable(() -> {
+              keycloakAdminPersister.logout(jwt.getClaim("sub"));
+            })
+            .then(Mono.fromCallable(() -> ResponseEntity.ok().<Void>build())));
   }
 }

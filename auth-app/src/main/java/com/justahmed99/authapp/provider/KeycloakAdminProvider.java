@@ -35,7 +35,7 @@ public class KeycloakAdminProvider implements KeycloakAdminPersister {
   private String clientSecret;
 
   @Override
-  public Boolean createRegularUser(UserRepresentation userRepresentation) {
+  public Boolean createRegularUser(final UserRepresentation userRepresentation) {
     Keycloak keycloak = KeycloakBuilder.builder()
         .serverUrl(serverUrl)
         .realm(realm)
@@ -51,7 +51,7 @@ public class KeycloakAdminProvider implements KeycloakAdminPersister {
   }
 
   @Override
-  public Map<String, String> login(Login login) {
+  public Map<String, String> login(final Login login) {
     Keycloak keycloak = KeycloakBuilder.builder()
         .serverUrl(serverUrl)
         .realm(realm)
@@ -67,6 +67,19 @@ public class KeycloakAdminProvider implements KeycloakAdminPersister {
         "access_token", keycloak.tokenManager().getAccessToken().getToken(),
         "refresh_token", keycloak.tokenManager().refreshToken().getToken()
     );
+  }
+
+  @Override
+  public void logout(final String userId) {
+    Keycloak keycloak = KeycloakBuilder.builder()
+        .serverUrl(serverUrl)
+        .realm(realm)
+        .clientId(adminClientId)
+        .clientSecret(adminClientSecret)
+        .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
+        .resteasyClient(new ResteasyClientBuilderImpl().connectionPoolSize(10).build())
+        .build();
+    keycloak.realm(realm).users().get(userId).logout();
   }
 }
 
