@@ -1,6 +1,8 @@
 package com.ahmadthesis.image.adapter.input.rest.image.v1.converter;
 
 import com.ahmadthesis.image.adapter.input.rest.common.parser.FilePartParser;
+import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.CartDeleteRequest;
+import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.CartSaveRequest;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.ImageUploadResponse;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.PaginationRequest;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.SaveImageRequest;
@@ -87,5 +89,13 @@ public final class ImageRestConverter {
 
   public static Mono<String> extractIdRequest(ServerRequest request) {
     return Mono.just(request.queryParam("id").orElse(""));
+  }
+
+  public static Mono<CartDeleteRequest> getCartId(ServerRequest request) {
+    return request.bodyToMono(CartDeleteRequest.class);
+  }
+
+  public static Mono<CartSaveRequest> getImageId(ServerRequest request) {
+    return request.bodyToMono(CartSaveRequest.class);
   }
 }

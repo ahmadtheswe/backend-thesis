@@ -7,6 +7,7 @@ import com.ahmadthesis.image.domain.image.ImageOwnership;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
@@ -16,6 +17,12 @@ public class OwnershipPostgreAdapter implements OwnershipDatabase {
   @Override
   public Flux<ImageOwnership> getImageOwnershipByOwnerId(String ownerId) {
     return repository.findAllByOwnerId(ownerId)
+            .map(OwnershipConverter::convertEntityToDomain);
+  }
+
+  @Override
+  public Mono<ImageOwnership> getImageByOwnershipByOwnerIdAndImageId(String ownerId, String imageId) {
+    return repository.findByOwnerIdAndImageId(ownerId, imageId)
             .map(OwnershipConverter::convertEntityToDomain);
   }
 }
