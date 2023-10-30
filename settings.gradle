@@ -8,4 +8,6 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'auth-app'
+rootProject.name = 'backend-monorepo'
+include (':auth-app')
+include (':image')
