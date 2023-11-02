@@ -1,5 +1,7 @@
 package com.ahmadthesis.image.utils.config;
 
+import java.util.Arrays;
+import java.util.Collections;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -11,32 +13,36 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Mono;
 
 @Configuration
 @EnableWebFluxSecurity
 public class ResourceServerConfig {
+
   @Bean
   public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) throws Exception {
     return http
-            .csrf(ServerHttpSecurity.CsrfSpec::disable)
-            .cors(ServerHttpSecurity.CorsSpec::disable)
-            .exceptionHandling(
-                    exceptionHandlingSpec -> exceptionHandlingSpec.authenticationEntryPoint(
-                            authenticationEntryPoint()
-                    )
+        .csrf(ServerHttpSecurity.CsrfSpec::disable)
+        .cors(corsSpec -> corsSpec.configurationSource(corsConfigurationSource()))
+        .exceptionHandling(
+            exceptionHandlingSpec -> exceptionHandlingSpec.authenticationEntryPoint(
+                authenticationEntryPoint()
             )
-            .authorizeExchange(authorizeExchangeSpec ->
-                    authorizeExchangeSpec
-                            .pathMatchers("/public/**").permitAll()
-                            .pathMatchers("/testing/**").permitAll()
-                            .pathMatchers("/image/v1/admin/**").hasRole("ADMIN")
-                            .pathMatchers("/image/v1/regular/**").hasRole("REGULAR")
-                            .anyExchange().authenticated())
-            .oauth2ResourceServer(oAuth2ResourceServerSpec ->
-                    oAuth2ResourceServerSpec.jwt(
-                            jwtSpec -> jwtSpec.jwtAuthenticationConverter(jwtAuthenticationConverter())))
-            .build();
+        )
+        .authorizeExchange(authorizeExchangeSpec ->
+            authorizeExchangeSpec
+                .pathMatchers("/public/**").permitAll()
+                .pathMatchers("/testing/**").permitAll()
+                .pathMatchers("/image/v1/admin/**").hasRole("ADMIN")
+                .pathMatchers("/image/v1/regular/**").hasRole("REGULAR")
+                .anyExchange().authenticated())
+        .oauth2ResourceServer(oAuth2ResourceServerSpec ->
+            oAuth2ResourceServerSpec.jwt(
+                jwtSpec -> jwtSpec.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+        .build();
   }
 
   @Bean
@@ -47,5 +53,15 @@ public class ResourceServerConfig {
   @Bean
   public Converter<Jwt, Mono<AbstractAuthenticationToken>> jwtAuthenticationConverter() {
     return new CustomJwtAuthenticationConverter();
+  }
+
+  private CorsConfigurationSource corsConfigurationSource() {
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    CorsConfiguration config = new CorsConfiguration();
+    config.setAllowedOrigins(Collections.singletonList("*"));
+    config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    config.setAllowedHeaders(Collections.singletonList("*"));
+    source.registerCorsConfiguration("/**", config);
+    return source;
   }
 }
