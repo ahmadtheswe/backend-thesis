@@ -73,4 +73,4 @@ flyway {
 	locations = ["filesystem:src/main/resources/db/migration"]
 }
 
-defaultTasks 'flywayMigrate'
+build.dependsOn flywayMigrate
