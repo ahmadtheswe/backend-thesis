@@ -3,8 +3,8 @@ package com.justahmed99.authapp.controller;
 import com.justahmed99.authapp.dto.LoginRequestDTO;
 import com.justahmed99.authapp.dto.RegistrationRequestDTO;
 import com.justahmed99.authapp.dto.ReturnDataDTO;
+import com.justahmed99.authapp.dto.TokenResponseDTO;
 import com.justahmed99.authapp.usecase.KeycloakAdminService;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +28,7 @@ public class UserController {
   }
 
   @PostMapping("/login")
-  public Mono<ResponseEntity<ReturnDataDTO<Map<String, String>>>> login(
+  public Mono<ResponseEntity<ReturnDataDTO<TokenResponseDTO>>> login(
       @RequestBody LoginRequestDTO loginRequestDTO) {
     return keycloakAdminService.login(loginRequestDTO);
   }

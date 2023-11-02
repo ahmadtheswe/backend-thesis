@@ -1,6 +1,8 @@
 package com.justahmed99.authapp.provider;
 
 import com.justahmed99.authapp.business.Login;
+import com.justahmed99.authapp.business.Token;
+import com.justahmed99.authapp.business.TokenConverter;
 import jakarta.ws.rs.core.Response;
 import java.util.Map;
 import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
@@ -51,7 +53,7 @@ public class KeycloakAdminProvider implements KeycloakAdminPersister {
   }
 
   @Override
-  public Map<String, String> login(final Login login) {
+  public Token login(final Login login) {
     Keycloak keycloak = KeycloakBuilder.builder()
         .serverUrl(serverUrl)
         .realm(realm)
@@ -63,10 +65,7 @@ public class KeycloakAdminProvider implements KeycloakAdminPersister {
         .resteasyClient(new ResteasyClientBuilderImpl().connectionPoolSize(10).build())
         .build();
 
-    return Map.of(
-        "access_token", keycloak.tokenManager().getAccessToken().getToken(),
-        "refresh_token", keycloak.tokenManager().refreshToken().getToken()
-    );
+    return TokenConverter.fromKeycloakToToken(keycloak);
   }
 
   @Override

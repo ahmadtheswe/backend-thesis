@@ -3,8 +3,10 @@ package com.justahmed99.authapp.usecase;
 import com.justahmed99.authapp.dto.LoginRequestDTO;
 import com.justahmed99.authapp.dto.RegistrationRequestDTO;
 import com.justahmed99.authapp.dto.ReturnDataDTO;
+import com.justahmed99.authapp.dto.TokenResponseDTO;
 import com.justahmed99.authapp.dto.converter.LoginConverter;
 import com.justahmed99.authapp.dto.converter.RegistrationConverter;
+import com.justahmed99.authapp.dto.converter.TokenDTOConverter;
 import com.justahmed99.authapp.provider.KeycloakAdminPersister;
 import java.util.List;
 import java.util.Map;
@@ -49,18 +51,18 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
   }
 
   @Override
-  public Mono<ResponseEntity<ReturnDataDTO<Map<String, String>>>> login(final LoginRequestDTO dto) {
+  public Mono<ResponseEntity<ReturnDataDTO<TokenResponseDTO>>> login(final LoginRequestDTO dto) {
     return LoginConverter.fromLoginRequestDTO(dto)
         .map(keycloakAdminPersister::login)
         .map(tokenMap -> ResponseEntity.ok(
-            ReturnDataDTO.<Map<String, String>>builder()
-                .data(tokenMap)
+            ReturnDataDTO.<TokenResponseDTO>builder()
+                .data(TokenDTOConverter.fromTokenToTokenDTO(tokenMap))
                 .messages(List.of("Login Success!"))
                 .build()
         ))
         .onErrorResume(throwable -> {
-          ReturnDataDTO<Map<String, String>> errorResponse =
-              ReturnDataDTO.<Map<String, String>>builder()
+          ReturnDataDTO<TokenResponseDTO> errorResponse =
+              ReturnDataDTO.<TokenResponseDTO>builder()
                   .messages(List.of("Login Failed!"))
                   .build();
 
