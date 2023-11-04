@@ -11,11 +11,15 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:28080/realms/image-project
-          jwk-set-uri: http://localhost:28080/realms/image-project/protocol/openid-connect/certs
+          issuer-uri: http://localhost:28080/realms/${REALM_NAME}
+          jwk-set-uri: http://localhost:28080/realms/${REALM_NAME}/protocol/openid-connect/certs
 
 logging:
   level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.boot.autoconfigure.security: DEBUG
+    org.springframework.boot.autoconfigure.security.oauth2: DEBUG
     io:
       r2dbc:
         postgresql:
