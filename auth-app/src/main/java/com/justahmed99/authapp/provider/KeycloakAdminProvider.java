@@ -3,14 +3,17 @@ package com.justahmed99.authapp.provider;
 import com.justahmed99.authapp.business.Login;
 import com.justahmed99.authapp.business.Token;
 import com.justahmed99.authapp.business.TokenConverter;
+import com.nimbusds.jose.util.Pair;
 import jakarta.ws.rs.core.Response;
-import java.util.Map;
+import java.net.URI;
+import java.util.List;
 import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -37,7 +40,8 @@ public class KeycloakAdminProvider implements KeycloakAdminPersister {
   private String clientSecret;
 
   @Override
-  public Boolean createRegularUser(final UserRepresentation userRepresentation) {
+  public Pair<Boolean, Integer> createRegularUser(
+      final UserRepresentation userRepresentation) {
     Keycloak keycloak = KeycloakBuilder.builder()
         .serverUrl(serverUrl)
         .realm(realm)
@@ -46,10 +50,31 @@ public class KeycloakAdminProvider implements KeycloakAdminPersister {
         .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
         .resteasyClient(new ResteasyClientBuilderImpl().connectionPoolSize(10).build())
         .build();
-    RealmResource realmResource = keycloak.realm(realm);
-    UsersResource usersResource = realmResource.users();
-    Response response = usersResource.create(userRepresentation);
-    return response.getStatus() == 201;
+    final RealmResource realmResource = keycloak.realm(realm);
+    final UsersResource usersResource = realmResource.users();
+    final Response response = usersResource.create(userRepresentation);
+
+    if (response.getStatus() == 409) {
+      return Pair.of(false, 409);
+    } else {
+      final String userId = getUserId(response.getLocation());
+      if (response.getStatus() == 201) {
+        final RoleRepresentation regularRole =
+            realmResource.roles().get("regular").toRepresentation();
+
+        usersResource.get(userId).roles().realmLevel().add(List.of(regularRole));
+
+        return Pair.of(true, 201);
+      } else {
+        keycloak.realm(realm).users().get(userId).remove();
+        return Pair.of(false, 500);
+      }
+    }
+  }
+
+  private String getUserId(final URI location) {
+    final String path = location.getPath();
+    return path.substring(path.lastIndexOf("/") + 1);
   }
 
   @Override

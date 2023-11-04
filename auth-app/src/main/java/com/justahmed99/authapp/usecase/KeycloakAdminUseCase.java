@@ -8,8 +8,8 @@ import com.justahmed99.authapp.dto.converter.LoginConverter;
 import com.justahmed99.authapp.dto.converter.RegistrationConverter;
 import com.justahmed99.authapp.dto.converter.TokenDTOConverter;
 import com.justahmed99.authapp.provider.KeycloakAdminPersister;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,20 +31,31 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
       final RegistrationRequestDTO dto) {
     return RegistrationConverter.fromRegistrationRequestDTO(dto)
         .map(keycloakAdminPersister::createRegularUser)
-        .map(success -> {
-          if (success) {
+        .map(responsePair -> {
+          if (responsePair.getLeft()) {
             return ResponseEntity.ok(
                 ReturnDataDTO.<String>builder()
                     .data("SUCCESS")
                     .messages(List.of("User registered successfully!"))
                     .build());
           } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            List<String> errorMessages = new ArrayList<>() {{
+              if (responsePair.getRight() == 500) {
+                add(HttpStatus.INTERNAL_SERVER_ERROR.name());
+                add("Failed to save user data");
+              } else {
+                add(HttpStatus.CONFLICT.name());
+                add("User already exist!");
+              }
+            }};
+            return ResponseEntity.status(
+                    responsePair.getRight() == 500 ?
+                        HttpStatus.INTERNAL_SERVER_ERROR :
+                        HttpStatus.CONFLICT)
                 .body(
                     ReturnDataDTO.<String>builder()
                         .data("FAILED")
-                        .messages(List.of(HttpStatus.INTERNAL_SERVER_ERROR.name(),
-                            "User registration failed!"))
+                        .messages(errorMessages)
                         .build());
           }
         });
