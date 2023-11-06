@@ -22,8 +22,12 @@ import java.util.UUID;
 @Component
 public final class ImageRestConverter {
 
-  @Value("${directory.image}")
   private static String UPLOAD_DIR;
+
+  @Value("${directory.image}")
+  public void setUploadDir(String UPLOAD_DIR) {
+    ImageRestConverter.UPLOAD_DIR = UPLOAD_DIR;
+  }
 
   public static ImageUploadResponse generateUploadResponse(Image image) {
     return ImageUploadResponse.builder()

@@ -36,7 +36,7 @@ class ImageMapperTest {
         .isPublic(true)
         .build();
 
-    try (MockedStatic<DateUtils> mockedStatic = mockStatic(DateUtils.class)) {
+    try (MockedStatic<DateUtils> ignored = mockStatic(DateUtils.class)) {
       when(DateUtils.now()).thenReturn(1679827200000L); // Example timestamp
 
       // Act

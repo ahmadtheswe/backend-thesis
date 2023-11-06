@@ -10,11 +10,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class DateUtilsTest {
-  private DateUtils utils;
 
   @BeforeEach
   public void setup() {
-    utils = new DateUtils();
+    DateUtils utils = new DateUtils();
     ReflectionTestUtils.setField(utils, "timezone", "Asia/Jakarta");
     ReflectionTestUtils.setField(utils, "pattern", "yyyy-MM-dd HH:mm:ss z");
   }
@@ -26,7 +25,7 @@ class DateUtilsTest {
     long currentTimeMillis = System.currentTimeMillis();
 
     // Act
-    Long result = utils.now();
+    Long result = DateUtils.now();
 
     // Assert
     assertEquals(currentTimeMillis, result, "Current time in milliseconds does not match");
@@ -40,7 +39,7 @@ class DateUtilsTest {
     String expectedDateString = "2023-03-26 17:40:00 WIB";
 
     // Act
-    String result = utils.millisecondsToDateString(millis);
+    String result = DateUtils.millisecondsToDateString(millis);
 
     // Assert
     assertEquals(expectedDateString, result, "Formatted date string does not match");

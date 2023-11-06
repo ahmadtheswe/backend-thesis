@@ -10,11 +10,19 @@ import java.time.format.DateTimeFormatter;
 
 @Component
 public final class DateUtils {
-  @Value("${time.zone}")
+
   private static String timezone;
+  private static String pattern;
+
+  @Value("${time.zone}")
+  public void setTimezone(String timezone) {
+    DateUtils.timezone = timezone;
+  }
 
   @Value("${time.pattern}")
-  private static String pattern;
+  public void setPattern(String pattern) {
+    DateUtils.pattern = pattern;
+  }
 
   public static Long now() {
     ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneId.of(timezone));
