@@ -13,22 +13,23 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 @Configuration("ImageRegularRouter")
 @RequiredArgsConstructor
 public class ImageRegularRouter {
+
   private final ImageRegularHandler handler;
 
   @Bean
   RouterFunction<ServerResponse> imageRegularRouters() {
     return RouterFunctions
-            .route(GET("/image/v1/regular")
-                    .and(accept(MediaType.APPLICATION_JSON)), handler::getImagesPagination)
-            .andRoute(GET("/image/v1/regular/collection")
-                    .and(accept(MediaType.APPLICATION_JSON)), handler::getUserImagesCollectionPagination)
-            .andRoute(GET("/image/v1/regular/view")
-                    .and(accept(MediaType.APPLICATION_OCTET_STREAM)), handler::viewImageFile)
-            .andRoute(GET("/image/v1/regular/cart")
-                    .and(accept(MediaType.APPLICATION_JSON)), handler::getUserCart)
-            .andRoute(POST("/image/v1/regular/cart")
-                    .and(accept(MediaType.APPLICATION_JSON)), handler::saveCart)
-            .andRoute(DELETE("/image/v1/regular/cart")
-                    .and(accept(MediaType.APPLICATION_JSON)), handler::deleteCart);
+        .route(GET("/image/v1/regular")
+            .and(accept(MediaType.APPLICATION_JSON)), handler::getImagesPagination)
+        .andRoute(GET("/image/v1/regular/collection")
+            .and(accept(MediaType.APPLICATION_JSON)), handler::getUserImagesCollectionPagination)
+        .andRoute(GET("/image/v1/regular/view")
+            .and(accept(MediaType.APPLICATION_OCTET_STREAM)), handler::viewImageFile)
+        .andRoute(GET("/image/v1/regular/cart")
+            .and(accept(MediaType.APPLICATION_JSON)), handler::getUserCart)
+        .andRoute(POST("/image/v1/regular/cart")
+            .and(accept(MediaType.APPLICATION_JSON)), handler::saveCart)
+        .andRoute(DELETE("/image/v1/regular/cart")
+            .and(accept(MediaType.APPLICATION_JSON)), handler::deleteCart);
   }
 }

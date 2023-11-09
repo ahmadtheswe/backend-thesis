@@ -12,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("testing")
 public class TestingController {
+
   @GetMapping("")
   public Mono<ResponseEntity<DataResponse<String>>> testing() {
     List<String> message = List.of("hello", "world");

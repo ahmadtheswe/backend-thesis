@@ -12,17 +12,19 @@ import reactor.core.publisher.Mono;
 @Component
 @RequiredArgsConstructor
 public class OwnershipPostgreAdapter implements OwnershipDatabase {
+
   private final R2DBCOwnershipRepository repository;
 
   @Override
   public Flux<ImageOwnership> getImageOwnershipByOwnerId(String ownerId) {
     return repository.findAllByOwnerId(ownerId)
-            .map(OwnershipConverter::convertEntityToDomain);
+        .map(OwnershipConverter::convertEntityToDomain);
   }
 
   @Override
-  public Mono<ImageOwnership> getImageByOwnershipByOwnerIdAndImageId(String ownerId, String imageId) {
+  public Mono<ImageOwnership> getImageByOwnershipByOwnerIdAndImageId(String ownerId,
+      String imageId) {
     return repository.findByOwnerIdAndImageId(ownerId, imageId)
-            .map(OwnershipConverter::convertEntityToDomain);
+        .map(OwnershipConverter::convertEntityToDomain);
   }
 }

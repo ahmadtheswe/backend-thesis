@@ -25,113 +25,116 @@ import java.util.UUID;
 @Component("ImageRegularHandler")
 @RequiredArgsConstructor
 public class ImageRegularHandler {
+
   private final ImageService imageService;
   private final CartService cartService;
   private final OwnershipService ownershipService;
 
   Mono<ServerResponse> getImagesPagination(final ServerRequest request) {
     return ImageRestConverter.generatePaginationRequest(request)
-            .flatMap(paginationRequest -> {
-              final Flux<Image> imageFlux = imageService.getPublicImagesPagination(
-                      paginationRequest.getSize(),
-                      paginationRequest.getPage(),
-                      paginationRequest.getSortBy());
+        .flatMap(paginationRequest -> {
+          final Flux<Image> imageFlux = imageService.getPublicImagesPagination(
+              paginationRequest.getSize(),
+              paginationRequest.getPage(),
+              paginationRequest.getSortBy());
 
-              final Mono<Long> totalImagesMono = imageService.getImagesCount();
+          final Mono<Long> totalImagesMono = imageService.getImagesCount();
 
-              return imageFlux.collectList()
-                      .zipWith(totalImagesMono)
-                      .flatMap(tuple -> ServerResponse.ok()
-                              .bodyValue(
-                                      new PaginationResponse<>(
-                                              tuple.getT1(),
-                                              ImageRestConverter
-                                                      .generatePaginationInfo(paginationRequest, tuple.getT2()),
-                                              new ArrayList<>()
-                                      )
-                              ));
-            });
+          return imageFlux.collectList()
+              .zipWith(totalImagesMono)
+              .flatMap(tuple -> ServerResponse.ok()
+                  .bodyValue(
+                      new PaginationResponse<>(
+                          tuple.getT1(),
+                          ImageRestConverter
+                              .generatePaginationInfo(paginationRequest, tuple.getT2()),
+                          new ArrayList<>()
+                      )
+                  ));
+        });
   }
 
   Mono<ServerResponse> getUserImagesCollectionPagination(final ServerRequest request) {
     return request.principal().flatMap(principal -> Mono.just(principal.getName()))
-            .flatMap(userId -> ImageRestConverter.generatePaginationRequest(request)
-                    .flatMap(paginationRequest -> {
-                      final Flux<Image> imageFlux = imageService.getUserImagesCollectionPagination(
-                              paginationRequest.getSize(),
-                              paginationRequest.getPage(),
-                              paginationRequest.getSortBy(),
-                              userId);
+        .flatMap(userId -> ImageRestConverter.generatePaginationRequest(request)
+            .flatMap(paginationRequest -> {
+              final Flux<Image> imageFlux = imageService.getUserImagesCollectionPagination(
+                  paginationRequest.getSize(),
+                  paginationRequest.getPage(),
+                  paginationRequest.getSortBy(),
+                  userId);
 
-                      final Mono<Long> totalImagesMono = imageService.getImagesCount();
+              final Mono<Long> totalImagesMono = imageService.getImagesCount();
 
-                      return imageFlux.collectList()
-                              .zipWith(totalImagesMono)
-                              .flatMap(tuple -> ServerResponse.ok()
-                                      .bodyValue(
-                                              new PaginationResponse<>(
-                                                      tuple.getT1(),
-                                                      ImageRestConverter
-                                                              .generatePaginationInfo(paginationRequest, tuple.getT2()),
-                                                      new ArrayList<>()
-                                              )
-                                      ));
-                    }));
+              return imageFlux.collectList()
+                  .zipWith(totalImagesMono)
+                  .flatMap(tuple -> ServerResponse.ok()
+                      .bodyValue(
+                          new PaginationResponse<>(
+                              tuple.getT1(),
+                              ImageRestConverter
+                                  .generatePaginationInfo(paginationRequest, tuple.getT2()),
+                              new ArrayList<>()
+                          )
+                      ));
+            }));
   }
 
   Mono<ServerResponse> getUserCart(final ServerRequest request) {
     return request.principal().flatMap(principal -> Mono.just(principal.getName()))
-            .flatMap(userId -> cartService.getUserChartList(userId).collectList()
-                    .flatMap(carts -> ServerResponse.ok().bodyValue(
-                            new DataResponse<>(
-                                    carts,
-                                    new ArrayList<>()
-                            )
-                    )));
+        .flatMap(userId -> cartService.getUserChartList(userId).collectList()
+            .flatMap(carts -> ServerResponse.ok().bodyValue(
+                new DataResponse<>(
+                    carts,
+                    new ArrayList<>()
+                )
+            )));
   }
 
   Mono<ServerResponse> saveCart(final ServerRequest request) {
     return request.principal().flatMap(principal -> Mono.just(principal.getName()))
-            .flatMap(userId -> ImageRestConverter.getImageId(request)
-                    .flatMap(cartSaveRequest -> cartService.save(
-                            Cart.builder()
-                                    .id(UUID.randomUUID().toString())
-                                    .imageId(cartSaveRequest.getImageId())
-                                    .userId(userId)
-                                    .build()))
-                    .flatMap(cart -> ServerResponse.ok().bodyValue(
-                            new DataResponse<>(
-                                    cart,
-                                    new ArrayList<>()
-                            ))));
+        .flatMap(userId -> ImageRestConverter.getImageId(request)
+            .flatMap(cartSaveRequest -> cartService.save(
+                Cart.builder()
+                    .id(UUID.randomUUID().toString())
+                    .imageId(cartSaveRequest.getImageId())
+                    .userId(userId)
+                    .build()))
+            .flatMap(cart -> ServerResponse.ok().bodyValue(
+                new DataResponse<>(
+                    cart,
+                    new ArrayList<>()
+                ))));
   }
 
   Mono<ServerResponse> deleteCart(final ServerRequest request) {
     return request.principal().flatMap(principal -> Mono.just(principal.getName()))
-            .flatMap(userId -> ImageRestConverter.getCartId(request)
-                    .flatMap(cartDeleteRequest -> cartService.deleteChart(userId, cartDeleteRequest.getCartId())
-                            .then(Mono.defer(Mono::empty))));
+        .flatMap(userId -> ImageRestConverter.getCartId(request)
+            .flatMap(
+                cartDeleteRequest -> cartService.deleteChart(userId, cartDeleteRequest.getCartId())
+                    .then(Mono.defer(Mono::empty))));
   }
 
   Mono<ServerResponse> viewImageFile(final ServerRequest request) {
     return ImageRestConverter.extractIdRequest(request)
-            .flatMap(imageId -> request.principal().flatMap(principal -> Mono.just(principal.getName()))
-                    .flatMap(userId -> ownershipService.getImageByOwnershipByOwnerIdAndUserId(userId, imageId))
-                    .flatMap(imageOwnership -> imageService.getImageById(imageOwnership.getId()))
-                    .flatMap(image -> {
-                      final File file = new File(image.getOriginalImageDir());
-                      final Resource resource = new FileSystemResource(file);
-                      return ServerResponse.ok()
-                              .bodyValue(resource);
-                    })
-                    .switchIfEmpty(Mono.defer(() -> ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(
-                            new DataResponse<>(
-                                    null,
-                                    new ArrayList<>() {{
-                                      add(HttpStatus.NOT_FOUND.toString());
-                                    }}
-                            )
-                    ))));
+        .flatMap(imageId -> request.principal().flatMap(principal -> Mono.just(principal.getName()))
+            .flatMap(
+                userId -> ownershipService.getImageByOwnershipByOwnerIdAndUserId(userId, imageId))
+            .flatMap(imageOwnership -> imageService.getImageById(imageOwnership.getId()))
+            .flatMap(image -> {
+              final File file = new File(image.getOriginalImageDir());
+              final Resource resource = new FileSystemResource(file);
+              return ServerResponse.ok()
+                  .bodyValue(resource);
+            })
+            .switchIfEmpty(Mono.defer(() -> ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(
+                new DataResponse<>(
+                    null,
+                    new ArrayList<>() {{
+                      add(HttpStatus.NOT_FOUND.toString());
+                    }}
+                )
+            ))));
 
   }
 }
