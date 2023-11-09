@@ -1,5 +1,6 @@
 package com.ahmadthesis.image.domain.image;
 
+import java.math.BigDecimal;
 import lombok.*;
 
 @AllArgsConstructor
@@ -17,5 +18,8 @@ public class Image {
   private Long createdAt;
   private Long latestAccess;
   private Boolean isPublic;
+  private Long priceIDR;
+  private BigDecimal latitude;
+  private BigDecimal longitude;
 
 }

@@ -4,33 +4,38 @@ import com.ahmadthesis.image.adapter.output.persistence.postgresql.data.ImageEnt
 import com.ahmadthesis.image.domain.image.Image;
 
 public final class ImageConverter {
-  public static Image convertAdapterToDomain(ImageEntity postgre) {
-    Image image = new Image();
-    image.setId(postgre.getId());
-    image.setUploaderId(postgre.getUploaderId());
-    image.setTitle(postgre.getTitle());
-    image.setOriginalImageDir(postgre.getOriginalImageDir());
-    image.setCreatedAt(postgre.getCreatedAt());
-    image.setLatestAccess(postgre.getLatestAccess());
-    image.setMediaType(postgre.getMediaType());
-    image.setFilename(postgre.getFilename());
-    image.setIsPublic(postgre.getIsPublic());
 
-    return image;
+  public static Image convertAdapterToDomain(ImageEntity postgre) {
+    return Image.builder()
+        .id(postgre.getId())
+        .uploaderId(postgre.getUploaderId())
+        .title(postgre.getTitle())
+        .originalImageDir(postgre.getOriginalImageDir())
+        .createdAt(postgre.getCreatedAt())
+        .latestAccess(postgre.getLatestAccess())
+        .mediaType(postgre.getMediaType())
+        .filename(postgre.getFilename())
+        .isPublic(postgre.getIsPublic())
+        .priceIDR(postgre.getPriceIDR())
+        .latitude(postgre.getLatitude())
+        .longitude(postgre.getLongitude())
+        .build();
   }
 
   public static ImageEntity convertDomainToAdapter(Image domain) {
-    ImageEntity postgre = new ImageEntity();
-    postgre.setId(domain.getId());
-    postgre.setUploaderId(domain.getUploaderId());
-    postgre.setTitle(domain.getTitle());
-    postgre.setOriginalImageDir(domain.getOriginalImageDir());
-    postgre.setCreatedAt(domain.getCreatedAt());
-    postgre.setLatestAccess(domain.getLatestAccess());
-    postgre.setMediaType(domain.getMediaType());
-    postgre.setFilename(domain.getFilename());
-    postgre.setIsPublic(domain.getIsPublic());
-
-    return postgre;
+    return ImageEntity.builder()
+        .id(domain.getId())
+        .uploaderId(domain.getUploaderId())
+        .title(domain.getTitle())
+        .originalImageDir(domain.getOriginalImageDir())
+        .createdAt(domain.getCreatedAt())
+        .latestAccess(domain.getLatestAccess())
+        .mediaType(domain.getMediaType())
+        .filename(domain.getFilename())
+        .isPublic(domain.getIsPublic())
+        .priceIDR(domain.getPriceIDR())
+        .latitude(domain.getLatitude())
+        .longitude(domain.getLongitude())
+        .build();
   }
 }

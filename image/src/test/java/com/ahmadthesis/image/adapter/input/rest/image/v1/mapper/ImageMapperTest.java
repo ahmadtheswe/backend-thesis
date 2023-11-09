@@ -34,6 +34,7 @@ class ImageMapperTest {
         .filename("test.jpg")
         .uploadDir("/uploads")
         .isPublic(true)
+        .priceIDR(10000L)
         .build();
 
     try (MockedStatic<DateUtils> ignored = mockStatic(DateUtils.class)) {
@@ -48,6 +49,7 @@ class ImageMapperTest {
       assertEquals("test.jpg", result.getFilename());
       assertEquals("/uploads", result.getOriginalImageDir());
       assertEquals(1679827200000L, result.getCreatedAt());
+      assertEquals(10000L, result.getPriceIDR());
       assertEquals(true, result.getIsPublic());
     }
 

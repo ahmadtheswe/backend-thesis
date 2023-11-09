@@ -9,16 +9,20 @@ import java.util.UUID;
 
 @Component
 public final class ImageMapper {
+
   public static Image mapRequestToImage(SaveImageRequest saveImageRequest) {
     return Image.builder()
-            .id(UUID.randomUUID().toString())
-            .uploaderId(UUID.randomUUID().toString())
-            .title(saveImageRequest.getTitle())
-            .mediaType(saveImageRequest.getMediaType())
-            .filename(saveImageRequest.getFilename())
-            .originalImageDir(saveImageRequest.getUploadDir())
-            .createdAt(DateUtils.now())
-            .isPublic(saveImageRequest.getIsPublic())
-            .build();
+        .id(UUID.randomUUID().toString())
+        .uploaderId(UUID.randomUUID().toString())
+        .title(saveImageRequest.getTitle())
+        .mediaType(saveImageRequest.getMediaType())
+        .filename(saveImageRequest.getFilename())
+        .originalImageDir(saveImageRequest.getUploadDir())
+        .createdAt(DateUtils.now())
+        .isPublic(saveImageRequest.getIsPublic())
+        .priceIDR(saveImageRequest.getPriceIDR())
+        .latitude(saveImageRequest.getLatitude())
+        .longitude(saveImageRequest.getLongitude())
+        .build();
   }
 }

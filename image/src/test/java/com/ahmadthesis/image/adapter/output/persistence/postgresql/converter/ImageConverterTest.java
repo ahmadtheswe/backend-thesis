@@ -1,17 +1,18 @@
 package com.ahmadthesis.image.adapter.output.persistence.postgresql.converter;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.ahmadthesis.image.adapter.output.persistence.postgresql.data.ImageEntity;
 import com.ahmadthesis.image.domain.image.Image;
-import org.junit.jupiter.api.Assertions;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.UUID;
-
 @SpringBootTest
 class ImageConverterTest {
+
   private final Image image = new Image();
   private final ImageEntity imageEntity = new ImageEntity();
 
@@ -29,6 +30,7 @@ class ImageConverterTest {
     imageEntity.setCreatedAt(1691224239866L);
     imageEntity.setLatestAccess(1691224239866L);
     imageEntity.setIsPublic(true);
+    imageEntity.setPriceIDR(10000L);
 
     image.setId(id);
     image.setUploaderId(uploaderId);
@@ -39,6 +41,7 @@ class ImageConverterTest {
     image.setCreatedAt(1691224239866L);
     image.setLatestAccess(1691224239866L);
     image.setIsPublic(true);
+    image.setPriceIDR(10000L);
   }
 
   @Test
@@ -50,15 +53,17 @@ class ImageConverterTest {
     final ImageEntity converted = ImageConverter.convertDomainToAdapter(image);
 
     // Assert
-    Assertions.assertEquals(imageEntity.getId(), converted.getId());
-    Assertions.assertEquals(imageEntity.getUploaderId(), converted.getUploaderId());
-    Assertions.assertEquals(imageEntity.getTitle(), converted.getTitle());
-    Assertions.assertEquals(imageEntity.getFilename(), converted.getFilename());
-    Assertions.assertEquals(imageEntity.getOriginalImageDir(), converted.getOriginalImageDir());
-    Assertions.assertEquals(imageEntity.getMediaType(), converted.getMediaType());
-    Assertions.assertEquals(imageEntity.getCreatedAt(), converted.getCreatedAt());
-    Assertions.assertEquals(imageEntity.getLatestAccess(), converted.getLatestAccess());
-    Assertions.assertEquals(imageEntity.getIsPublic(), converted.getIsPublic());
+    assertEquals(imageEntity.getId(), converted.getId());
+    assertEquals(imageEntity.getUploaderId(), converted.getUploaderId());
+    assertEquals(imageEntity.getTitle(), converted.getTitle());
+    assertEquals(imageEntity.getFilename(), converted.getFilename());
+    assertEquals(imageEntity.getOriginalImageDir(), converted.getOriginalImageDir());
+    assertEquals(imageEntity.getMediaType(), converted.getMediaType());
+    assertEquals(imageEntity.getCreatedAt(), converted.getCreatedAt());
+    assertEquals(imageEntity.getLatestAccess(), converted.getLatestAccess());
+    assertEquals(imageEntity.getIsPublic(), converted.getIsPublic());
+    assertEquals(imageEntity.getPriceIDR(), converted.getPriceIDR());
+
   }
 
   @Test
@@ -70,14 +75,15 @@ class ImageConverterTest {
     Image converted = ImageConverter.convertAdapterToDomain(imageEntity);
 
     // Assert
-    Assertions.assertEquals(imageEntity.getId(), converted.getId());
-    Assertions.assertEquals(imageEntity.getUploaderId(), converted.getUploaderId());
-    Assertions.assertEquals(imageEntity.getTitle(), converted.getTitle());
-    Assertions.assertEquals(imageEntity.getFilename(), converted.getFilename());
-    Assertions.assertEquals(imageEntity.getOriginalImageDir(), converted.getOriginalImageDir());
-    Assertions.assertEquals(imageEntity.getMediaType(), converted.getMediaType());
-    Assertions.assertEquals(imageEntity.getCreatedAt(), converted.getCreatedAt());
-    Assertions.assertEquals(imageEntity.getLatestAccess(), converted.getLatestAccess());
-    Assertions.assertEquals(imageEntity.getIsPublic(), converted.getIsPublic());
+    assertEquals(imageEntity.getId(), converted.getId());
+    assertEquals(imageEntity.getUploaderId(), converted.getUploaderId());
+    assertEquals(imageEntity.getTitle(), converted.getTitle());
+    assertEquals(imageEntity.getFilename(), converted.getFilename());
+    assertEquals(imageEntity.getOriginalImageDir(), converted.getOriginalImageDir());
+    assertEquals(imageEntity.getMediaType(), converted.getMediaType());
+    assertEquals(imageEntity.getCreatedAt(), converted.getCreatedAt());
+    assertEquals(imageEntity.getLatestAccess(), converted.getLatestAccess());
+    assertEquals(imageEntity.getIsPublic(), converted.getIsPublic());
+    assertEquals(imageEntity.getPriceIDR(), converted.getPriceIDR());
   }
 }

@@ -8,6 +8,7 @@ import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.PaginationR
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.SaveImageRequest;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.PaginationInfo;
 import com.ahmadthesis.image.domain.image.Image;
+import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Component;
@@ -31,36 +32,49 @@ public final class ImageRestConverter {
 
   public static ImageUploadResponse generateUploadResponse(Image image) {
     return ImageUploadResponse.builder()
-            .id(image.getId())
-            .title(image.getTitle())
-            .build();
+        .id(image.getId())
+        .title(image.getTitle())
+        .build();
   }
 
   public static Mono<SaveImageRequest> extractUploadRequest(ServerRequest request) {
     return request.multipartData().flatMap(stringPartMultiValueMap -> {
-      FilePart image = (FilePart) stringPartMultiValueMap.getFirst("image");
-      Mono<String> titleMono = FilePartParser.parsePartToString(
-              Objects.requireNonNull(stringPartMultiValueMap.getFirst("title")));
-      Mono<Boolean> isPublicMono = FilePartParser.parsePartToString(
-                      Objects.requireNonNull(stringPartMultiValueMap.getFirst("isPublic")))
-              .map(Boolean::valueOf);
-      String mediaType = getExtensionByStringHandling(Objects.requireNonNull(image).filename());
-      String filename = UUID.randomUUID() + "." + getExtensionByStringHandling(mediaType);
-      String uploadDir = Paths.get(UPLOAD_DIR + File.separator + filename).toString();
+      final FilePart image = (FilePart) stringPartMultiValueMap.getFirst("image");
+      final Mono<String> titleMono = FilePartParser.parsePartToString(
+          Objects.requireNonNull(stringPartMultiValueMap.getFirst("title")));
+      final Mono<Boolean> isPublicMono = FilePartParser.parsePartToString(
+              Objects.requireNonNull(stringPartMultiValueMap.getFirst("isPublic")))
+          .map(Boolean::valueOf);
+      final Mono<Long> priceIDRMono = FilePartParser.parsePartToString(
+              Objects.requireNonNull(stringPartMultiValueMap.getFirst("priceIDR")))
+          .map(Long::parseLong);
+      final Mono<BigDecimal> latitudeMono = FilePartParser.parsePartToString(
+              Objects.requireNonNull(stringPartMultiValueMap.getFirst("latitude")))
+          .map(BigDecimal::new);
+      final Mono<BigDecimal> longitudeMono = FilePartParser.parsePartToString(
+              Objects.requireNonNull(stringPartMultiValueMap.getFirst("longitude")))
+          .map(BigDecimal::new);
 
-      return titleMono.flatMap(title ->
-              isPublicMono.map(isPublic ->
-                      SaveImageRequest.builder()
-                              .image(image)
-                              .title(title)
-                              .isPublic(isPublic)
-                              .filename(filename)
-                              .mediaType(mediaType)
-                              .uploadDir(uploadDir)
-                              .build()
-              )
+      final String mediaType = getExtensionByStringHandling(
+          Objects.requireNonNull(image).filename());
+      final String filename = UUID.randomUUID() + "." + getExtensionByStringHandling(mediaType);
+      final String uploadDir = Paths.get(
+          UPLOAD_DIR + File.separator + filename).toString();
 
-      );
+      return Mono.zip(titleMono, isPublicMono, priceIDRMono, latitudeMono, longitudeMono)
+          .flatMap(data ->
+              Mono.just(
+                  SaveImageRequest.builder()
+                      .image(image)
+                      .title(data.getT1())
+                      .isPublic(data.getT2())
+                      .filename(filename)
+                      .mediaType(mediaType)
+                      .uploadDir(uploadDir)
+                      .priceIDR(data.getT3())
+                      .latitude(data.getT4())
+                      .longitude(data.getT5())
+                      .build()));
     });
   }
 
@@ -70,25 +84,25 @@ public final class ImageRestConverter {
 
   public static Mono<PaginationRequest> generatePaginationRequest(ServerRequest request) {
     return Mono.just(
-            PaginationRequest.builder()
-                    .size(request.queryParam("size").map(Integer::parseInt).orElse(5))
-                    .page(request.queryParam("page").map(Integer::parseInt).orElse(0))
-                    .sortBy(request.queryParam("sortBy").orElse("id"))
-                    .build()
+        PaginationRequest.builder()
+            .size(request.queryParam("size").map(Integer::parseInt).orElse(5))
+            .page(request.queryParam("page").map(Integer::parseInt).orElse(0))
+            .sortBy(request.queryParam("sortBy").orElse("id"))
+            .build()
     );
   }
 
   public static PaginationInfo generatePaginationInfo(
-          PaginationRequest paginationRequest,
-          Long totalItems) {
+      PaginationRequest paginationRequest,
+      Long totalItems) {
 
     return PaginationInfo.builder()
-            .currentPage(paginationRequest.getPage())
-            .pageSize(paginationRequest.getSize())
-            .sortBy(paginationRequest.getSortBy())
-            .totalPages((totalItems + paginationRequest.getSize() - 1) / paginationRequest.getSize())
-            .totalItems(totalItems)
-            .build();
+        .currentPage(paginationRequest.getPage())
+        .pageSize(paginationRequest.getSize())
+        .sortBy(paginationRequest.getSortBy())
+        .totalPages((totalItems + paginationRequest.getSize() - 1) / paginationRequest.getSize())
+        .totalItems(totalItems)
+        .build();
   }
 
   public static Mono<String> extractIdRequest(ServerRequest request) {
