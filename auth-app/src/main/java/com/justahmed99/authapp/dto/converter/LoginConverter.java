@@ -10,7 +10,6 @@ public final class LoginConverter {
     return Mono.just(
         Login.builder()
             .username(dto.getUsername())
-            .email(dto.getEmail())
             .password(dto.getPassword())
             .build());
   }

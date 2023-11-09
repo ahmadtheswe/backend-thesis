@@ -1,10 +1,12 @@
 package com.justahmed99.authapp.usecase;
 
 import com.justahmed99.authapp.dto.LoginRequestDTO;
+import com.justahmed99.authapp.dto.RefreshTokenRequestDTO;
 import com.justahmed99.authapp.dto.RegistrationRequestDTO;
 import com.justahmed99.authapp.dto.ReturnDataDTO;
 import com.justahmed99.authapp.dto.TokenResponseDTO;
 import com.justahmed99.authapp.dto.converter.LoginConverter;
+import com.justahmed99.authapp.dto.converter.RefreshTokenConverter;
 import com.justahmed99.authapp.dto.converter.RegistrationConverter;
 import com.justahmed99.authapp.dto.converter.TokenDTOConverter;
 import com.justahmed99.authapp.provider.KeycloakAdminPersister;
@@ -75,6 +77,27 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
           ReturnDataDTO<TokenResponseDTO> errorResponse =
               ReturnDataDTO.<TokenResponseDTO>builder()
                   .messages(List.of("Login Failed!"))
+                  .build();
+
+          return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse));
+        });
+  }
+
+  @Override
+  public Mono<ResponseEntity<ReturnDataDTO<TokenResponseDTO>>> refresh(
+      RefreshTokenRequestDTO dto) {
+    return RefreshTokenConverter.fromRefreshTokenRequestDTO(dto)
+        .map(keycloakAdminPersister::refresh)
+        .map(tokenMap -> ResponseEntity.ok(
+            ReturnDataDTO.<TokenResponseDTO>builder()
+                .data(TokenDTOConverter.fromTokenToTokenDTO(tokenMap))
+                .messages(List.of("Refresh Success!"))
+                .build()
+        ))
+        .onErrorResume(throwable -> {
+          ReturnDataDTO<TokenResponseDTO> errorResponse =
+              ReturnDataDTO.<TokenResponseDTO>builder()
+                  .messages(List.of("Refresh Failed!"))
                   .build();
 
           return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse));

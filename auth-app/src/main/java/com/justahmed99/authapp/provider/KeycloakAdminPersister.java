@@ -11,5 +11,7 @@ public interface KeycloakAdminPersister {
 
   Token login(final Login login);
 
+  Token refresh(final String refreshToken);
+
   void logout(final String userId);
 }

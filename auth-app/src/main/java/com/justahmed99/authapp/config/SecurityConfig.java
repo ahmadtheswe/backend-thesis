@@ -38,6 +38,7 @@ public class SecurityConfig {
             authorizeExchangeSpec
                 .pathMatchers("/api/user/registration/**").permitAll()
                 .pathMatchers("/api/user/login/**").permitAll()
+                .pathMatchers("/api/user/refresh/**").permitAll()
                 .pathMatchers("/api/user/logout/**").authenticated()
                 .pathMatchers("/public/**").permitAll()
                 .pathMatchers("/admin/**").hasRole("ADMIN")
@@ -48,7 +49,7 @@ public class SecurityConfig {
         .oauth2ResourceServer(oAuth2ResourceServerSpec ->
             oAuth2ResourceServerSpec.jwt(
                 jwtSpec -> jwtSpec.jwtAuthenticationConverter(jwtAuthenticationConverter())))
-        .logout(Customizer.withDefaults()  )
+        .logout(Customizer.withDefaults())
         .build();
   }
 

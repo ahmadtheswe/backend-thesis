@@ -7,16 +7,26 @@ import com.nimbusds.jose.util.Pair;
 import jakarta.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class KeycloakAdminProvider implements KeycloakAdminPersister {
@@ -92,6 +102,36 @@ public class KeycloakAdminProvider implements KeycloakAdminPersister {
 
     return TokenConverter.fromKeycloakToToken(keycloak);
   }
+
+  @Override
+  public Token refresh(final String refreshToken) {
+    try {
+    final RestTemplate restTemplate = new RestTemplate();
+
+    final HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+    MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+    requestParams.add("grant_type", "refresh_token");
+    requestParams.add("client_id", clientId);
+    requestParams.add("client_secret", clientSecret);
+    requestParams.add("refresh_token", refreshToken);
+
+    HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(requestParams, headers);
+
+    ResponseEntity<AccessTokenResponse> response = restTemplate.postForEntity(
+        serverUrl + "/realms/" + realm + "/protocol/openid-connect/token",
+        request,
+        AccessTokenResponse.class
+    );
+
+    return TokenConverter.fromAccessTokenResponse(Objects.requireNonNull(response.getBody()));
+    } catch (HttpClientErrorException e) {
+      throw e;
+    }
+
+  }
+
 
   @Override
   public void logout(final String userId) {
