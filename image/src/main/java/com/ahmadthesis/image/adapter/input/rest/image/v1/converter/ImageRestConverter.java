@@ -83,13 +83,26 @@ public final class ImageRestConverter {
   }
 
   public static Mono<PaginationRequest> generatePaginationRequest(ServerRequest request) {
-    return Mono.just(
-        PaginationRequest.builder()
-            .size(request.queryParam("size").map(Integer::parseInt).orElse(5))
-            .page(request.queryParam("page").map(Integer::parseInt).orElse(0))
-            .sortBy(request.queryParam("sortBy").orElse("id"))
-            .build()
-    );
+    if (request.queryParam("longitude").isPresent() &&
+        request.queryParam("latitude").isEmpty()) {
+      throw new IllegalArgumentException("Latitude must not be null");
+    } else if (request.queryParam("longitude").isEmpty()
+        && request.queryParam("latitude").isPresent()) {
+      throw new IllegalArgumentException("longitude must not be null");
+    } else {
+      return Mono.just(
+          PaginationRequest.builder()
+              .size(request.queryParam("size").map(Integer::parseInt).orElse(5))
+              .page(request.queryParam("page").map(Integer::parseInt).orElse(0))
+              .title(request.queryParam("title").orElse(null))
+              .sortBy(request.queryParam("sortBy").orElse("id"))
+              .latitude(
+                  request.queryParam("latitude").map(BigDecimal::new).orElse(new BigDecimal(0)))
+              .longitude(
+                  request.queryParam("longitude").map(BigDecimal::new).orElse(new BigDecimal(0)))
+              .build()
+      );
+    }
   }
 
   public static PaginationInfo generatePaginationInfo(

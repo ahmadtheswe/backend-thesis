@@ -8,6 +8,7 @@ import com.ahmadthesis.image.application.usecase.ImageService;
 import com.ahmadthesis.image.application.usecase.OwnershipService;
 import com.ahmadthesis.image.domain.image.Cart;
 import com.ahmadthesis.image.domain.image.Image;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -36,7 +37,9 @@ public class ImageRegularHandler {
           final Flux<Image> imageFlux = imageService.getPublicImagesPagination(
               paginationRequest.getSize(),
               paginationRequest.getPage(),
-              paginationRequest.getSortBy());
+              paginationRequest.getSortBy(),
+              paginationRequest.getLatitude(),
+              paginationRequest.getLongitude());
 
           final Mono<Long> totalImagesMono = imageService.getImagesCount();
 
@@ -62,7 +65,9 @@ public class ImageRegularHandler {
                   paginationRequest.getSize(),
                   paginationRequest.getPage(),
                   paginationRequest.getSortBy(),
-                  userId);
+                  userId,
+                  paginationRequest.getLatitude(),
+                  paginationRequest.getLongitude());
 
               final Mono<Long> totalImagesMono = imageService.getImagesCount();
 
@@ -77,7 +82,21 @@ public class ImageRegularHandler {
                               new ArrayList<>()
                           )
                       ));
-            }));
+            })
+            .onErrorResume(IllegalArgumentException.class,
+                throwable -> ServerResponse.badRequest().bodyValue(
+                    new DataResponse<>(
+                        null,
+                        List.of(throwable.getMessage())
+                    )
+                ))
+        )
+        .onErrorResume(throwable -> ServerResponse.badRequest().bodyValue(
+            new DataResponse<>(
+                null,
+                List.of(throwable.getMessage())
+            )
+        ));
   }
 
   Mono<ServerResponse> getUserCart(final ServerRequest request) {

@@ -67,7 +67,10 @@ public class ImageAdminHandler {
           final Flux<Image> imageFlux = imageService.getImagesPagination(
               paginationRequest.getSize(),
               paginationRequest.getPage(),
-              paginationRequest.getSortBy());
+              paginationRequest.getSortBy(),
+              paginationRequest.getTitle(),
+              paginationRequest.getLatitude(),
+              paginationRequest.getLongitude());
 
           final Mono<Long> totalImagesMono = imageService.getImagesCount();
 
@@ -82,7 +85,19 @@ public class ImageAdminHandler {
                           new ArrayList<>()
                       )
                   ));
-        });
+        })
+        .onErrorResume(IllegalArgumentException.class,
+            throwable -> ServerResponse.badRequest().bodyValue(
+                new DataResponse<>(
+                    null,
+                    List.of(throwable.getMessage())
+                )
+            ))
+        .onErrorResume(throwable ->
+            ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).bodyValue(
+                new DataResponse<>(null, List.of(throwable.getMessage()))
+            )
+        );
   }
 
   Mono<ServerResponse> viewImageFile(final ServerRequest request) {
@@ -104,7 +119,7 @@ public class ImageAdminHandler {
         )));
   }
 
-  public Mono<ServerResponse> handleRequest(ServerRequest request) {
+  public Mono<ServerResponse> handleRequest(final ServerRequest request) {
     return request.principal()
         .flatMap(principal -> {
           String username = principal.getName();
