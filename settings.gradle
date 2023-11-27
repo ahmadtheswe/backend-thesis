@@ -11,3 +11,4 @@ pluginManagement {
 rootProject.name = 'backend-monorepo'
 include (':auth-app')
 include (':image')
+include (':payment')
