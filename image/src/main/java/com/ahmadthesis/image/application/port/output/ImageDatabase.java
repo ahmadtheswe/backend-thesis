@@ -11,6 +11,8 @@ public interface ImageDatabase {
 
   Mono<Image> getImageById(final String id);
 
+  Mono<Image> getPublicImageById(final String id);
+
   Flux<Image> getImages(final Integer size, final Integer page, final String sortBy,
       final String title, final BigDecimal latitude, final BigDecimal longitude);
 

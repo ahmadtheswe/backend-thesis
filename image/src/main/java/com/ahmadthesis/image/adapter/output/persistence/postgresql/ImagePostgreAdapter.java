@@ -33,6 +33,12 @@ public class ImagePostgreAdapter implements ImageDatabase {
   }
 
   @Override
+  public Mono<Image> getPublicImageById(final String id) {
+    return this.repository.findByIdAndIsPublicIsTrue(id)
+        .map(ImageConverter::convertAdapterToDomain);
+  }
+
+  @Override
   public Flux<Image> getImages(final Integer size, final Integer page, final String sortBy,
       final String title, final BigDecimal latitude, final BigDecimal longitude) {
     final PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortBy));

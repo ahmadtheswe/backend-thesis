@@ -5,6 +5,7 @@ import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface R2DBCImageRepository extends ReactiveCrudRepository<ImageEntity, String> {
   Flux<ImageEntity> findAllByIsPublicTrue();
@@ -17,4 +18,6 @@ public interface R2DBCImageRepository extends ReactiveCrudRepository<ImageEntity
   @Query("SELECT * FROM image i WHERE (:title IS NULL OR LOWER(i.title) "
       + "LIKE CONCAT('%', LOWER(:title), '%'))")
   Flux<ImageEntity> findAllByTitleLikeIgnoreCase(@Param("title") String title);
+
+  Mono<ImageEntity> findByIdAndIsPublicIsTrue(String id);
 }

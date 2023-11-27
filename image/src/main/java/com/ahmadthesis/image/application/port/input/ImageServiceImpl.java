@@ -25,6 +25,11 @@ public class ImageServiceImpl implements ImageService {
   }
 
   @Override
+  public Mono<Image> getPublicImageById(String id) {
+    return database.getPublicImageById(id);
+  }
+
+  @Override
   public Flux<Image> getImagesPagination(final Integer size, final Integer page, final String sortBy,
       final String title, final BigDecimal latitude, final BigDecimal longitude) {
     return database.getImages(size, page, sortBy, title, latitude, longitude);
