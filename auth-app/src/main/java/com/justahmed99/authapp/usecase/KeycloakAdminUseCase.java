@@ -11,6 +11,8 @@ import com.justahmed99.authapp.dto.converter.RegistrationConverter;
 import com.justahmed99.authapp.dto.converter.TokenDTOConverter;
 import com.justahmed99.authapp.provider.KeycloakAdminPersister;
 import com.justahmed99.authapp.provider.UserException;
+import com.justahmed99.authapp.provider.UserInfoConverter;
+import com.justahmed99.authapp.provider.UserInfoPersister;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,8 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
 
   private final KeycloakAdminPersister keycloakAdminPersister;
 
+  private final UserInfoPersister userInfoPersister;
+
   @Override
   public Mono<ResponseEntity<ReturnDataDTO<String>>> createRegularUser(
       final RegistrationRequestDTO dto) {
@@ -38,11 +42,13 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
           try {
             final UserRepresentation createdUser = keycloakAdminPersister.createRegularUser(
                 userRepresentation);
-            return Mono.just(ResponseEntity.ok(
-                ReturnDataDTO.<String>builder()
-                    .data("SUCCESS")
-                    .messages(List.of("User registered successfully!"))
-                    .build()));
+            return userInfoPersister.saveUser(
+                    UserInfoConverter.fromKeycloakUserRepresentation(createdUser))
+                .then(Mono.defer(() -> Mono.just(ResponseEntity.ok(
+                    ReturnDataDTO.<String>builder()
+                        .data("SUCCESS")
+                        .messages(List.of("User registered successfully!"))
+                        .build()))));
           } catch (UserException e) {
             return Mono.just(ResponseEntity.status(e.getStatusCode()).body(
                 ReturnDataDTO.<String>builder()

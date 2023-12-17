@@ -1,6 +1,7 @@
 package com.justahmed99.authapp.provider;
 
 import java.util.UUID;
+import org.keycloak.representations.idm.UserRepresentation;
 
 public class UserInfoConverter {
 
@@ -23,6 +24,17 @@ public class UserInfoConverter {
         .role(userInfoEntity.getRole())
         .createdAt(userInfoEntity.getCreatedAt())
         .isActive(userInfoEntity.getIsActive())
+        .build();
+  }
+
+  public static UserInfo fromKeycloakUserRepresentation(
+      final UserRepresentation userRepresentation) {
+    return UserInfo.builder()
+        .id(userRepresentation.getId())
+        .username(userRepresentation.getUsername())
+        .email(userRepresentation.getEmail())
+        .role("REGULAR")
+        .isActive(true)
         .build();
   }
 }

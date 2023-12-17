@@ -2,7 +2,7 @@ server:
   port: 9091
 spring:
   r2dbc:
-    url: 'r2dbc:postgresql://postgres@localhost:5432/auth'
+    url: 'r2dbc:postgresql://postgres@localhost:5445/auth'
     password: 'postgres'
   h2:
     console:

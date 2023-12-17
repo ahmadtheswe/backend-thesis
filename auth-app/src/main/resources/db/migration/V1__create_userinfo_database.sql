@@ -4,6 +4,6 @@ CREATE TABLE "public"."userinfo"
     "username"   character varying(40) not null,
     "email"      character varying(100) not null,
     "role"       character varying(40),
-    "created_at" timestamp(0),
+    "created_at" timestamp(0) default now(),
     is_active    boolean
 );
