@@ -50,7 +50,7 @@ public class KeycloakAdminProvider implements KeycloakAdminPersister {
   private String clientSecret;
 
   @Override
-  public Pair<Boolean, Integer> createRegularUser(
+  public UserRepresentation createRegularUser(
       final UserRepresentation userRepresentation) {
     Keycloak keycloak = KeycloakBuilder.builder()
         .serverUrl(serverUrl)
@@ -64,21 +64,18 @@ public class KeycloakAdminProvider implements KeycloakAdminPersister {
     final UsersResource usersResource = realmResource.users();
     final Response response = usersResource.create(userRepresentation);
 
-    if (response.getStatus() == 409) {
-      return Pair.of(false, 409);
-    } else {
+    if (response.getStatus() == 201) {
       final String userId = getUserId(response.getLocation());
-      if (response.getStatus() == 201) {
-        final RoleRepresentation regularRole =
-            realmResource.roles().get("regular").toRepresentation();
+      final RoleRepresentation regularRole =
+          realmResource.roles().get("regular").toRepresentation();
 
-        usersResource.get(userId).roles().realmLevel().add(List.of(regularRole));
-
-        return Pair.of(true, 201);
-      } else {
-        keycloak.realm(realm).users().get(userId).remove();
-        return Pair.of(false, 500);
-      }
+      usersResource.get(userId).roles().realmLevel().add(List.of(regularRole));
+      return usersResource.get(userId).toRepresentation();
+    } else {
+      // keycloak.realm(realm).users().get(userId).remove();
+      throw new UserException(response.getStatus(),
+          response.getStatus() == 409 ? "Username / email already exists"
+              : "Internal Server Error");
     }
   }
 
@@ -89,7 +86,7 @@ public class KeycloakAdminProvider implements KeycloakAdminPersister {
 
   @Override
   public Token login(final Login login) {
-    Keycloak keycloak = KeycloakBuilder.builder()
+    final Keycloak keycloak = KeycloakBuilder.builder()
         .serverUrl(serverUrl)
         .realm(realm)
         .clientId(clientId)
@@ -106,26 +103,26 @@ public class KeycloakAdminProvider implements KeycloakAdminPersister {
   @Override
   public Token refresh(final String refreshToken) {
     try {
-    final RestTemplate restTemplate = new RestTemplate();
+      final RestTemplate restTemplate = new RestTemplate();
 
-    final HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+      final HttpHeaders headers = new HttpHeaders();
+      headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-    MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
-    requestParams.add("grant_type", "refresh_token");
-    requestParams.add("client_id", clientId);
-    requestParams.add("client_secret", clientSecret);
-    requestParams.add("refresh_token", refreshToken);
+      MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+      requestParams.add("grant_type", "refresh_token");
+      requestParams.add("client_id", clientId);
+      requestParams.add("client_secret", clientSecret);
+      requestParams.add("refresh_token", refreshToken);
 
-    HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(requestParams, headers);
+      HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(requestParams, headers);
 
-    ResponseEntity<AccessTokenResponse> response = restTemplate.postForEntity(
-        serverUrl + "/realms/" + realm + "/protocol/openid-connect/token",
-        request,
-        AccessTokenResponse.class
-    );
+      ResponseEntity<AccessTokenResponse> response = restTemplate.postForEntity(
+          serverUrl + "/realms/" + realm + "/protocol/openid-connect/token",
+          request,
+          AccessTokenResponse.class
+      );
 
-    return TokenConverter.fromAccessTokenResponse(Objects.requireNonNull(response.getBody()));
+      return TokenConverter.fromAccessTokenResponse(Objects.requireNonNull(response.getBody()));
     } catch (HttpClientErrorException e) {
       throw e;
     }

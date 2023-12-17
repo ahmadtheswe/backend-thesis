@@ -1,6 +1,12 @@
 server:
   port: 9091
 spring:
+  r2dbc:
+    url: 'r2dbc:postgresql://postgres@localhost:5432/auth'
+    password: 'postgres'
+  h2:
+    console:
+      enabled: true
   main:
     allow-bean-definition-overriding: true
   security:

@@ -10,9 +10,11 @@ import com.justahmed99.authapp.dto.converter.RefreshTokenConverter;
 import com.justahmed99.authapp.dto.converter.RegistrationConverter;
 import com.justahmed99.authapp.dto.converter.TokenDTOConverter;
 import com.justahmed99.authapp.provider.KeycloakAdminPersister;
+import com.justahmed99.authapp.provider.UserException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -32,33 +34,21 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
   public Mono<ResponseEntity<ReturnDataDTO<String>>> createRegularUser(
       final RegistrationRequestDTO dto) {
     return RegistrationConverter.fromRegistrationRequestDTO(dto)
-        .map(keycloakAdminPersister::createRegularUser)
-        .map(responsePair -> {
-          if (responsePair.getLeft()) {
-            return ResponseEntity.ok(
+        .flatMap(userRepresentation -> {
+          try {
+            final UserRepresentation createdUser = keycloakAdminPersister.createRegularUser(
+                userRepresentation);
+            return Mono.just(ResponseEntity.ok(
                 ReturnDataDTO.<String>builder()
                     .data("SUCCESS")
                     .messages(List.of("User registered successfully!"))
-                    .build());
-          } else {
-            List<String> errorMessages = new ArrayList<>() {{
-              if (responsePair.getRight() == 500) {
-                add(HttpStatus.INTERNAL_SERVER_ERROR.name());
-                add("Failed to save user data");
-              } else {
-                add(HttpStatus.CONFLICT.name());
-                add("User already exist!");
-              }
-            }};
-            return ResponseEntity.status(
-                    responsePair.getRight() == 500 ?
-                        HttpStatus.INTERNAL_SERVER_ERROR :
-                        HttpStatus.CONFLICT)
-                .body(
-                    ReturnDataDTO.<String>builder()
-                        .data("FAILED")
-                        .messages(errorMessages)
-                        .build());
+                    .build()));
+          } catch (UserException e) {
+            return Mono.just(ResponseEntity.status(e.getStatusCode()).body(
+                ReturnDataDTO.<String>builder()
+                    .data("FAILED")
+                    .messages(List.of(e.getMessage()))
+                    .build()));
           }
         });
   }

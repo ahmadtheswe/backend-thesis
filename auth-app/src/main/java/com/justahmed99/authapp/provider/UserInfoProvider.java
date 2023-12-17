@@ -1,0 +1,22 @@
+package com.justahmed99.authapp.provider;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
+
+@Service
+@RequiredArgsConstructor
+public class UserInfoProvider implements UserInfoPersister, UserInfoRetriever {
+
+  private final UserinfoRepository repository;
+
+  @Override
+  public Mono<Void> saveUser(UserInfo userInfo) {
+    return repository.save(UserInfoConverter.toEntity(userInfo)).then();
+  }
+
+  @Override
+  public Mono<UserInfo> getUserInfo(String id) {
+    return repository.findById(id).map(UserInfoConverter::toDomain);
+  }
+}
