@@ -1,0 +1,14 @@
+server:
+  port: 9093
+spring:
+  r2dbc:
+    url: 'r2dbc:postgresql://postgres@db:5432/image'
+    password: 'postgres'
+  h2:
+    console:
+      enabled: true
+
+midtrans:
+  merchant-id: ${MIDTRANS_MERCHANT_ID}
+  server-key: ${MIDTRANS_SERVER_KEY}
+  client-key: ${MIDTRANS_CLIENT_KEY}
