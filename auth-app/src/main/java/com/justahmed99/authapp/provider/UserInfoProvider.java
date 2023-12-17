@@ -19,4 +19,9 @@ public class UserInfoProvider implements UserInfoPersister, UserInfoRetriever {
   public Mono<UserInfo> getUserInfo(String id) {
     return repository.findById(id).map(UserInfoConverter::toDomain);
   }
+
+  @Override
+  public Mono<UserInfo> getUserInfoByUsername(String username) {
+    return repository.findUserInfoEntityByUsername(username).map(UserInfoConverter::toDomain);
+  }
 }

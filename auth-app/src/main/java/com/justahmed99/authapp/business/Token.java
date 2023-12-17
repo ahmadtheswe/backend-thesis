@@ -15,4 +15,6 @@ public class Token {
   private Integer notBeforePolicy;
   private String sessionState;
   private String scope;
+  private String username;
+  private String role;
 }

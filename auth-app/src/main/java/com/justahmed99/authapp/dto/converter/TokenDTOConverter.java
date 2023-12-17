@@ -15,6 +15,7 @@ public final class TokenDTOConverter {
         .notBeforePolicy(token.getNotBeforePolicy())
         .sessionState(token.getSessionState())
         .scope(token.getScope())
+        .role(token.getRole())
         .build();
   }
 }

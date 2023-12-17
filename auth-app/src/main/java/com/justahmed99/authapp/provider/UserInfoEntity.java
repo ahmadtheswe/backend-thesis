@@ -1,5 +1,6 @@
 package com.justahmed99.authapp.provider;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +23,7 @@ public class UserInfoEntity implements Persistable<String> {
   private String username;
   private String email;
   private String role;
-  private Long createdAt;
+  private LocalDateTime createdAt;
   private Boolean isActive;
   @Override
   public String getId() {

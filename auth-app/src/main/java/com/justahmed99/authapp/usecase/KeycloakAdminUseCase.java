@@ -1,5 +1,6 @@
 package com.justahmed99.authapp.usecase;
 
+import com.justahmed99.authapp.business.Token;
 import com.justahmed99.authapp.dto.LoginRequestDTO;
 import com.justahmed99.authapp.dto.RefreshTokenRequestDTO;
 import com.justahmed99.authapp.dto.RegistrationRequestDTO;
@@ -13,6 +14,7 @@ import com.justahmed99.authapp.provider.KeycloakAdminPersister;
 import com.justahmed99.authapp.provider.UserException;
 import com.justahmed99.authapp.provider.UserInfoConverter;
 import com.justahmed99.authapp.provider.UserInfoPersister;
+import com.justahmed99.authapp.provider.UserInfoRetriever;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,8 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
   private final KeycloakAdminPersister keycloakAdminPersister;
 
   private final UserInfoPersister userInfoPersister;
+
+  private final UserInfoRetriever userInfoRetriever;
 
   @Override
   public Mono<ResponseEntity<ReturnDataDTO<String>>> createRegularUser(
@@ -62,19 +66,22 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
   @Override
   public Mono<ResponseEntity<ReturnDataDTO<TokenResponseDTO>>> login(final LoginRequestDTO dto) {
     return LoginConverter.fromLoginRequestDTO(dto)
-        .map(keycloakAdminPersister::login)
-        .map(tokenMap -> ResponseEntity.ok(
-            ReturnDataDTO.<TokenResponseDTO>builder()
-                .data(TokenDTOConverter.fromTokenToTokenDTO(tokenMap))
-                .messages(List.of("Login Success!"))
-                .build()
-        ))
+        .flatMap(login -> {
+          Token token = keycloakAdminPersister.login(login);
+          return userInfoRetriever.getUserInfoByUsername(token.getUsername())
+              .flatMap(userInfo -> {
+                token.setRole(userInfo.getRole());
+                return Mono.just(ResponseEntity.ok(ReturnDataDTO.<TokenResponseDTO>builder()
+                    .data(TokenDTOConverter.fromTokenToTokenDTO(token))
+                    .messages(List.of("Login Success!"))
+                    .build()));
+              });
+        })
         .onErrorResume(throwable -> {
           ReturnDataDTO<TokenResponseDTO> errorResponse =
               ReturnDataDTO.<TokenResponseDTO>builder()
                   .messages(List.of("Login Failed!"))
                   .build();
-
           return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse));
         });
   }

@@ -97,7 +97,7 @@ public class KeycloakAdminProvider implements KeycloakAdminPersister {
         .resteasyClient(new ResteasyClientBuilderImpl().connectionPoolSize(10).build())
         .build();
 
-    return TokenConverter.fromKeycloakToToken(keycloak);
+    return TokenConverter.fromKeycloakToToken(keycloak, login.getUsername());
   }
 
   @Override

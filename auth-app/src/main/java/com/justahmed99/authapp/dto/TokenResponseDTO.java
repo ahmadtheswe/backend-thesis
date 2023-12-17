@@ -25,4 +25,5 @@ public class TokenResponseDTO {
   private String sessionState;
   @JsonProperty("scope")
   private String scope;
+  private String role;
 }

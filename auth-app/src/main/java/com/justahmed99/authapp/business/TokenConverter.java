@@ -4,7 +4,7 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.AccessTokenResponse;
 
 public final class TokenConverter {
-  public static Token fromKeycloakToToken(final Keycloak keycloak) {
+  public static Token fromKeycloakToToken(final Keycloak keycloak, final String username) {
     return Token.builder()
         .accessToken(keycloak.tokenManager().getAccessToken().getToken())
         .refreshToken(keycloak.tokenManager().refreshToken().getToken())
@@ -15,6 +15,7 @@ public final class TokenConverter {
         .notBeforePolicy(keycloak.tokenManager().getAccessToken().getNotBeforePolicy())
         .sessionState(keycloak.tokenManager().getAccessToken().getSessionState())
         .scope(keycloak.tokenManager().getAccessToken().getScope())
+        .username(username)
         .build();
   }
 
