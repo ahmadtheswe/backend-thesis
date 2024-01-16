@@ -2,7 +2,7 @@ server:
   port: 9093
 spring:
   r2dbc:
-    url: 'r2dbc:postgresql://postgres@db:5432/image'
+    url: 'r2dbc:postgresql://postgres@db:5446/payment'
     password: 'postgres'
   h2:
     console:
