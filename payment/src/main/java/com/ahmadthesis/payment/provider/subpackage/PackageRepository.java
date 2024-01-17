@@ -1,4 +1,4 @@
-package com.ahmadthesis.payment.provider;
+package com.ahmadthesis.payment.provider.subpackage;
 
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Mono;

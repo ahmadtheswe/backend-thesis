@@ -1,4 +1,4 @@
-package com.ahmadthesis.payment.provider;
+package com.ahmadthesis.payment.provider.subpackage;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
