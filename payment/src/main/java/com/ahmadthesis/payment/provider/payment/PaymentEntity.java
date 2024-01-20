@@ -6,7 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Generated;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -20,12 +22,16 @@ public class PaymentEntity implements Persistable<String> {
   @Id
   private String id;
   private String userId;
+  private String email;
   private String packageId;
   private String paymentStatus;
   private Instant payDate;
   private Instant validDate;
-  @Override
-  public boolean isNew() {
-    return true;
-  }
+
+  @Transient
+  private boolean isNew = true;
+
+  public void setIsNew(boolean isNew) { this.isNew = isNew; }
+  public boolean isNew() { return isNew; }
+
 }

@@ -1,6 +1,10 @@
 package com.ahmadthesis.payment.business;
 
+import lombok.Getter;
+
+@Getter
 public enum PaymentStatus {
+  UNPAID("UNPAID"),
   PAID("PAID"),
   CANCELLED("CANCELLED"),
   FAILED("FAILED");
@@ -11,7 +15,4 @@ public enum PaymentStatus {
     this.status = status;
   }
 
-  public String getStatus() {
-    return this.status;
-  }
 }

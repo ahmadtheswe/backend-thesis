@@ -7,9 +7,10 @@ import lombok.Data;
 @Builder
 @Data
 public class TransactionsDTO {
-  private String orderId;
-  private Integer grossAmount;
+  private String userId;
+  private String email;
   private String paymentType;
   private String bank;
+  private String packageType;
   private Set<ItemDetailsDTO> itemDetails;
 }

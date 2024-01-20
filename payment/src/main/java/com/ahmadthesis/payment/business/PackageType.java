@@ -1,0 +1,17 @@
+package com.ahmadthesis.payment.business;
+
+import lombok.Getter;
+
+@Getter
+public enum PackageType {
+  PRO("PRO", 70000),
+  PREMIUM("PREMIUM", 100000);
+
+  private final String name;
+  private final Integer value;
+
+  PackageType(String name, Integer value) {
+    this.name = name;
+    this.value = value;
+  }
+}

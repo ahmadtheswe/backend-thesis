@@ -4,5 +4,5 @@ import com.ahmadthesis.payment.business.Payment;
 import reactor.core.publisher.Mono;
 
 public interface PaymentPersister {
-  Mono<Void> savePayment(Payment payment);
+  Mono<Void> savePayment(Payment payment, Boolean isNew);
 }
