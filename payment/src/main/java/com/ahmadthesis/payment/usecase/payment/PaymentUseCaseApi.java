@@ -49,24 +49,22 @@ public class PaymentUseCaseApi implements PersistPayment {
   @Override
   public Mono<Object> checkCharge(String orderId) {
     return midtransRetriever.checkCharge(orderId)
-        .flatMap(midtransResp -> {
-          return paymentRetriever.getPaymentById(orderId).flatMap(payment -> {
-            if (midtransResp.get("transaction_status").equals("settlement")) {
-              payment.setPaymentStatus(PaymentStatus.PAID);
+        .flatMap(midtransResp -> paymentRetriever.getPaymentById(orderId).flatMap(payment -> {
+          if (midtransResp.get("transaction_status").equals("settlement")) {
+            payment.setPaymentStatus(PaymentStatus.PAID);
 
-              DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-              LocalDateTime localDateTime = LocalDateTime.parse(
-                  midtransResp.get("transaction_time").toString(), formatter);
-              ZonedDateTime payDate = ZonedDateTime.of(localDateTime, ZoneId.of("Asia/Jakarta"));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime localDateTime = LocalDateTime.parse(
+                midtransResp.get("transaction_time").toString(), formatter);
+            ZonedDateTime payDate = ZonedDateTime.of(localDateTime, ZoneId.of("Asia/Jakarta"));
 
-              System.out.println("Payment time: " + payDate);
-              payment.setPayDate(payDate);
-              payment.setValidDate(payDate.plusDays(30));
+            System.out.println("Payment time: " + payDate);
+            payment.setPayDate(payDate);
+            payment.setValidDate(payDate.plusDays(30));
 
-              return paymentPersister.savePayment(payment, false).then();
-            }
-            return Mono.just(payment);
-          });
-        });
+            return paymentPersister.savePayment(payment, true).then();
+          }
+          return Mono.just(payment);
+        }));
   }
 }
