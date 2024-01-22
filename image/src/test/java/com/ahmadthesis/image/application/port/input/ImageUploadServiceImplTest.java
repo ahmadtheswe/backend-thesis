@@ -78,24 +78,31 @@ public class ImageUploadServiceImplTest {
   public void uploadTest() throws IOException {
     // Arrange
     Path tempFilePath = Files.createTempFile("test-upload", ".jpg");
-    FilePart filePart = Mockito.mock(FilePart.class);
+    FilePart file = Mockito.mock(FilePart.class);
 
-//    Mockito.when(filePart.filename()).thenReturn("test.jpg");
-    Mockito.when(filePart.transferTo(Mockito.any(Path.class))).thenReturn(Mono.empty());
-    Mockito.when(filePart.content()).thenReturn(Flux.empty());
+    Path tempThumbnailPath = Files.createTempFile("test-upload-thumbnail", ".jpg");
+    FilePart thumbnail = Mockito.mock(FilePart.class);
+
+//    Mockito.when(file.filename()).thenReturn("test.jpg");
+    Mockito.when(file.transferTo(Mockito.any(Path.class))).thenReturn(Mono.empty());
+    Mockito.when(file.content()).thenReturn(Flux.empty());
+
+    Mockito.when(thumbnail.transferTo(Mockito.any(Path.class))).thenReturn(Mono.empty());
+    Mockito.when(thumbnail.content()).thenReturn(Flux.empty());
 
     ImageUploadServiceImpl imageUploadService = new ImageUploadServiceImpl();
     ReflectionTestUtils.setField(imageUploadService, "UPLOAD_DIRECTORY", tempFilePath.getParent().toString());
+    ReflectionTestUtils.setField(imageUploadService, "THUMBNAIL_DIRECTORY", tempFilePath.getParent().toString());
 
     // Act
-    Mono<Void> result = imageUploadService.upload(filePart, "test.jpg");
+    Mono<Void> result = imageUploadService.upload(file, thumbnail, "test.jpg");
 
     // Assert
     StepVerifier.create(result)
             .verifyComplete();
 
-//    Mockito.verify(filePart, Mockito.times(1)).filename();
-    Mockito.verify(filePart, Mockito.times(1)).transferTo(Mockito.any(Path.class));
+//    Mockito.verify(file, Mockito.times(1)).filename();
+    Mockito.verify(file, Mockito.times(1)).transferTo(Mockito.any(Path.class));
 
     // Clean up
     Files.deleteIfExists(tempFilePath);

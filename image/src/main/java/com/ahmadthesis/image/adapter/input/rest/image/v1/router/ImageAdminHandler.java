@@ -30,7 +30,10 @@ public class ImageAdminHandler {
 
   Mono<ServerResponse> uploadImage(final ServerRequest request) {
     return ImageRestConverter.extractUploadRequest(request).flatMap(saveImageRequest ->
-        imageUploadService.upload(saveImageRequest.getImage(), saveImageRequest.getFilename())
+        imageUploadService.upload(
+                saveImageRequest.getImage(),
+                saveImageRequest.getThumbnail(),
+                saveImageRequest.getFilename())
             .then(Mono.defer(() -> {
               final Image image = ImageMapper.mapRequestToImage(saveImageRequest);
               return imageService.save(image)

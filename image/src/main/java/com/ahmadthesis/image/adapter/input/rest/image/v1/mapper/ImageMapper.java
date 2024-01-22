@@ -2,6 +2,7 @@ package com.ahmadthesis.image.adapter.input.rest.image.v1.mapper;
 
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.SaveImageRequest;
 import com.ahmadthesis.image.domain.image.Image;
+import com.ahmadthesis.image.domain.image.ProductLevel;
 import com.ahmadthesis.image.global.utils.dates.DateUtils;
 import org.springframework.stereotype.Component;
 
@@ -18,9 +19,10 @@ public final class ImageMapper {
         .mediaType(saveImageRequest.getMediaType())
         .filename(saveImageRequest.getFilename())
         .originalImageDir(saveImageRequest.getUploadDir())
+        .thumbnailImageDir(saveImageRequest.getThumbnailDir())
         .createdAt(DateUtils.now())
         .isPublic(saveImageRequest.getIsPublic())
-        .priceIDR(saveImageRequest.getPriceIDR())
+        .productLevel(ProductLevel.valueOf(saveImageRequest.getProductLevel()))
         .latitude(saveImageRequest.getLatitude())
         .longitude(saveImageRequest.getLongitude())
         .build();

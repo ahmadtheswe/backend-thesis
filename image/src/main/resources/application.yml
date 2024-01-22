@@ -29,6 +29,7 @@ logging:
 
 directory:
   image: '/home/ahmad/image/uploads'
+  thumbnail: '/home/ahmad/image/uploads'
 
 time:
   zone: 'Asia/Jakarta'

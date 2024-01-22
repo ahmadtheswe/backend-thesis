@@ -18,6 +18,9 @@ public class ImageUploadServiceImpl implements ImageUploadService {
   @Value("${directory.image}")
   private String UPLOAD_DIRECTORY;
 
+  @Value("${directory.thumbnail}")
+  private String THUMBNAIL_DIRECTORY;
+
   @Override
   public Mono<Pair<Boolean, String>> storeImage(MultipartFile file) {
     String fileName = file.getOriginalFilename();
@@ -30,8 +33,10 @@ public class ImageUploadServiceImpl implements ImageUploadService {
   }
 
   @Override
-  public Mono<Void> upload(FilePart filePart, String filename) {
-    return filePart.transferTo(Paths.get(UPLOAD_DIRECTORY
-            + File.separator + filename));
+  public Mono<Void> upload(FilePart file, FilePart thumbnail, String filename) {
+    return file.transferTo(Paths.get(UPLOAD_DIRECTORY + File.separator + filename))
+        .then(Mono.defer(() ->
+            thumbnail.transferTo(
+                Paths.get(THUMBNAIL_DIRECTORY + File.separator + filename))));
   }
 }

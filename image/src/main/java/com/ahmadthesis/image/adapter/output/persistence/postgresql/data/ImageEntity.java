@@ -20,12 +20,12 @@ public class ImageEntity implements Persistable<String> {
   private String title;
   private String filename;
   private String originalImageDir;
+  private String thumbnailImageDir;
   private String mediaType;
   private Long createdAt;
   private Long latestAccess;
+  private String productLevel;
   private Boolean isPublic;
-  @Column(value = "price_idr")
-  private Long priceIDR;
   private BigDecimal latitude;
   private BigDecimal longitude;
 

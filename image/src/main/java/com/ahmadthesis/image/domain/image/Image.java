@@ -15,10 +15,11 @@ public class Image {
   private String mediaType;
   private String filename;
   private String originalImageDir;
+  private String thumbnailImageDir;
   private Long createdAt;
   private Long latestAccess;
+  private ProductLevel productLevel;
   private Boolean isPublic;
-  private Long priceIDR;
   private BigDecimal latitude;
   private BigDecimal longitude;
 

@@ -12,11 +12,14 @@ import org.springframework.http.codec.multipart.FilePart;
 public class SaveImageRequest {
   private String id;
   private FilePart image;
+  private FilePart thumbnail;
   private String title;
   private Boolean isPublic;
   private String filename;
   private String mediaType;
   private String uploadDir;
+  private String thumbnailDir;
+  private String productLevel;
   private Long priceIDR;
   private BigDecimal latitude;
   private BigDecimal longitude;

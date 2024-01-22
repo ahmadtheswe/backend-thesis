@@ -7,5 +7,5 @@ import reactor.core.publisher.Mono;
 
 public interface ImageUploadService {
   Mono<Pair<Boolean, String>> storeImage(MultipartFile file);
-  Mono<Void> upload(FilePart filePart, String filename);
+  Mono<Void> upload(FilePart file, FilePart thumbnail, String filename);
 }

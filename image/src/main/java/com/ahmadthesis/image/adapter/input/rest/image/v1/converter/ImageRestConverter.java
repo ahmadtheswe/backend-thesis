@@ -40,20 +40,20 @@ public final class ImageRestConverter {
   public static Mono<SaveImageRequest> extractUploadRequest(ServerRequest request) {
     return request.multipartData().flatMap(stringPartMultiValueMap -> {
       final FilePart image = (FilePart) stringPartMultiValueMap.getFirst("image");
+      final FilePart thumbnail = (FilePart) stringPartMultiValueMap.getFirst("thumbnail");
       final Mono<String> titleMono = FilePartParser.parsePartToString(
           Objects.requireNonNull(stringPartMultiValueMap.getFirst("title")));
       final Mono<Boolean> isPublicMono = FilePartParser.parsePartToString(
               Objects.requireNonNull(stringPartMultiValueMap.getFirst("isPublic")))
           .map(Boolean::valueOf);
-      final Mono<Long> priceIDRMono = FilePartParser.parsePartToString(
-              Objects.requireNonNull(stringPartMultiValueMap.getFirst("priceIDR")))
-          .map(Long::parseLong);
       final Mono<BigDecimal> latitudeMono = FilePartParser.parsePartToString(
               Objects.requireNonNull(stringPartMultiValueMap.getFirst("latitude")))
           .map(BigDecimal::new);
       final Mono<BigDecimal> longitudeMono = FilePartParser.parsePartToString(
               Objects.requireNonNull(stringPartMultiValueMap.getFirst("longitude")))
           .map(BigDecimal::new);
+      final Mono<String> productLevelMono = FilePartParser.parsePartToString(
+          Objects.requireNonNull(stringPartMultiValueMap.getFirst("productLevel")));
 
       final String mediaType = getExtensionByStringHandling(
           Objects.requireNonNull(image).filename());
@@ -61,19 +61,20 @@ public final class ImageRestConverter {
       final String uploadDir = Paths.get(
           UPLOAD_DIR + File.separator + filename).toString();
 
-      return Mono.zip(titleMono, isPublicMono, priceIDRMono, latitudeMono, longitudeMono)
+      return Mono.zip(titleMono, isPublicMono, latitudeMono, longitudeMono, productLevelMono)
           .flatMap(data ->
               Mono.just(
                   SaveImageRequest.builder()
                       .image(image)
+                      .thumbnail(thumbnail)
                       .title(data.getT1())
                       .isPublic(data.getT2())
                       .filename(filename)
                       .mediaType(mediaType)
                       .uploadDir(uploadDir)
-                      .priceIDR(data.getT3())
-                      .latitude(data.getT4())
-                      .longitude(data.getT5())
+                      .latitude(data.getT3())
+                      .longitude(data.getT4())
+                      .productLevel(data.getT5())
                       .build()));
     });
   }

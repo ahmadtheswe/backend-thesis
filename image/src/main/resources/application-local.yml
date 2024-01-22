@@ -30,10 +30,11 @@ logging:
       ahmadthesis:
         image: debug
   file:
-    name: 'E:\thesis_project\logs\application.log'
+    name: 'D:\Thesis\logs\application.log'
 
 directory:
-  image: 'E:\thesis_project\upload'
+  image: 'D:\Thesis\upload\image'
+  thumbnail: 'D:\Thesis\upload\thumbnail'
 
 time:
   zone: 'Asia/Jakarta'
