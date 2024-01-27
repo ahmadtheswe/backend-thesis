@@ -17,7 +17,6 @@ public class Image {
   private String originalImageDir;
   private String thumbnailImageDir;
   private Long createdAt;
-  private Long latestAccess;
   private ProductLevel productLevel;
   private Boolean isPublic;
   private BigDecimal latitude;

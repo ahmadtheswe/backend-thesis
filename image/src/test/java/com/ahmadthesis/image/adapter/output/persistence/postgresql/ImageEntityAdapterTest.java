@@ -38,7 +38,6 @@ public class ImageEntityAdapterTest {
     imageEntity.setOriginalImageDir("d://image//image_1.jpg");
     imageEntity.setMediaType("jpg");
     imageEntity.setCreatedAt(1691224239866L);
-    imageEntity.setLatestAccess(1691224239866L);
     imageEntity.setIsPublic(true);
 
     ImageEntity imagePostgre = new ImageEntity();
@@ -49,7 +48,6 @@ public class ImageEntityAdapterTest {
     imagePostgre.setOriginalImageDir("d://image//image_1.jpg");
     imagePostgre.setMediaType("jpg");
     imagePostgre.setCreatedAt(1691224239866L);
-    imagePostgre.setLatestAccess(1691224239866L);
     imagePostgre.setIsPublic(true);
 
     // Act
@@ -79,7 +77,6 @@ public class ImageEntityAdapterTest {
     imageEntity.setOriginalImageDir("d://image//image_1.jpg");
     imageEntity.setMediaType("jpg");
     imageEntity.setCreatedAt(1691224239866L);
-    imageEntity.setLatestAccess(1691224239866L);
     imageEntity.setIsPublic(true);
 
     ImageEntity imagePostgre = new ImageEntity();
@@ -90,7 +87,6 @@ public class ImageEntityAdapterTest {
     imagePostgre.setOriginalImageDir("d://image//image_1.jpg");
     imagePostgre.setMediaType("jpg");
     imagePostgre.setCreatedAt(1691224239866L);
-    imagePostgre.setLatestAccess(1691224239866L);
     imagePostgre.setIsPublic(true);
 
     // Act

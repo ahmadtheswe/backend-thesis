@@ -28,7 +28,6 @@ class ImageConverterTest {
     imageEntity.setOriginalImageDir("d://image//image_1.jpg");
     imageEntity.setMediaType("jpg");
     imageEntity.setCreatedAt(1691224239866L);
-    imageEntity.setLatestAccess(1691224239866L);
     imageEntity.setIsPublic(true);
 
     image.setId(id);
@@ -38,7 +37,6 @@ class ImageConverterTest {
     image.setOriginalImageDir("d://image//image_1.jpg");
     image.setMediaType("jpg");
     image.setCreatedAt(1691224239866L);
-    image.setLatestAccess(1691224239866L);
     image.setIsPublic(true);
   }
 
@@ -58,7 +56,6 @@ class ImageConverterTest {
     assertEquals(imageEntity.getOriginalImageDir(), converted.getOriginalImageDir());
     assertEquals(imageEntity.getMediaType(), converted.getMediaType());
     assertEquals(imageEntity.getCreatedAt(), converted.getCreatedAt());
-    assertEquals(imageEntity.getLatestAccess(), converted.getLatestAccess());
     assertEquals(imageEntity.getIsPublic(), converted.getIsPublic());
 
   }
@@ -79,7 +76,6 @@ class ImageConverterTest {
     assertEquals(imageEntity.getOriginalImageDir(), converted.getOriginalImageDir());
     assertEquals(imageEntity.getMediaType(), converted.getMediaType());
     assertEquals(imageEntity.getCreatedAt(), converted.getCreatedAt());
-    assertEquals(imageEntity.getLatestAccess(), converted.getLatestAccess());
     assertEquals(imageEntity.getIsPublic(), converted.getIsPublic());
   }
 }

@@ -43,7 +43,6 @@ public class ImageServiceImplTest {
     image.setOriginalImageDir("d://image//image_1.jpg");
     image.setMediaType("jpg");
     image.setCreatedAt(1691224239866L);
-    image.setLatestAccess(1691224239866L);
     image.setIsPublic(true);
 
     // Act
@@ -72,7 +71,6 @@ public class ImageServiceImplTest {
     image.setOriginalImageDir("d://image//image_1.jpg");
     image.setMediaType("jpg");
     image.setCreatedAt(1691224239866L);
-    image.setLatestAccess(1691224239866L);
     image.setIsPublic(true);
 
     // Act

@@ -23,7 +23,6 @@ public class ImageEntity implements Persistable<String> {
   private String thumbnailImageDir;
   private String mediaType;
   private Long createdAt;
-  private Long latestAccess;
   private String productLevel;
   private Boolean isPublic;
   private BigDecimal latitude;
