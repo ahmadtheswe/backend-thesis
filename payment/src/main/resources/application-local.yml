@@ -7,6 +7,12 @@ spring:
   h2:
     console:
       enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:28080/realms/${REALM_NAME}
+          jwk-set-uri: http://localhost:28080/realms/${REALM_NAME}/protocol/openid-connect/certs
 
 midtrans:
   merchant-id: ${MIDTRANS_MERCHANT_ID}

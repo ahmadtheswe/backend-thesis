@@ -30,7 +30,6 @@ class ImageConverterTest {
     imageEntity.setCreatedAt(1691224239866L);
     imageEntity.setLatestAccess(1691224239866L);
     imageEntity.setIsPublic(true);
-    imageEntity.setPriceIDR(10000L);
 
     image.setId(id);
     image.setUploaderId(uploaderId);
@@ -61,7 +60,6 @@ class ImageConverterTest {
     assertEquals(imageEntity.getCreatedAt(), converted.getCreatedAt());
     assertEquals(imageEntity.getLatestAccess(), converted.getLatestAccess());
     assertEquals(imageEntity.getIsPublic(), converted.getIsPublic());
-    assertEquals(imageEntity.getPriceIDR(), converted.getPriceIDR());
 
   }
 

@@ -62,7 +62,7 @@ public class PaymentUseCaseApi implements PersistPayment {
             payment.setPayDate(payDate);
             payment.setValidDate(payDate.plusDays(30));
 
-            return paymentPersister.savePayment(payment, true).then();
+            return paymentPersister.savePayment(payment, false).then();
           }
           return Mono.just(payment);
         }));
