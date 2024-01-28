@@ -9,8 +9,10 @@ import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Mono;
 
 public interface KeycloakAdminService {
-  Mono<ResponseEntity<ReturnDataDTO<String>>> createRegularUser(final RegistrationRequestDTO dto);
-  Mono<ResponseEntity<ReturnDataDTO<TokenResponseDTO>>> login(final LoginRequestDTO dto);
-  Mono<ResponseEntity<ReturnDataDTO<TokenResponseDTO>>> refresh(final RefreshTokenRequestDTO dto);
+  Mono<ResponseEntity<ReturnDataDTO<String>>> createRegularUser(RegistrationRequestDTO dto);
+  Mono<ResponseEntity<ReturnDataDTO<TokenResponseDTO>>> login(LoginRequestDTO dto);
+  Mono<ResponseEntity<ReturnDataDTO<TokenResponseDTO>>> refresh(RefreshTokenRequestDTO dto);
   Mono<ResponseEntity<Void>> logout();
+
+  Mono<ResponseEntity<ReturnDataDTO<String>>> activateUser(String userId);
 }

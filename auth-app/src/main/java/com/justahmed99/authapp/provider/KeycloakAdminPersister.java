@@ -6,11 +6,13 @@ import org.keycloak.representations.idm.UserRepresentation;
 
 public interface KeycloakAdminPersister {
 
-  UserRepresentation createRegularUser(final UserRepresentation userRepresentation);
+  UserRepresentation createRegularUser(UserRepresentation userRepresentation);
 
-  Token login(final Login login);
+  UserRepresentation activateUser(String userId);
 
-  Token refresh(final String refreshToken);
+  Token login(Login login);
 
-  void logout(final String userId);
+  Token refresh(String refreshToken);
+
+  void logout(String userId);
 }

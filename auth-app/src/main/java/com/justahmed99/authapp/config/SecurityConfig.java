@@ -39,6 +39,7 @@ public class SecurityConfig {
                 .pathMatchers("/api/user/registration/**").permitAll()
                 .pathMatchers("/api/user/login/**").permitAll()
                 .pathMatchers("/api/user/refresh/**").permitAll()
+                .pathMatchers("/api/user/activate/**").permitAll()
                 .pathMatchers("/api/user/logout/**").authenticated()
                 .pathMatchers("/public/**").permitAll()
                 .pathMatchers("/admin/**").hasRole("ADMIN")

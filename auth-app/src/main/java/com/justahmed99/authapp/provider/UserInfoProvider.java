@@ -11,8 +11,10 @@ public class UserInfoProvider implements UserInfoPersister, UserInfoRetriever {
   private final UserinfoRepository repository;
 
   @Override
-  public Mono<Void> saveUser(UserInfo userInfo) {
-    return repository.save(UserInfoConverter.toEntity(userInfo)).then();
+  public Mono<Void> saveUser(UserInfo userInfo, Boolean isNew) {
+    final UserInfoEntity entity = UserInfoConverter.toEntity(userInfo);
+    entity.setIsNew(isNew);
+    return repository.save(entity).then();
   }
 
   @Override

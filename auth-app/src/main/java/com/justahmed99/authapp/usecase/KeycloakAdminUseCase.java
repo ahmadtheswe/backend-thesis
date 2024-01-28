@@ -15,7 +15,6 @@ import com.justahmed99.authapp.provider.UserException;
 import com.justahmed99.authapp.provider.UserInfoConverter;
 import com.justahmed99.authapp.provider.UserInfoPersister;
 import com.justahmed99.authapp.provider.UserInfoRetriever;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -47,7 +46,7 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
             final UserRepresentation createdUser = keycloakAdminPersister.createRegularUser(
                 userRepresentation);
             return userInfoPersister.saveUser(
-                    UserInfoConverter.fromKeycloakUserRepresentation(createdUser))
+                    UserInfoConverter.fromKeycloakUserRepresentation(createdUser), true)
                 .then(Mono.defer(() -> Mono.just(ResponseEntity.ok(
                     ReturnDataDTO.<String>builder()
                         .data("SUCCESS")
@@ -117,5 +116,25 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
               keycloakAdminPersister.logout(jwt.getClaim("sub"));
             })
             .then(Mono.fromCallable(() -> ResponseEntity.ok().<Void>build())));
+  }
+
+  @Override
+  public Mono<ResponseEntity<ReturnDataDTO<String>>> activateUser(String userId) {
+    return Mono.fromSupplier(() -> keycloakAdminPersister.activateUser(userId))
+        .flatMap(userRepresentation -> {
+          return userInfoRetriever.getUserInfo(userRepresentation.getId())
+              .flatMap(userInfo -> {
+                userInfo.setIsActive(true);
+                return userInfoPersister.saveUser(userInfo, false)
+                    .thenReturn(ResponseEntity.ok(ReturnDataDTO.<String>builder()
+                        .data("SUCCESS")
+                        .messages(List.of("Refresh Success!"))
+                        .build()));
+              });
+        });
+//        .map(userRepresentation -> ResponseEntity.ok(ReturnDataDTO.<String>builder()
+//            .data("SUCCESS")
+//            .messages(List.of("Refresh Success!"))
+//            .build()));
   }
 }

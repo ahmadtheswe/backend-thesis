@@ -13,6 +13,7 @@ import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.RoleRepresentation;
@@ -52,7 +53,7 @@ public class KeycloakAdminProvider implements KeycloakAdminPersister {
   @Override
   public UserRepresentation createRegularUser(
       final UserRepresentation userRepresentation) {
-    Keycloak keycloak = KeycloakBuilder.builder()
+    final Keycloak keycloak = KeycloakBuilder.builder()
         .serverUrl(serverUrl)
         .realm(realm)
         .clientId(adminClientId)
@@ -77,6 +78,29 @@ public class KeycloakAdminProvider implements KeycloakAdminPersister {
           response.getStatus() == 409 ? "Username / email already exists"
               : "Internal Server Error");
     }
+  }
+
+  @Override
+  public UserRepresentation activateUser(final String userId) {
+    final Keycloak keycloak = KeycloakBuilder.builder()
+        .serverUrl(serverUrl)
+        .realm(realm)
+        .clientId(adminClientId)
+        .clientSecret(adminClientSecret)
+        .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
+        .resteasyClient(new ResteasyClientBuilderImpl().connectionPoolSize(10).build())
+        .build();
+    final RealmResource realmResource = keycloak.realm(realm);
+    final UsersResource usersResource = realmResource.users();
+
+    final UserResource userResource = usersResource.get(userId);
+    final UserRepresentation representation = userResource.toRepresentation();
+    representation.setEnabled(true);
+    representation.setEmailVerified(true);
+
+    userResource.update(representation);
+
+    return representation;
   }
 
   private String getUserId(final URI location) {

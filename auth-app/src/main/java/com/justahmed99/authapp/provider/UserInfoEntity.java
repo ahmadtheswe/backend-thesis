@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.Generated;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -25,13 +26,15 @@ public class UserInfoEntity implements Persistable<String> {
   private String role;
   private LocalDateTime createdAt;
   private Boolean isActive;
+
+  @Transient
+  private boolean isNew = true;
+
+  public void setIsNew(boolean isNew) { this.isNew = isNew; }
+  public boolean isNew() { return isNew; }
+
   @Override
   public String getId() {
     return id;
-  }
-
-  @Override
-  public boolean isNew() {
-    return true;
   }
 }

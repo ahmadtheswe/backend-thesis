@@ -13,8 +13,8 @@ public final class RegistrationConverter {
     userRepresentation.setFirstName(dto.getFirstName());
     userRepresentation.setLastName(dto.getLastName());
     userRepresentation.setEmail(dto.getEmail());
-    userRepresentation.setEmailVerified(true);
-    userRepresentation.setEnabled(true);
+    userRepresentation.setEmailVerified(false);
+    userRepresentation.setEnabled(false);
 
     CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
     credentialRepresentation.setValue(dto.getPassword());

@@ -34,7 +34,7 @@ public class UserInfoConverter {
         .username(userRepresentation.getUsername())
         .email(userRepresentation.getEmail())
         .role("REGULAR")
-        .isActive(true)
+        .isActive(false)
         .build();
   }
 }

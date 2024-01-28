@@ -15,7 +15,7 @@ public class PaymentDBProvider implements PaymentPersister, PaymentRetriever {
 
   @Override
   public Mono<Void> savePayment(Payment payment, Boolean isNew) {
-    PaymentEntity entity = PaymentConverter.toEntity(payment);
+    final PaymentEntity entity = PaymentConverter.toEntity(payment);
     entity.setIsNew(isNew);
     return paymentRepository.save(entity).then();
   }
