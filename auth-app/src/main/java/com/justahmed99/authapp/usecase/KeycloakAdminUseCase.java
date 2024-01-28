@@ -15,6 +15,8 @@ import com.justahmed99.authapp.provider.UserException;
 import com.justahmed99.authapp.provider.UserInfoConverter;
 import com.justahmed99.authapp.provider.UserInfoPersister;
 import com.justahmed99.authapp.provider.UserInfoRetriever;
+import com.justahmed99.authapp.provider.email.Email;
+import com.justahmed99.authapp.provider.email.EmailPersister;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -37,6 +39,8 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
 
   private final UserInfoRetriever userInfoRetriever;
 
+  private final EmailPersister emailPersister;
+
   @Override
   public Mono<ResponseEntity<ReturnDataDTO<String>>> createRegularUser(
       final RegistrationRequestDTO dto) {
@@ -47,6 +51,11 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
                 userRepresentation);
             return userInfoPersister.saveUser(
                     UserInfoConverter.fromKeycloakUserRepresentation(createdUser), true)
+                .flatMap(userInfo -> emailPersister.sendEmail(Email.builder()
+                    .to(userInfo.getEmail())
+                    .subject("Complete your registration")
+                    .content("http://localhost:9091/api/user/activate/" + userInfo.getId())
+                    .build()).thenReturn(userInfo))
                 .then(Mono.defer(() -> Mono.just(ResponseEntity.ok(
                     ReturnDataDTO.<String>builder()
                         .data("SUCCESS")

@@ -30,7 +30,7 @@ public class UserController {
     return keycloakAdminService.createRegularUser(registrationRequestDTO);
   }
 
-  @PutMapping("/activate/{userId}")
+  @GetMapping("/activate/{userId}")
   public Mono<ResponseEntity<ReturnDataDTO<String>>> activateUser(
       @PathVariable final String userId
   ) {

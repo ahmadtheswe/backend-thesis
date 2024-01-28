@@ -44,3 +44,7 @@ keycloak-admin:
   admin-client-secret: ${ADMIN_CLIENT_SECRET}
   client-id: ${CLIENT_ID}
   client-secret: ${CLIENT_SECRET}
+
+email:
+  sender-address: ${AUTH_EMAIL}
+  sender-password: ${AUTH_PASS}
