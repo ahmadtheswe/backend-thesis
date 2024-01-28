@@ -112,29 +112,21 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
         .map(SecurityContext::getAuthentication)
         .map(Authentication::getPrincipal)
         .cast(Jwt.class)
-        .flatMap(jwt -> Mono.fromRunnable(() -> {
-              keycloakAdminPersister.logout(jwt.getClaim("sub"));
-            })
-            .then(Mono.fromCallable(() -> ResponseEntity.ok().<Void>build())));
+        .flatMap(jwt -> Mono.fromRunnable(() -> keycloakAdminPersister.logout(jwt.getClaim("sub")))
+            .then(Mono.fromCallable(() -> ResponseEntity.ok().build())));
   }
 
   @Override
   public Mono<ResponseEntity<ReturnDataDTO<String>>> activateUser(String userId) {
     return Mono.fromSupplier(() -> keycloakAdminPersister.activateUser(userId))
-        .flatMap(userRepresentation -> {
-          return userInfoRetriever.getUserInfo(userRepresentation.getId())
-              .flatMap(userInfo -> {
-                userInfo.setIsActive(true);
-                return userInfoPersister.saveUser(userInfo, false)
-                    .thenReturn(ResponseEntity.ok(ReturnDataDTO.<String>builder()
-                        .data("SUCCESS")
-                        .messages(List.of("Refresh Success!"))
-                        .build()));
-              });
-        });
-//        .map(userRepresentation -> ResponseEntity.ok(ReturnDataDTO.<String>builder()
-//            .data("SUCCESS")
-//            .messages(List.of("Refresh Success!"))
-//            .build()));
+        .flatMap(userRepresentation -> userInfoRetriever.getUserInfo(userRepresentation.getId())
+            .flatMap(userInfo -> {
+              userInfo.setIsActive(true);
+              return userInfoPersister.saveUser(userInfo, false)
+                  .thenReturn(ResponseEntity.ok(ReturnDataDTO.<String>builder()
+                      .data("SUCCESS")
+                      .messages(List.of("Refresh Success!"))
+                      .build()));
+            }));
   }
 }
