@@ -3,6 +3,8 @@ package com.ahmadthesis.payment.usecase.payment;
 import com.ahmadthesis.payment.business.PackageType;
 import com.ahmadthesis.payment.business.Payment;
 import com.ahmadthesis.payment.business.PaymentStatus;
+import com.ahmadthesis.payment.controller.ActivePackageConverter;
+import com.ahmadthesis.payment.controller.ActivePackageDTO;
 import com.ahmadthesis.payment.controller.PersistPayment;
 import com.ahmadthesis.payment.controller.TransactionConverter;
 import com.ahmadthesis.payment.controller.TransactionsDTO;
@@ -66,5 +68,10 @@ public class PaymentUseCaseApi implements PersistPayment {
           }
           return Mono.just(payment);
         }));
+  }
+
+  @Override
+  public Mono<ActivePackageDTO> getActivePayment(String userId) {
+    return paymentRetriever.getActivePackage(userId).map(ActivePackageConverter::toDTO);
   }
 }
