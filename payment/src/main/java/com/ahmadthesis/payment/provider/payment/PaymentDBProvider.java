@@ -37,10 +37,10 @@ public class PaymentDBProvider implements PaymentPersister, PaymentRetriever {
     return paymentRepository.getPaymentEntitiesByUserIdAndPaymentStatusAndValidDateIsAfter(
         userId, PaymentStatus.PAID.getStatus(), today
     ).flatMap(paymentEntity -> {
-      if (paymentEntity.getPackageId().contains(PackageType.PRO.getName())) {
-        return Mono.just(ActivePackage.builder().activePackage(PackageType.PRO).build());
-      } else if (paymentEntity.getPackageId().contains(PackageType.PREMIUM.getName())) {
+      if (paymentEntity.getPackageId().contains(PackageType.PREMIUM.getName())) {
         return Mono.just(ActivePackage.builder().activePackage(PackageType.PREMIUM).build());
+      } else if (paymentEntity.getPackageId().contains(PackageType.PRO.getName())) {
+        return Mono.just(ActivePackage.builder().activePackage(PackageType.PRO).build());
       } else {
         return Mono.just(ActivePackage.builder().activePackage(PackageType.FREE).build());
       }
