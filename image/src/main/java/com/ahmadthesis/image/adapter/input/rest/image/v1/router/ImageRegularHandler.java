@@ -94,7 +94,7 @@ public class ImageRegularHandler {
 
   Mono<ServerResponse> viewImageFile(final ServerRequest request) {
     return ImageRestConverter.extractIdRequest(request)
-        .flatMap(imageService::getImageById)
+        .flatMap(imageService::getPublicImageById)
         .flatMap(image -> {
           final File file = new File(image.getOriginalImageDir());
           final Resource resource = new FileSystemResource(file);
