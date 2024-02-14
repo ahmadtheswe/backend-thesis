@@ -1,4 +1,4 @@
-package com.ahmadthesis.image.adapter.output.persistence.postgresql.data;
+package com.ahmadthesis.image.adapter.output.persistence.postgresql.image.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

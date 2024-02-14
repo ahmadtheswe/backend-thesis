@@ -1,9 +1,10 @@
 package com.ahmadthesis.image.adapter.output.persistence.postgresql;
 
-import com.ahmadthesis.image.adapter.output.persistence.postgresql.data.ImageHistoryEntity;
-import com.ahmadthesis.image.adapter.output.persistence.postgresql.sql.R2DBCImageHistoryRepository;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.ImageHistoryPostgreAdapter;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.data.ImageHistoryEntity;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.sql.ImageHistoryRepository;
 import com.ahmadthesis.image.domain.image.ImageHistory;
-import com.ahmadthesis.image.domain.objectvalue.image.Activity;
+import com.ahmadthesis.image.domain.image.Activity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +27,7 @@ public class ImageHistoryPostgreAdapterTest {
   private ImageHistoryPostgreAdapter database;
 
   @Mock
-  private R2DBCImageHistoryRepository repository;
+  private ImageHistoryRepository repository;
 
 
   @Test

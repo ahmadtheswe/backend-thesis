@@ -2,7 +2,8 @@ package com.ahmadthesis.image.adapter.output.persistence.postgresql.converter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.ahmadthesis.image.adapter.output.persistence.postgresql.data.ImageEntity;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.data.ImageEntity;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.converter.ImageConverter;
 import com.ahmadthesis.image.domain.image.Image;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;

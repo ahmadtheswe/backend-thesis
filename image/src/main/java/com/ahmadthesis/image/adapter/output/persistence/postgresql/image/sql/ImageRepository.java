@@ -1,13 +1,15 @@
-package com.ahmadthesis.image.adapter.output.persistence.postgresql.sql;
+package com.ahmadthesis.image.adapter.output.persistence.postgresql.image.sql;
 
-import com.ahmadthesis.image.adapter.output.persistence.postgresql.data.ImageEntity;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.data.ImageEntity;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface R2DBCImageRepository extends ReactiveCrudRepository<ImageEntity, String> {
+@Repository
+public interface ImageRepository extends ReactiveCrudRepository<ImageEntity, String> {
   Flux<ImageEntity> findAllByIsPublicTrue();
 
   @Query("SELECT * FROM image i where i.id in (SELECT distinct o.image_id FROM ownership o " +

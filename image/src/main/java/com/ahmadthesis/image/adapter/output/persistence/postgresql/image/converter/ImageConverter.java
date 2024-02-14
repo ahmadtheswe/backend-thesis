@@ -1,6 +1,6 @@
-package com.ahmadthesis.image.adapter.output.persistence.postgresql.converter;
+package com.ahmadthesis.image.adapter.output.persistence.postgresql.image.converter;
 
-import com.ahmadthesis.image.adapter.output.persistence.postgresql.data.ImageEntity;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.data.ImageEntity;
 import com.ahmadthesis.image.domain.image.Image;
 import com.ahmadthesis.image.domain.image.ProductLevel;
 

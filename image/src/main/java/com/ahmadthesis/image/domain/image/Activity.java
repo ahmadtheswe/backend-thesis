@@ -1,4 +1,4 @@
-package com.ahmadthesis.image.domain.objectvalue.image;
+package com.ahmadthesis.image.domain.image;
 
 public enum Activity {
   CREATE,

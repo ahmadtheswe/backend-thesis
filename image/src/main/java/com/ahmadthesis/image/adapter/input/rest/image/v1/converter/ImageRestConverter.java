@@ -24,10 +24,16 @@ import java.util.UUID;
 public final class ImageRestConverter {
 
   private static String UPLOAD_DIR;
+  private static String THUMBNAIL_DIR;
 
   @Value("${directory.image}")
   public void setUploadDir(String UPLOAD_DIR) {
     ImageRestConverter.UPLOAD_DIR = UPLOAD_DIR;
+  }
+
+  @Value("${directory.thumbnail}")
+  public void setThumbnailDir(String THUMBNAIL_DIR) {
+    ImageRestConverter.THUMBNAIL_DIR = THUMBNAIL_DIR;
   }
 
   public static ImageUploadResponse generateUploadResponse(Image image) {
@@ -60,6 +66,8 @@ public final class ImageRestConverter {
       final String filename = UUID.randomUUID() + "." + getExtensionByStringHandling(mediaType);
       final String uploadDir = Paths.get(
           UPLOAD_DIR + File.separator + filename).toString();
+      final String thumbnailDir = Paths.get(
+          THUMBNAIL_DIR + File.separator + filename).toString();
 
       return Mono.zip(titleMono, isPublicMono, latitudeMono, longitudeMono, productLevelMono)
           .flatMap(data ->
@@ -72,6 +80,7 @@ public final class ImageRestConverter {
                       .filename(filename)
                       .mediaType(mediaType)
                       .uploadDir(uploadDir)
+                      .thumbnailDir(thumbnailDir)
                       .latitude(data.getT3())
                       .longitude(data.getT4())
                       .productLevel(data.getT5())

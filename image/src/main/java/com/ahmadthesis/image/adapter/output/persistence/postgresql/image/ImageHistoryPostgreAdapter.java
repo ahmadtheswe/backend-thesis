@@ -1,7 +1,7 @@
-package com.ahmadthesis.image.adapter.output.persistence.postgresql;
+package com.ahmadthesis.image.adapter.output.persistence.postgresql.image;
 
-import com.ahmadthesis.image.adapter.output.persistence.postgresql.converter.ImageHistoryConverter;
-import com.ahmadthesis.image.adapter.output.persistence.postgresql.sql.R2DBCImageHistoryRepository;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.converter.ImageHistoryConverter;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.sql.ImageHistoryRepository;
 import com.ahmadthesis.image.application.port.output.ImageHistoryDatabase;
 import com.ahmadthesis.image.domain.image.ImageHistory;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class ImageHistoryPostgreAdapter implements ImageHistoryDatabase {
 
-  private final R2DBCImageHistoryRepository repository;
+  private final ImageHistoryRepository repository;
 
   @Override
   public Mono<ImageHistory> save(ImageHistory imageHistory) {

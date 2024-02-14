@@ -1,6 +1,6 @@
 package com.ahmadthesis.image.application.port.input;
 
-import com.ahmadthesis.image.adapter.output.persistence.postgresql.ImagePostgreAdapter;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.ImagePostgreAdapter;
 import com.ahmadthesis.image.application.port.output.ImageDatabase;
 import com.ahmadthesis.image.application.usecase.ImageService;
 import com.ahmadthesis.image.domain.image.Image;

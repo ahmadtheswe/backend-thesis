@@ -1,8 +1,8 @@
-package com.ahmadthesis.image.adapter.output.persistence.postgresql;
+package com.ahmadthesis.image.adapter.output.persistence.postgresql.image;
 
-import com.ahmadthesis.image.adapter.output.persistence.postgresql.converter.ImageConverter;
-import com.ahmadthesis.image.adapter.output.persistence.postgresql.data.ImageEntity;
-import com.ahmadthesis.image.adapter.output.persistence.postgresql.sql.R2DBCImageRepository;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.converter.ImageConverter;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.data.ImageEntity;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.sql.ImageRepository;
 import com.ahmadthesis.image.application.port.output.ImageDatabase;
 import com.ahmadthesis.image.domain.image.Image;
 import java.math.BigDecimal;
@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class ImagePostgreAdapter implements ImageDatabase {
 
-  private final R2DBCImageRepository repository;
+  private final ImageRepository repository;
 
   @Override
   public Mono<Image> save(final Image image) {

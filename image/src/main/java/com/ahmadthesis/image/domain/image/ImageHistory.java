@@ -1,6 +1,5 @@
 package com.ahmadthesis.image.domain.image;
 
-import com.ahmadthesis.image.domain.objectvalue.image.Activity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Generated;

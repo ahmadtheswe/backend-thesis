@@ -1,8 +1,8 @@
-package com.ahmadthesis.image.adapter.output.persistence.postgresql.converter;
+package com.ahmadthesis.image.adapter.output.persistence.postgresql.image.converter;
 
-import com.ahmadthesis.image.adapter.output.persistence.postgresql.data.ImageHistoryEntity;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.data.ImageHistoryEntity;
 import com.ahmadthesis.image.domain.image.ImageHistory;
-import com.ahmadthesis.image.domain.objectvalue.image.Activity;
+import com.ahmadthesis.image.domain.image.Activity;
 
 public final class ImageHistoryConverter {
   public static ImageHistory convertEntityToDomain(final ImageHistoryEntity entity) {

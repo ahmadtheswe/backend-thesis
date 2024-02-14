@@ -27,6 +27,8 @@ public class ImageAdminRouter {
             .and(accept(MediaType.APPLICATION_JSON)), handler::getImagesPagination)
         .andRoute(GET("/image/v1/admin/view")
             .and(accept(MediaType.APPLICATION_OCTET_STREAM)), handler::viewImageFile)
+        .andRoute(GET("/image/v1/admin/view/thumbnail")
+            .and(accept(MediaType.APPLICATION_OCTET_STREAM)), handler::viewImageThumbnailFile)
         .andRoute(GET("/image/v1/admin/user-detail")
             .and(accept(MediaType.APPLICATION_JSON)), handler::handleRequest);
   }

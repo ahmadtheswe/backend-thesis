@@ -111,6 +111,25 @@ public class ImageRegularHandler {
         )));
   }
 
+  Mono<ServerResponse> viewImageThumbnailFile(final ServerRequest request) {
+    return ImageRestConverter.extractIdRequest(request)
+        .flatMap(imageService::getImageById)
+        .flatMap(image -> {
+          final File file = new File(image.getThumbnailImageDir());
+          final Resource resource = new FileSystemResource(file);
+          return ServerResponse.ok()
+              .bodyValue(resource);
+        })
+        .switchIfEmpty(Mono.defer(() -> ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(
+            new DataResponse<>(
+                null,
+                new ArrayList<>() {{
+                  add(HttpStatus.NOT_FOUND.toString());
+                }}
+            )
+        )));
+  }
+
   Mono<ServerResponse> viewPublicImageFile(final ServerRequest request) {
     return ImageRestConverter.extractIdRequest(request)
         .flatMap(imageService::getPublicImageById)

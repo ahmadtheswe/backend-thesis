@@ -25,6 +25,8 @@ public class ImageRegularRouter {
             .and(accept(MediaType.APPLICATION_JSON)), handler::getUserImagesCollectionPagination)
         .andRoute(GET("/image/v1/regular/view")
             .and(accept(MediaType.APPLICATION_OCTET_STREAM)), handler::viewImageFile)
+        .andRoute(GET("/image/v1/regular/view/thumbnail")
+            .and(accept(MediaType.APPLICATION_OCTET_STREAM)), handler::viewImageThumbnailFile)
         .andRoute(GET("/image/v1/regular/on-sale/view")
             .and(accept(MediaType.APPLICATION_JSON)), handler::viewPublicImageFile);
   }

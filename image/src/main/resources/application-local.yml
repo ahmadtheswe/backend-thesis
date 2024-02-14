@@ -1,12 +1,21 @@
 server:
   port: 9092
 spring:
-  r2dbc:
-    url: 'r2dbc:postgresql://postgres@localhost:5432/image'
-    password: 'postgres'
-  h2:
-    console:
-      enabled: true
+  db-connection:
+    image: 'r2dbc:postgres://postgres:postgres@localhost:5432/image?schema=public'
+    payment: 'r2dbc:postgres://postgres:postgres@localhost:5446/payment?schema=public'
+#  r2dbc:
+#    image-datasource:
+#      url: 'r2dbc:postgresql://postgres@localhost:5432/image'
+#      username: 'postgres'
+#      password: 'postgres'
+#    payment-datasource:
+#      url: 'r2dbc:postgresql://postgres@localhost:5446/payment'
+#      username: 'postgres'
+#      password: 'postgres'
+#  h2:
+#    console:
+#      enabled: true
   security:
     oauth2:
       resourceserver:

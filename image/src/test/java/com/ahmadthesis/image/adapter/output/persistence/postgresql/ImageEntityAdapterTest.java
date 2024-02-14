@@ -1,7 +1,8 @@
 package com.ahmadthesis.image.adapter.output.persistence.postgresql;
 
-import com.ahmadthesis.image.adapter.output.persistence.postgresql.data.ImageEntity;
-import com.ahmadthesis.image.adapter.output.persistence.postgresql.sql.R2DBCImageRepository;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.ImagePostgreAdapter;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.data.ImageEntity;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.sql.ImageRepository;
 import com.ahmadthesis.image.domain.image.Image;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ public class ImageEntityAdapterTest {
   @InjectMocks
   private ImagePostgreAdapter database;
   @Mock
-  R2DBCImageRepository repository;
+  ImageRepository repository;
 
   @Test
   @DisplayName("should save image data to database")
