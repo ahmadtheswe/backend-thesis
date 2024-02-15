@@ -144,7 +144,7 @@ public class ImageAdminHandler {
   public Mono<ServerResponse> handleRequest(final ServerRequest request) {
     return request.principal()
         .flatMap(principal -> {
-          String username = principal.getName();
+          final String username = principal.getName();
           return ServerResponse.ok().bodyValue(username);
         });
   }

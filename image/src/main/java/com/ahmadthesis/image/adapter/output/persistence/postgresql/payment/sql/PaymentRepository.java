@@ -12,4 +12,6 @@ public interface PaymentRepository extends R2dbcRepository<PaymentEntity, String
   Flux<PaymentEntity> getPaymentEntitiesByUserIdAndPaymentStatusAndValidDateIsAfter(
       String userId, String paymentStatus, Instant today
   );
+
+  Mono<PaymentEntity> getFirstByUserIdAndValidDateAfterOrderByValidDateDesc(String userId, Instant today);
 }

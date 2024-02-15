@@ -1,24 +1,24 @@
 package com.ahmadthesis.image.adapter.input.rest.image.v1.converter;
 
 import com.ahmadthesis.image.adapter.input.rest.common.parser.FilePartParser;
-import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.CartDeleteRequest;
-import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.CartSaveRequest;
-import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.ImageUploadResponse;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.PaginationRequest;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.SaveImageRequest;
+import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.ImageUploadResponse;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.PaginationInfo;
 import com.ahmadthesis.image.domain.image.Image;
-import java.math.BigDecimal;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.codec.multipart.FilePart;
-import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.server.ServerRequest;
-import reactor.core.publisher.Mono;
-
 import java.io.File;
+import java.math.BigDecimal;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import reactor.core.publisher.Mono;
 
 @Component
 public final class ImageRestConverter {
@@ -132,11 +132,18 @@ public final class ImageRestConverter {
     return Mono.just(request.queryParam("id").orElse(""));
   }
 
-  public static Mono<CartDeleteRequest> getCartId(ServerRequest request) {
-    return request.bodyToMono(CartDeleteRequest.class);
+  public static String extractUserId(ServerRequest request) {
+    return request.headers().header("Authorization").stream()
+        .findFirst()
+        .map(headerValue -> {
+          String token = headerValue.replace("Bearer ", "");
+          Jwt jwt = parseJwt(token);
+          JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(jwt);
+          return jwtAuthenticationToken.getToken().getClaimAsString(StandardClaimNames.PREFERRED_USERNAME);
+        }).orElse(null);
   }
 
-  public static Mono<CartSaveRequest> getImageId(ServerRequest request) {
-    return request.bodyToMono(CartSaveRequest.class);
+  private static Jwt parseJwt(String token) {
+    return Jwt.withTokenValue(token).build();
   }
 }
