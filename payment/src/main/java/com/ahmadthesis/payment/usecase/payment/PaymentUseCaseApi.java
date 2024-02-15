@@ -31,14 +31,14 @@ public class PaymentUseCaseApi implements PersistPayment {
   private final PaymentRetriever paymentRetriever;
 
   @Override
-  public Mono<Map<String, String>> saveCharge(TransactionsDTO transactionsDTO) {
+  public Mono<Map<String, String>> saveCharge(TransactionsDTO transactionsDTO, String userId) {
     return Mono.fromSupplier(() -> midtransPersister.charge(
             TransactionConverter.toPayment(transactionsDTO)))
         .flatMap(charge -> {
           final Payment payment = Payment.builder()
               .id(charge.get("orderId"))
               .email(transactionsDTO.getEmail())
-              .userId(transactionsDTO.getUserId())
+              .userId(userId)
               .packageType(PackageType.valueOf(transactionsDTO.getPackageType()))
               .paymentType(transactionsDTO.getPaymentType())
               .paymentStatus(PaymentStatus.UNPAID)
