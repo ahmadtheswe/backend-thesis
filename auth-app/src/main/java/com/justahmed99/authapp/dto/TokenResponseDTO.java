@@ -26,4 +26,5 @@ public class TokenResponseDTO {
   @JsonProperty("scope")
   private String scope;
   private String role;
+  private String subscriptionLevel;
 }

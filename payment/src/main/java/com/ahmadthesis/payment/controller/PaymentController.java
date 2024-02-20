@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("payment")
 @RequiredArgsConstructor
-public class MidtransController {
+public class PaymentController {
   private final PersistPayment persistPayment;
 
   @PostMapping("/charge")

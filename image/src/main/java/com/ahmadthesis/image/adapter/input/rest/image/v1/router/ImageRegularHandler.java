@@ -5,16 +5,20 @@ import com.ahmadthesis.image.adapter.input.rest.image.v1.converter.ImageRestConv
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.PaginationResponse;
 import com.ahmadthesis.image.application.usecase.ImageService;
 import com.ahmadthesis.image.application.usecase.PaymentService;
+import com.ahmadthesis.image.application.usecase.PaymentWebClientService;
 import com.ahmadthesis.image.domain.image.Image;
 import com.ahmadthesis.image.domain.image.ProductLevel;
 import com.ahmadthesis.image.domain.payment.PackageType;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -27,6 +31,7 @@ public class ImageRegularHandler {
 
   private final ImageService imageService;
   private final PaymentService paymentService;
+  private final PaymentWebClientService paymentWebClientService;
 
   Mono<ServerResponse> getImagesPagination(final ServerRequest request) {
     return ImageRestConverter.generatePaginationRequest(request)
@@ -126,16 +131,17 @@ public class ImageRegularHandler {
             return ServerResponse.status(HttpStatus.NOT_FOUND).build();
           } else {
             return request.principal().flatMap(principal -> {
-              final String username = principal.getName();
-              return paymentService.getRecentPayment(username).flatMap(payment -> {
+              final Authentication authentication = (Authentication) principal;
+              final String jwtToken = extractJwtToken(authentication);
+              return paymentWebClientService.getActivePackage(jwtToken).flatMap(productLevel -> {
                 if (image.getProductLevel().equals(ProductLevel.FREE)) {
                   return ServerResponse.ok()
                       .bodyValue(resource);
-                } else if (payment.getPackageType().equals(PackageType.PRO) && image.getProductLevel()
+                } else if (productLevel.equals(PackageType.PRO.getName()) && image.getProductLevel()
                     .equals(ProductLevel.PRO)) {
                   return ServerResponse.ok()
                       .bodyValue(resource);
-                } else if (payment.getPackageType().equals(PackageType.PREMIUM)) {
+                } else if (productLevel.equals(PackageType.PREMIUM.getName())) {
                   return ServerResponse.ok()
                       .bodyValue(resource);
                 } else {
@@ -146,6 +152,15 @@ public class ImageRegularHandler {
           }
         })
         .switchIfEmpty(Mono.defer(() -> ServerResponse.status(HttpStatus.NOT_FOUND).build()));
+  }
+
+  private String extractJwtToken(Authentication authentication) {
+    try {
+      Jwt credentials = (Jwt) authentication.getCredentials();
+      return credentials.getTokenValue();
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Unable to extract JWT token from authentication credentials.", e);
+    }
   }
 
   Mono<ServerResponse> viewPublicImageFile(final ServerRequest request) {
