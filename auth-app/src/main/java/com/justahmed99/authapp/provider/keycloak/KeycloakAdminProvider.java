@@ -1,9 +1,9 @@
-package com.justahmed99.authapp.provider;
+package com.justahmed99.authapp.provider.keycloak;
 
 import com.justahmed99.authapp.business.Login;
 import com.justahmed99.authapp.business.Token;
 import com.justahmed99.authapp.business.TokenConverter;
-import com.nimbusds.jose.util.Pair;
+import com.justahmed99.authapp.provider.userinfo.UserException;
 import jakarta.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;

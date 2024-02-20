@@ -34,7 +34,7 @@ public class PaymentController {
 
   @GetMapping("")
   public Mono<ActivePackageDTO> getActivePackage(final JwtAuthenticationToken auth) {
-    String userId = auth.getToken().getClaimAsString(StandardClaimNames.SUB);
+    final String userId = auth.getToken().getClaimAsString(StandardClaimNames.SUB);
     return persistPayment.getActivePayment(userId);
   }
 }

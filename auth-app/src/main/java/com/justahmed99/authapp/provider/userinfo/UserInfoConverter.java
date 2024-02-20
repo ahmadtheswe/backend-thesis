@@ -1,4 +1,4 @@
-package com.justahmed99.authapp.provider;
+package com.justahmed99.authapp.provider.userinfo;
 
 import java.util.UUID;
 import org.keycloak.representations.idm.UserRepresentation;

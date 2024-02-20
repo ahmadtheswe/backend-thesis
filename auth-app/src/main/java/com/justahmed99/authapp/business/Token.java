@@ -17,4 +17,5 @@ public class Token {
   private String scope;
   private String username;
   private String role;
+  private String subscriptionLevel;
 }

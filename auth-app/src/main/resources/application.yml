@@ -48,3 +48,7 @@ keycloak-admin:
 email:
   sender-address: ${AUTH_EMAIL}
   sender-password: ${AUTH_PASS}
+
+api:
+  payment:
+    get-subscription-level: 'http://localhost:9093/payment'

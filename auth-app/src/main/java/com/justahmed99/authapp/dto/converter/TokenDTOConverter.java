@@ -16,6 +16,7 @@ public final class TokenDTOConverter {
         .sessionState(token.getSessionState())
         .scope(token.getScope())
         .role(token.getRole())
+        .subscriptionLevel(token.getSubscriptionLevel())
         .build();
   }
 }

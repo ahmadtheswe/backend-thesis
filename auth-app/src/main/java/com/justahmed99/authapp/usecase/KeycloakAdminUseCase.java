@@ -10,11 +10,12 @@ import com.justahmed99.authapp.dto.converter.LoginConverter;
 import com.justahmed99.authapp.dto.converter.RefreshTokenConverter;
 import com.justahmed99.authapp.dto.converter.RegistrationConverter;
 import com.justahmed99.authapp.dto.converter.TokenDTOConverter;
-import com.justahmed99.authapp.provider.KeycloakAdminPersister;
-import com.justahmed99.authapp.provider.UserException;
-import com.justahmed99.authapp.provider.UserInfoConverter;
-import com.justahmed99.authapp.provider.UserInfoPersister;
-import com.justahmed99.authapp.provider.UserInfoRetriever;
+import com.justahmed99.authapp.provider.keycloak.KeycloakAdminPersister;
+import com.justahmed99.authapp.provider.payment.PaymentWebClientRetriever;
+import com.justahmed99.authapp.provider.userinfo.UserException;
+import com.justahmed99.authapp.provider.userinfo.UserInfoConverter;
+import com.justahmed99.authapp.provider.userinfo.UserInfoPersister;
+import com.justahmed99.authapp.provider.userinfo.UserInfoRetriever;
 import com.justahmed99.authapp.provider.email.Email;
 import com.justahmed99.authapp.provider.email.EmailPersister;
 import java.util.List;
@@ -40,6 +41,8 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
   private final UserInfoRetriever userInfoRetriever;
 
   private final EmailPersister emailPersister;
+
+  private final PaymentWebClientRetriever paymentWebClientRetriever;
 
   @Override
   public Mono<ResponseEntity<ReturnDataDTO<String>>> createRegularUser(
@@ -79,10 +82,15 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
           return userInfoRetriever.getUserInfoByUsername(token.getUsername())
               .flatMap(userInfo -> {
                 token.setRole(userInfo.getRole());
-                return Mono.just(ResponseEntity.ok(ReturnDataDTO.<TokenResponseDTO>builder()
-                    .data(TokenDTOConverter.fromTokenToTokenDTO(token))
-                    .messages(List.of("Login Success!"))
-                    .build()));
+                return paymentWebClientRetriever.getActivePackage(token.getAccessToken())
+                    .flatMap(subscriptionLevel -> {
+                      token.setSubscriptionLevel(
+                          token.getRole().equals("admin") ? "PREMIUM" : subscriptionLevel);
+                      return Mono.just(ResponseEntity.ok(ReturnDataDTO.<TokenResponseDTO>builder()
+                          .data(TokenDTOConverter.fromTokenToTokenDTO(token))
+                          .messages(List.of("Login Success!"))
+                          .build()));
+                    });
               });
         })
         .onErrorResume(throwable -> {

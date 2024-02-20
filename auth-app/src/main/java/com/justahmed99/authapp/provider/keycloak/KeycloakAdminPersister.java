@@ -1,4 +1,4 @@
-package com.justahmed99.authapp.provider;
+package com.justahmed99.authapp.provider.keycloak;
 
 import com.justahmed99.authapp.business.Login;
 import com.justahmed99.authapp.business.Token;

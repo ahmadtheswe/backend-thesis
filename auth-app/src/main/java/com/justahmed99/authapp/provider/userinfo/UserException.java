@@ -1,4 +1,4 @@
-package com.justahmed99.authapp.provider;
+package com.justahmed99.authapp.provider.userinfo;
 
 public class UserException extends RuntimeException {
   private final int statusCode;

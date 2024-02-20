@@ -1,4 +1,4 @@
-package com.justahmed99.authapp.provider;
+package com.justahmed99.authapp.provider.userinfo;
 
 import java.time.LocalDateTime;
 import lombok.Builder;

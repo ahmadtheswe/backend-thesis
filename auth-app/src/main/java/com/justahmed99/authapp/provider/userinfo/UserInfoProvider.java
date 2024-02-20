@@ -1,4 +1,4 @@
-package com.justahmed99.authapp.provider;
+package com.justahmed99.authapp.provider.userinfo;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
