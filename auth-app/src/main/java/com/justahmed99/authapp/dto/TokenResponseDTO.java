@@ -27,4 +27,6 @@ public class TokenResponseDTO {
   private String scope;
   private String role;
   private String subscriptionLevel;
+  private String email;
+  private String username;
 }

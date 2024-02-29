@@ -82,6 +82,8 @@ public class KeycloakAdminUseCase implements KeycloakAdminService {
           return userInfoRetriever.getUserInfoByUsername(token.getUsername())
               .flatMap(userInfo -> {
                 token.setRole(userInfo.getRole());
+                token.setEmail(userInfo.getEmail());
+                token.setUsername(userInfo.getUsername());
                 return paymentWebClientRetriever.getActivePackage(token.getAccessToken())
                     .flatMap(subscriptionLevel -> {
                       token.setSubscriptionLevel(

@@ -17,6 +17,8 @@ public final class TokenDTOConverter {
         .scope(token.getScope())
         .role(token.getRole())
         .subscriptionLevel(token.getSubscriptionLevel())
+        .email(token.getEmail())
+        .username(token.getUsername())
         .build();
   }
 }

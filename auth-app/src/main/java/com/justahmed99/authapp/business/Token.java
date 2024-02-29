@@ -18,4 +18,5 @@ public class Token {
   private String username;
   private String role;
   private String subscriptionLevel;
+  private String email;
 }
