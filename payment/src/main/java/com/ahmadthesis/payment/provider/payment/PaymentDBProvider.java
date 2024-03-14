@@ -44,9 +44,8 @@ public class PaymentDBProvider implements PaymentPersister, PaymentRetriever {
       } else {
         return Mono.just(ActivePackage.builder().activePackage(PackageType.FREE).build());
       }
-    }).next().switchIfEmpty(Mono.defer(() -> {
-      return Mono.just(ActivePackage.builder().activePackage(PackageType.FREE).build());
-    }));
+    }).next().switchIfEmpty(Mono.defer(
+        () -> Mono.just(ActivePackage.builder().activePackage(PackageType.FREE).build())));
   }
 
   @Override
@@ -61,8 +60,8 @@ public class PaymentDBProvider implements PaymentPersister, PaymentRetriever {
   public Mono<Void> deleteActivePayment(String userId) {
     final Instant today = ZonedDateTime.now(ZoneId.of("Asia/Jakarta")).toInstant();
     return paymentRepository.getPaymentEntityByUserIdAndPaymentStatusAndPaymentDueDateAfterOrderByPaymentDueDateDesc(
-        userId,
-        PaymentStatus.UNPAID.getStatus(), today)
+            userId,
+            PaymentStatus.UNPAID.getStatus(), today)
         .flatMap(paymentRepository::delete);
   }
 }
