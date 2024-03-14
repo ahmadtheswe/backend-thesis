@@ -4,6 +4,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,14 +17,15 @@ import reactor.core.publisher.Mono;
 @RequestMapping("payment")
 @RequiredArgsConstructor
 public class PaymentController {
+
   private final PersistPayment persistPayment;
 
   @PostMapping("/charge")
-  public Mono<Map<String, String>> createCharge(
+  public Mono<ChargeDTO> createCharge(
       @RequestBody final TransactionsDTO transactionRequest,
       final JwtAuthenticationToken auth
-      ) {
-    String userId = auth.getToken().getClaimAsString(StandardClaimNames.SUB);
+  ) {
+    String userId = auth.getToken().getClaimAsString(StandardClaimNames.PREFERRED_USERNAME);
     return persistPayment.saveCharge(transactionRequest, userId);
   }
 
@@ -34,7 +36,19 @@ public class PaymentController {
 
   @GetMapping("")
   public Mono<ActivePackageDTO> getActivePackage(final JwtAuthenticationToken auth) {
-    final String userId = auth.getToken().getClaimAsString(StandardClaimNames.SUB);
+    final String userId = auth.getToken().getClaimAsString(StandardClaimNames.PREFERRED_USERNAME);
     return persistPayment.getActivePayment(userId);
+  }
+
+  @GetMapping("/on-progress")
+  public Mono<PaymentDTO> getOnProgressPayment(final JwtAuthenticationToken auth) {
+    final String userId = auth.getToken().getClaimAsString(StandardClaimNames.PREFERRED_USERNAME);
+    return persistPayment.getOnProgressPayment(userId);
+  }
+
+  @DeleteMapping("/cancel")
+  public Mono<Void> cancelActivePayment(final JwtAuthenticationToken auth) {
+    final String userId = auth.getToken().getClaimAsString(StandardClaimNames.PREFERRED_USERNAME);
+    return persistPayment.cancelActivePayment(userId);
   }
 }

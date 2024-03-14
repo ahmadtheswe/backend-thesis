@@ -48,4 +48,21 @@ public class PaymentDBProvider implements PaymentPersister, PaymentRetriever {
       return Mono.just(ActivePackage.builder().activePackage(PackageType.FREE).build());
     }));
   }
+
+  @Override
+  public Mono<Payment> getOnProgressPaymentByUserId(String userId) {
+    final Instant today = ZonedDateTime.now(ZoneId.of("Asia/Jakarta")).toInstant();
+    return paymentRepository.getPaymentEntityByUserIdAndPaymentStatusAndPaymentDueDateAfterOrderByPaymentDueDateDesc(
+        userId,
+        PaymentStatus.UNPAID.getStatus(), today).map(PaymentConverter::toBusiness);
+  }
+
+  @Override
+  public Mono<Void> deleteActivePayment(String userId) {
+    final Instant today = ZonedDateTime.now(ZoneId.of("Asia/Jakarta")).toInstant();
+    return paymentRepository.getPaymentEntityByUserIdAndPaymentStatusAndPaymentDueDateAfterOrderByPaymentDueDateDesc(
+        userId,
+        PaymentStatus.UNPAID.getStatus(), today)
+        .flatMap(paymentRepository::delete);
+  }
 }

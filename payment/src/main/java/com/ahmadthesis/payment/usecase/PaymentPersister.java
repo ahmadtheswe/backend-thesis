@@ -5,4 +5,5 @@ import reactor.core.publisher.Mono;
 
 public interface PaymentPersister {
   Mono<Void> savePayment(Payment payment, Boolean isNew);
+  Mono<Void> deleteActivePayment(String userId);
 }

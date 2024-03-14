@@ -7,5 +7,6 @@ import reactor.core.publisher.Mono;
 public interface PaymentRetriever {
   Mono<Payment> getPaymentById(String paymentId);
   Mono<ActivePackage> getActivePackage(String userId);
+  Mono<Payment> getOnProgressPaymentByUserId(String userId);
 
 }

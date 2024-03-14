@@ -1,5 +1,6 @@
 package com.ahmadthesis.payment.provider.midtrans;
 
+import com.ahmadthesis.payment.business.Charge;
 import com.ahmadthesis.payment.business.Payment;
 import com.ahmadthesis.payment.usecase.MidtransPersister;
 import com.ahmadthesis.payment.usecase.MidtransRetriever;
@@ -21,7 +22,7 @@ public class MidtransProvider implements MidtransPersister, MidtransRetriever {
   private final MidtransSnapApi midtransSnapApi;
 
   @Override
-  public Map<String, String> charge(Payment payment) {
+  public Charge charge(Payment payment) {
     try {
       final String orderId = UUID.randomUUID().toString();
       final Map<String, Object> transactionDetails = new HashMap<>();
@@ -33,11 +34,11 @@ public class MidtransProvider implements MidtransPersister, MidtransRetriever {
       chargeRequest.put("transaction_details", transactionDetails);
       chargeRequest.put("payment_type", payment.getPaymentType());
 
-      final Map<String, String> response = new HashMap<>();
-      response.put("orderId", orderId);
-      response.put("token", midtransSnapApi.createTransactionToken(chargeRequest));
-      response.put("redirectUrl", midtransSnapApi.createTransactionRedirectUrl(chargeRequest));
-      return response;
+      return Charge.builder()
+          .orderId(orderId)
+          .redirectUrl(midtransSnapApi.createTransactionRedirectUrl(chargeRequest))
+          .midtransToken(midtransSnapApi.createTransactionToken(chargeRequest))
+          .build();
     } catch (MidtransError e) {
       throw new RuntimeException(e);
     }

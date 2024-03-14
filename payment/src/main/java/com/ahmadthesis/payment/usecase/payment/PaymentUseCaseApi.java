@@ -5,8 +5,11 @@ import com.ahmadthesis.payment.business.Payment;
 import com.ahmadthesis.payment.business.PaymentStatus;
 import com.ahmadthesis.payment.controller.ActivePackageConverter;
 import com.ahmadthesis.payment.controller.ActivePackageDTO;
+import com.ahmadthesis.payment.controller.ChargeConverter;
+import com.ahmadthesis.payment.controller.ChargeDTO;
+import com.ahmadthesis.payment.controller.PaymentConverter;
+import com.ahmadthesis.payment.controller.PaymentDTO;
 import com.ahmadthesis.payment.controller.PersistPayment;
-import com.ahmadthesis.payment.controller.TransactionConverter;
 import com.ahmadthesis.payment.controller.TransactionsDTO;
 import com.ahmadthesis.payment.usecase.MidtransPersister;
 import com.ahmadthesis.payment.usecase.MidtransRetriever;
@@ -16,7 +19,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -31,25 +33,28 @@ public class PaymentUseCaseApi implements PersistPayment {
   private final PaymentRetriever paymentRetriever;
 
   @Override
-  public Mono<Map<String, String>> saveCharge(TransactionsDTO transactionsDTO, String userId) {
+  public Mono<ChargeDTO> saveCharge(final TransactionsDTO transactionsDTO, final String userId) {
     return Mono.fromSupplier(() -> midtransPersister.charge(
-            TransactionConverter.toPayment(transactionsDTO)))
+            PaymentConverter.toPayment(transactionsDTO)))
         .flatMap(charge -> {
           final Payment payment = Payment.builder()
-              .id(charge.get("orderId"))
+              .id(charge.getOrderId())
               .email(transactionsDTO.getEmail())
               .userId(userId)
               .packageType(PackageType.valueOf(transactionsDTO.getPackageType()))
               .paymentType(transactionsDTO.getPaymentType())
               .paymentStatus(PaymentStatus.UNPAID)
+              .redirectUrl(charge.getRedirectUrl())
+              .midtransToken(charge.getMidtransToken())
               .build();
 
           return paymentPersister.savePayment(payment, true).thenReturn(charge);
-        });
+        })
+        .map(ChargeConverter::toDTO);
   }
 
   @Override
-  public Mono<Object> checkCharge(String orderId) {
+  public Mono<Object> checkCharge(final String orderId) {
     return midtransRetriever.checkCharge(orderId)
         .flatMap(midtransResp -> paymentRetriever.getPaymentById(orderId).flatMap(payment -> {
           if (midtransResp.get("transaction_status").equals("settlement")) {
@@ -71,7 +76,18 @@ public class PaymentUseCaseApi implements PersistPayment {
   }
 
   @Override
-  public Mono<ActivePackageDTO> getActivePayment(String userId) {
+  public Mono<ActivePackageDTO> getActivePayment(final String userId) {
     return paymentRetriever.getActivePackage(userId).map(ActivePackageConverter::toDTO);
+  }
+
+  @Override
+  public Mono<PaymentDTO> getOnProgressPayment(final String userId) {
+    return paymentRetriever.getOnProgressPaymentByUserId(userId)
+        .map(PaymentConverter::toPaymentDTO);
+  }
+
+  @Override
+  public Mono<Void> cancelActivePayment(final String userId) {
+    return paymentPersister.deleteActivePayment(userId);
   }
 }

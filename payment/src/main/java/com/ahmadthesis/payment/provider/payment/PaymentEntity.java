@@ -26,6 +26,9 @@ public class PaymentEntity implements Persistable<String> {
   private String paymentStatus;
   private Instant payDate;
   private Instant validDate;
+  private String redirectUrl;
+  private String midtransToken;
+  private Instant paymentDueDate;
 
   @Transient
   private boolean isNew = true;

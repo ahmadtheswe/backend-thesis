@@ -1,4 +1,4 @@
-package com.ahmadthesis.payment.business;
+package com.ahmadthesis.payment.controller;
 
 import java.time.ZonedDateTime;
 import lombok.Builder;
@@ -6,15 +6,12 @@ import lombok.Data;
 
 @Builder
 @Data
-public class Payment {
+public class PaymentDTO {
   private String id;
   private String userId;
   private String email;
-  private PackageType packageType;
-  private String paymentType;
-  private PaymentStatus paymentStatus;
-  private ZonedDateTime payDate;
-  private ZonedDateTime validDate;
+  private String packageId;
+  private String paymentStatus;
   private String redirectUrl;
   private String midtransToken;
   private ZonedDateTime paymentDueDate;

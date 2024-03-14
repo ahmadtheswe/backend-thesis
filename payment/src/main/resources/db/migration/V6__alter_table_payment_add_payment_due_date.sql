@@ -1,0 +1,1 @@
+alter table "public".payment add column payment_due_date timestamptz;

@@ -1,0 +1,1 @@
+alter table "public".payment add column midtrans_token varchar(36);

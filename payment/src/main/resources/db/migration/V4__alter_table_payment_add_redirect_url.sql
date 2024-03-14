@@ -1,0 +1,1 @@
+alter table "public".payment add column redirect_url varchar(200);
