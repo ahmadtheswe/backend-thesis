@@ -1,6 +1,7 @@
 package com.ahmadthesis.payment.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -42,7 +44,9 @@ public class PaymentController {
   @GetMapping("/on-progress")
   public Mono<PaymentDTO> getOnProgressPayment(final JwtAuthenticationToken auth) {
     final String userId = auth.getToken().getClaimAsString(StandardClaimNames.PREFERRED_USERNAME);
-    return persistPayment.getOnProgressPayment(userId);
+    return persistPayment.getOnProgressPayment(userId)
+        .switchIfEmpty(Mono.error(
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "On progress payment not found")));
   }
 
   @DeleteMapping("/cancel")

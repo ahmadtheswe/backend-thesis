@@ -30,6 +30,7 @@ public class PaymentConverter {
         .email(paymentEntity.getEmail())
         .packageType(PackageType.valueOf(paymentEntity.getPackageId()))
         .paymentStatus(PaymentStatus.valueOf(paymentEntity.getPaymentStatus()))
+        .redirectUrl(paymentEntity.getRedirectUrl())
         .payDate(paymentEntity.getPayDate() == null ? null
             : paymentEntity.getPayDate().atZone(ZoneId.of("Asia/Jakarta")))
         .validDate(paymentEntity.getValidDate() == null ? null
