@@ -2,6 +2,8 @@ package com.ahmadthesis.payment.controller;
 
 import com.ahmadthesis.payment.business.PackageType;
 import com.ahmadthesis.payment.business.Payment;
+import com.ahmadthesis.payment.controller.dto.PaymentDTO;
+import com.ahmadthesis.payment.controller.dto.TransactionsDTO;
 
 public class PaymentConverter {
   public static Payment toPayment(TransactionsDTO transactionsDTO) {

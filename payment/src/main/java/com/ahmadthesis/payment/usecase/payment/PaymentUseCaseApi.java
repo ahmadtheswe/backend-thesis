@@ -4,13 +4,13 @@ import com.ahmadthesis.payment.business.PackageType;
 import com.ahmadthesis.payment.business.Payment;
 import com.ahmadthesis.payment.business.PaymentStatus;
 import com.ahmadthesis.payment.controller.ActivePackageConverter;
-import com.ahmadthesis.payment.controller.ActivePackageDTO;
+import com.ahmadthesis.payment.controller.dto.ActivePackageDTO;
 import com.ahmadthesis.payment.controller.ChargeConverter;
-import com.ahmadthesis.payment.controller.ChargeDTO;
+import com.ahmadthesis.payment.controller.dto.ChargeDTO;
 import com.ahmadthesis.payment.controller.PaymentConverter;
-import com.ahmadthesis.payment.controller.PaymentDTO;
+import com.ahmadthesis.payment.controller.dto.PaymentDTO;
 import com.ahmadthesis.payment.controller.PersistPayment;
-import com.ahmadthesis.payment.controller.TransactionsDTO;
+import com.ahmadthesis.payment.controller.dto.TransactionsDTO;
 import com.ahmadthesis.payment.usecase.MidtransPersister;
 import com.ahmadthesis.payment.usecase.MidtransRetriever;
 import com.ahmadthesis.payment.usecase.PaymentPersister;
@@ -20,7 +20,9 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -69,9 +71,12 @@ public class PaymentUseCaseApi implements PersistPayment {
             payment.setPayDate(payDate);
             payment.setValidDate(payDate.plusDays(30));
 
-            return paymentPersister.savePayment(payment, false).then();
+            return paymentPersister.savePayment(payment, false)
+                .then(Mono.defer(() -> Mono.just(payment)));
           }
-          return Mono.just(payment);
+
+          return Mono.error(
+              new ResponseStatusException(HttpStatus.NOT_FOUND, "On progress payment not found"));
         }));
   }
 

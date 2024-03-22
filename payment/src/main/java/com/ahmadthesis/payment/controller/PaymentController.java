@@ -1,5 +1,9 @@
 package com.ahmadthesis.payment.controller;
 
+import com.ahmadthesis.payment.controller.dto.ActivePackageDTO;
+import com.ahmadthesis.payment.controller.dto.ChargeDTO;
+import com.ahmadthesis.payment.controller.dto.PaymentDTO;
+import com.ahmadthesis.payment.controller.dto.TransactionsDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
@@ -32,6 +36,11 @@ public class PaymentController {
 
   @GetMapping("/check")
   public Mono<Object> checkCharge(@RequestParam final String orderId) {
+    return persistPayment.checkCharge(orderId);
+  }
+
+  @PostMapping("/callback")
+  public Mono<Object> paymentCallBack(@RequestParam final String orderId) {
     return persistPayment.checkCharge(orderId);
   }
 

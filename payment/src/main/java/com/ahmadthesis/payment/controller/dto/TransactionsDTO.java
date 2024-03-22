@@ -1,4 +1,4 @@
-package com.ahmadthesis.payment.controller;
+package com.ahmadthesis.payment.controller.dto;
 
 import java.util.Set;
 import lombok.Builder;
