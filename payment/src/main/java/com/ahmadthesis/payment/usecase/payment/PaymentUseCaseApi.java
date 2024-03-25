@@ -4,10 +4,12 @@ import com.ahmadthesis.payment.business.PackageType;
 import com.ahmadthesis.payment.business.Payment;
 import com.ahmadthesis.payment.business.PaymentStatus;
 import com.ahmadthesis.payment.controller.ActivePackageConverter;
+import com.ahmadthesis.payment.controller.PaymentCallBackConverter;
 import com.ahmadthesis.payment.controller.dto.ActivePackageDTO;
 import com.ahmadthesis.payment.controller.ChargeConverter;
 import com.ahmadthesis.payment.controller.dto.ChargeDTO;
 import com.ahmadthesis.payment.controller.PaymentConverter;
+import com.ahmadthesis.payment.controller.dto.MidtransCallBackDTO;
 import com.ahmadthesis.payment.controller.dto.PaymentDTO;
 import com.ahmadthesis.payment.controller.PersistPayment;
 import com.ahmadthesis.payment.controller.dto.TransactionsDTO;
@@ -78,6 +80,12 @@ public class PaymentUseCaseApi implements PersistPayment {
           return Mono.error(
               new ResponseStatusException(HttpStatus.NOT_FOUND, "On progress payment not found"));
         }));
+  }
+
+  @Override
+  public Mono<Boolean> paymentCallBack(MidtransCallBackDTO midtransCallBackDTO) {
+    return paymentPersister.updatePaymentStatus(
+        PaymentCallBackConverter.toBusiness(midtransCallBackDTO));
   }
 
   @Override

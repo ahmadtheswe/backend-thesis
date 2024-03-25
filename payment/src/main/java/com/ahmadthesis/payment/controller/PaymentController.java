@@ -2,6 +2,7 @@ package com.ahmadthesis.payment.controller;
 
 import com.ahmadthesis.payment.controller.dto.ActivePackageDTO;
 import com.ahmadthesis.payment.controller.dto.ChargeDTO;
+import com.ahmadthesis.payment.controller.dto.MidtransCallBackDTO;
 import com.ahmadthesis.payment.controller.dto.PaymentDTO;
 import com.ahmadthesis.payment.controller.dto.TransactionsDTO;
 import lombok.RequiredArgsConstructor;
@@ -40,8 +41,8 @@ public class PaymentController {
   }
 
   @PostMapping("/callback")
-  public Mono<Object> paymentCallBack(@RequestParam final String orderId) {
-    return persistPayment.checkCharge(orderId);
+  public Mono<Boolean> paymentCallBack(@RequestBody final MidtransCallBackDTO midtransCallBackDTO) {
+    return persistPayment.paymentCallBack(midtransCallBackDTO);
   }
 
   @GetMapping("")

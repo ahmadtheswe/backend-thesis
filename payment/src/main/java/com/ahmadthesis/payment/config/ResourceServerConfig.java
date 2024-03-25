@@ -34,6 +34,7 @@ public class ResourceServerConfig {
             )
         ).authorizeExchange(authorizeExchangeSpec ->
             authorizeExchangeSpec
+                .pathMatchers("/payment/callback").permitAll()
                 .anyExchange().authenticated())
         .oauth2ResourceServer(oAuth2ResourceServerSpec ->
             oAuth2ResourceServerSpec.jwt(
