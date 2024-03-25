@@ -43,17 +43,26 @@ public class PaymentDBProvider implements PaymentPersister, PaymentRetriever {
   public Mono<ActivePackage> getActivePackage(String userId) {
     final Instant today = ZonedDateTime.now(ZoneId.of("Asia/Jakarta")).toInstant();
     return paymentRepository.getPaymentEntitiesByUserIdAndPaymentStatusAndValidDateIsAfter(
-        userId, PaymentStatus.PAID.getStatus(), today
-    ).flatMap(paymentEntity -> {
-      if (paymentEntity.getPackageId().contains(PackageType.PREMIUM.getName())) {
-        return Mono.just(ActivePackage.builder().activePackage(PackageType.PREMIUM).build());
-      } else if (paymentEntity.getPackageId().contains(PackageType.PRO.getName())) {
-        return Mono.just(ActivePackage.builder().activePackage(PackageType.PRO).build());
-      } else {
-        return Mono.just(ActivePackage.builder().activePackage(PackageType.FREE).build());
-      }
-    }).next().switchIfEmpty(Mono.defer(
-        () -> Mono.just(ActivePackage.builder().activePackage(PackageType.FREE).build())));
+            userId, PaymentStatus.PAID.getStatus(), today
+        )
+        // Filter PREMIUM
+        .filter(
+            paymentEntity -> paymentEntity.getPackageId().contains(PackageType.PREMIUM.getName()))
+        .next().flatMap(paymentEntity -> Mono.just(
+            ActivePackage.builder().activePackage(PackageType.PREMIUM).build()))
+        .switchIfEmpty(
+            paymentRepository.getPaymentEntitiesByUserIdAndPaymentStatusAndValidDateIsAfter(
+                    userId, PaymentStatus.PAID.getStatus(), today
+                )
+                // FILTER PRO
+                .filter(paymentEntity -> paymentEntity.getPackageId()
+                    .contains(PackageType.PRO.getName()))
+                .next().flatMap(paymentEntity -> Mono.just(
+                    ActivePackage.builder().activePackage(PackageType.PRO).build()))
+                .switchIfEmpty(
+                    // Return FREE if not contain PREMIUM or PRO
+                    Mono.just(ActivePackage.builder().activePackage(PackageType.FREE).build()))
+        );
   }
 
   @Override
