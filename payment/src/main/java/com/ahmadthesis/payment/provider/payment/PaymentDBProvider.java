@@ -8,8 +8,10 @@ import com.ahmadthesis.payment.business.PaymentStatus;
 import com.ahmadthesis.payment.usecase.PaymentPersister;
 import com.ahmadthesis.payment.usecase.PaymentRetriever;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.token.Sha512DigestUtils;
@@ -81,6 +83,14 @@ public class PaymentDBProvider implements PaymentPersister, PaymentRetriever {
       return paymentRepository.getPaymentEntityById(paymentCallBack.getOrderId())
           .flatMap(paymentEntity -> {
             paymentEntity.setPaymentStatus(PaymentStatus.PAID.getStatus());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime localDateTime = LocalDateTime.parse(
+                paymentCallBack.getTransactionTime(), formatter);
+            ZonedDateTime payDate = ZonedDateTime.of(localDateTime, ZoneId.of("Asia/Jakarta"));
+
+            System.out.println("Payment time: " + payDate);
+            paymentEntity.setPayDate(payDate.toInstant());
+            paymentEntity.setValidDate(payDate.plusDays(30).toInstant());
             paymentEntity.setIsNew(false);
             return paymentRepository.save(paymentEntity).then(Mono.defer(() -> Mono.just(true)));
           });

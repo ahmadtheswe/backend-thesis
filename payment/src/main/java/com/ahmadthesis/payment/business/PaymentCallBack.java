@@ -11,4 +11,5 @@ public class PaymentCallBack {
   private String grossAmount;
   private String signatureKey;
   private String transactionStatus;
+  private String transactionTime;
 }

@@ -10,6 +10,8 @@ public class PaymentCallBackConverter {
         .statusCode(dto.getStatusCode())
         .grossAmount(dto.getGrossAmount())
         .signatureKey(dto.getSignatureKey())
+        .transactionStatus(dto.getTransactionStatus())
+        .transactionTime(dto.getTransactionTime())
         .build();
   }
 }

@@ -19,4 +19,10 @@ public class MidtransCallBackDTO {
   @JsonProperty("signature_key")
   private String signatureKey;
 
+  @JsonProperty("transaction_status")
+  private String transactionStatus;
+
+  @JsonProperty("transaction_time")
+  private String transactionTime;
+
 }
