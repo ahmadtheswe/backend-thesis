@@ -55,8 +55,8 @@ public class ImagePostgreAdapter implements ImageDatabase {
             return true;
           }
         })
-        .skip((long) pageRequest.getPageNumber() * pageRequest.getPageSize())
-        .take(pageRequest.getPageSize())
+//        .skip((long) pageRequest.getPageNumber() * pageRequest.getPageSize())
+//        .take(pageRequest.getPageSize())
         .map(ImageConverter::convertAdapterToDomain);
   }
 
@@ -75,8 +75,8 @@ public class ImagePostgreAdapter implements ImageDatabase {
             return true;
           }
         })
-        .skip((long) pageRequest.getPageNumber() * pageRequest.getPageSize())
-        .take(pageRequest.getPageSize())
+//        .skip((long) pageRequest.getPageNumber() * pageRequest.getPageSize())
+//        .take(pageRequest.getPageSize())
         .map(ImageConverter::convertAdapterToDomain);
   }
 
