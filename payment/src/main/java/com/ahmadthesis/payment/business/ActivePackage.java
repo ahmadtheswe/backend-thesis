@@ -1,5 +1,6 @@
 package com.ahmadthesis.payment.business;
 
+import java.time.ZonedDateTime;
 import lombok.Builder;
 import lombok.Data;
 
@@ -7,4 +8,5 @@ import lombok.Data;
 @Data
 public class ActivePackage {
   private PackageType activePackage;
+  private ZonedDateTime activeUntil;
 }

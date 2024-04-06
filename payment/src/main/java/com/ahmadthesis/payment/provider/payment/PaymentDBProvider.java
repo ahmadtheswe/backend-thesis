@@ -25,6 +25,9 @@ public class PaymentDBProvider implements PaymentPersister, PaymentRetriever {
   @Value("${midtrans.server-key}")
   private String serverKey;
 
+  @Value("${time.zone}")
+  private String zoneDateTime;
+
   private final PaymentRepository paymentRepository;
 
   @Override
@@ -49,7 +52,8 @@ public class PaymentDBProvider implements PaymentPersister, PaymentRetriever {
         .filter(
             paymentEntity -> paymentEntity.getPackageId().contains(PackageType.PREMIUM.getName()))
         .next().flatMap(paymentEntity -> Mono.just(
-            ActivePackage.builder().activePackage(PackageType.PREMIUM).build()))
+            ActivePackage.builder().activePackage(PackageType.PREMIUM)
+                .activeUntil(paymentEntity.getValidDate().atZone(ZoneId.of(zoneDateTime))).build()))
         .switchIfEmpty(
             paymentRepository.getPaymentEntitiesByUserIdAndPaymentStatusAndValidDateIsAfter(
                     userId, PaymentStatus.PAID.getStatus(), today
@@ -58,7 +62,9 @@ public class PaymentDBProvider implements PaymentPersister, PaymentRetriever {
                 .filter(paymentEntity -> paymentEntity.getPackageId()
                     .contains(PackageType.PRO.getName()))
                 .next().flatMap(paymentEntity -> Mono.just(
-                    ActivePackage.builder().activePackage(PackageType.PRO).build()))
+                    ActivePackage.builder().activePackage(PackageType.PRO)
+                        .activeUntil(paymentEntity.getValidDate().atZone(ZoneId.of(zoneDateTime)))
+                        .build()))
                 .switchIfEmpty(
                     // Return FREE if not contain PREMIUM or PRO
                     Mono.just(ActivePackage.builder().activePackage(PackageType.FREE).build()))

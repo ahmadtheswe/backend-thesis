@@ -1,2 +1,6 @@
 server:
   port: 9092
+
+time:
+  zone: 'Asia/Jakarta'
+  pattern: 'yyyy-MM-dd HH:mm:ss z'
