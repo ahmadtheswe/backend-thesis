@@ -1,6 +1,7 @@
 package com.ahmadthesis.payment.provider.payment;
 
 import com.ahmadthesis.payment.business.ActivePackage;
+import com.ahmadthesis.payment.business.PackageCount;
 import com.ahmadthesis.payment.business.PackageType;
 import com.ahmadthesis.payment.business.Payment;
 import com.ahmadthesis.payment.business.PaymentCallBack;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.token.Sha512DigestUtils;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -77,6 +79,16 @@ public class PaymentDBProvider implements PaymentPersister, PaymentRetriever {
     return paymentRepository.getPaymentEntityByUserIdAndPaymentStatusAndPaymentDueDateAfterOrderByPaymentDueDateDesc(
         userId,
         PaymentStatus.UNPAID.getStatus(), today).map(PaymentConverter::toBusiness);
+  }
+
+  @Override
+  public Flux<PackageCount> getActiveSubscriptionCount() {
+    final Instant today = ZonedDateTime.now(ZoneId.of("Asia/Jakarta")).toInstant();
+    return paymentRepository.getLatestPaidPaymentSummaryForPackages(today)
+        .map(paymentPackageSummaryEntity -> PackageCount.builder()
+            .packageName(paymentPackageSummaryEntity.getPackageId())
+            .subscriptionTotal(paymentPackageSummaryEntity.getUserCount())
+            .build());
   }
 
   @Override

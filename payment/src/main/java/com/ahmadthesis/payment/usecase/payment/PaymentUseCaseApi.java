@@ -10,6 +10,7 @@ import com.ahmadthesis.payment.controller.ChargeConverter;
 import com.ahmadthesis.payment.controller.dto.ChargeDTO;
 import com.ahmadthesis.payment.controller.PaymentConverter;
 import com.ahmadthesis.payment.controller.dto.MidtransCallBackDTO;
+import com.ahmadthesis.payment.controller.dto.PackageCountDTO;
 import com.ahmadthesis.payment.controller.dto.PaymentDTO;
 import com.ahmadthesis.payment.controller.PersistPayment;
 import com.ahmadthesis.payment.controller.dto.TransactionsDTO;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -102,5 +104,14 @@ public class PaymentUseCaseApi implements PersistPayment {
   @Override
   public Mono<Void> cancelActivePayment(final String userId) {
     return paymentPersister.deleteActivePayment(userId);
+  }
+
+  @Override
+  public Flux<PackageCountDTO> getPackageSubscriptionCount() {
+    return paymentRetriever.getActiveSubscriptionCount()
+        .map(packageCount -> PackageCountDTO.builder()
+            .packageName(packageCount.getPackageName())
+            .subscriptionTotal(packageCount.getSubscriptionTotal())
+            .build());
   }
 }

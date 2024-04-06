@@ -35,6 +35,7 @@ public class ResourceServerConfig {
         ).authorizeExchange(authorizeExchangeSpec ->
             authorizeExchangeSpec
                 .pathMatchers("/payment/callback").permitAll()
+                .pathMatchers("/payment/package-count").hasRole("ADMIN")
                 .anyExchange().authenticated())
         .oauth2ResourceServer(oAuth2ResourceServerSpec ->
             oAuth2ResourceServerSpec.jwt(

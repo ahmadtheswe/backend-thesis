@@ -3,6 +3,7 @@ package com.ahmadthesis.payment.controller;
 import com.ahmadthesis.payment.controller.dto.ActivePackageDTO;
 import com.ahmadthesis.payment.controller.dto.ChargeDTO;
 import com.ahmadthesis.payment.controller.dto.MidtransCallBackDTO;
+import com.ahmadthesis.payment.controller.dto.PackageCountDTO;
 import com.ahmadthesis.payment.controller.dto.PaymentDTO;
 import com.ahmadthesis.payment.controller.dto.TransactionsDTO;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -63,5 +65,10 @@ public class PaymentController {
   public Mono<Void> cancelActivePayment(final JwtAuthenticationToken auth) {
     final String userId = auth.getToken().getClaimAsString(StandardClaimNames.PREFERRED_USERNAME);
     return persistPayment.cancelActivePayment(userId);
+  }
+
+  @GetMapping("/package-count")
+  public Flux<PackageCountDTO> getPackageSubscriptionCount() {
+    return persistPayment.getPackageSubscriptionCount();
   }
 }
