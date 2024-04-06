@@ -26,4 +26,9 @@ public class UserInfoProvider implements UserInfoPersister, UserInfoRetriever {
   public Mono<UserInfo> getUserInfoByUsername(String username) {
     return repository.findUserInfoEntityByUsername(username).map(UserInfoConverter::toDomain);
   }
+
+  @Override
+  public Mono<Integer> getUsersCount() {
+    return repository.countAllByRole("REGULAR");
+  }
 }

@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .pathMatchers("/api/user/activate/**").permitAll()
                 .pathMatchers("/api/user/logout/**").authenticated()
                 .pathMatchers("/public/**").permitAll()
-                .pathMatchers("/admin/**").hasRole("ADMIN")
+                .pathMatchers("/api/user/admin/**").hasRole("ADMIN")
                 .pathMatchers("/regular/**").hasRole("REGULAR")
                 .anyExchange().authenticated())
         .oauth2Login(Customizer.withDefaults())
