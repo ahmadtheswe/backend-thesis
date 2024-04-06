@@ -14,10 +14,10 @@ public interface ImageService {
   Mono<Image> getPublicImageById(final String id);
 
   Flux<Image> getImagesPagination(final Integer size, final Integer page, final String sortBy,
-      String title, BigDecimal latitude, BigDecimal longitude);
+      String title, BigDecimal latitude, BigDecimal longitude, Double radius);
 
   Flux<Image> getPublicImagesPagination(final Integer size, final Integer page,
-      final String sortBy, BigDecimal latitude, BigDecimal longitude);
+      final String sortBy, BigDecimal latitude, BigDecimal longitude, Double radius);
 
   Flux<Image> getUserImagesCollectionPagination(
       final Integer size, final Integer page, final String sortBy, final String ownerId,

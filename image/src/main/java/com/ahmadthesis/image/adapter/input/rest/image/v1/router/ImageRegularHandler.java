@@ -10,7 +10,6 @@ import com.ahmadthesis.image.domain.image.Image;
 import com.ahmadthesis.image.domain.image.ProductLevel;
 import com.ahmadthesis.image.domain.payment.PackageType;
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +40,9 @@ public class ImageRegularHandler {
               paginationRequest.getPage(),
               paginationRequest.getSortBy(),
               paginationRequest.getLatitude(),
-              paginationRequest.getLongitude());
+              paginationRequest.getLongitude(),
+              paginationRequest.getRadius()
+          );
 
           final Mono<Long> totalImagesMono = imageService.getImagesCount();
 

@@ -73,7 +73,9 @@ public class ImageAdminHandler {
               paginationRequest.getSortBy(),
               paginationRequest.getTitle(),
               paginationRequest.getLatitude(),
-              paginationRequest.getLongitude());
+              paginationRequest.getLongitude(),
+              paginationRequest.getRadius()
+          );
 
           final Mono<Long> totalImagesMono = imageService.getImagesCount();
 

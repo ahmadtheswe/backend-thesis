@@ -14,10 +14,11 @@ public interface ImageDatabase {
   Mono<Image> getPublicImageById(final String id);
 
   Flux<Image> getImages(final Integer size, final Integer page, final String sortBy,
-      final String title, final BigDecimal latitude, final BigDecimal longitude);
+      final String title, final BigDecimal latitude, final BigDecimal longitude,
+      final Double radius);
 
   Flux<Image> getPublicImages(final Integer size, final Integer page, final String sortBy,
-      final BigDecimal latitude, final BigDecimal longitude);
+      final BigDecimal latitude, final BigDecimal longitude, final Double radius);
 
   Flux<Image> getUserImagesCollection(
       final Integer size, final Integer page, final String sortBy, final String ownerId,

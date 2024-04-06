@@ -105,6 +105,7 @@ public final class ImageRestConverter {
               .size(request.queryParam("size").map(Integer::parseInt).orElse(5))
               .page(request.queryParam("page").map(Integer::parseInt).orElse(0))
               .title(request.queryParam("title").orElse(null))
+              .radius(request.queryParam("radius").map(Double::parseDouble).orElse(5.0))
               .sortBy(request.queryParam("sortBy").orElse("id"))
               .latitude(
                   request.queryParam("latitude").map(BigDecimal::new).orElse(new BigDecimal(0)))

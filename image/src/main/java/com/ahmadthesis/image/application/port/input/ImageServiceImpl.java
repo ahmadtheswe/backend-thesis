@@ -31,14 +31,14 @@ public class ImageServiceImpl implements ImageService {
 
   @Override
   public Flux<Image> getImagesPagination(final Integer size, final Integer page, final String sortBy,
-      final String title, final BigDecimal latitude, final BigDecimal longitude) {
-    return database.getImages(size, page, sortBy, title, latitude, longitude);
+      final String title, final BigDecimal latitude, final BigDecimal longitude, Double radius) {
+    return database.getImages(size, page, sortBy, title, latitude, longitude, radius);
   }
 
   @Override
   public Flux<Image> getPublicImagesPagination(final Integer size, final  Integer page,
-      final String sortBy, BigDecimal latitude, BigDecimal longitude) {
-    return database.getPublicImages(size, page, sortBy, latitude, longitude);
+      final String sortBy, BigDecimal latitude, BigDecimal longitude, Double radius) {
+    return database.getPublicImages(size, page, sortBy, latitude, longitude, radius);
   }
 
   @Override

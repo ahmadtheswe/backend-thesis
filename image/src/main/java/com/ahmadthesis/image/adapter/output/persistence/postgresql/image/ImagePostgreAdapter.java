@@ -40,7 +40,7 @@ public class ImagePostgreAdapter implements ImageDatabase {
 
   @Override
   public Flux<Image> getImages(final Integer size, final Integer page, final String sortBy,
-      final String title, final BigDecimal latitude, final BigDecimal longitude) {
+      final String title, final BigDecimal latitude, final BigDecimal longitude, Double radius) {
     final PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortBy));
     final Flux<ImageEntity> imageEntityFlux = title == null ?
         this.repository.findAll() : this.repository.findAllByTitleLikeIgnoreCase(title);
@@ -50,7 +50,7 @@ public class ImagePostgreAdapter implements ImageDatabase {
               BigDecimal.ZERO)) {
             return isWithinRadius(latitude.doubleValue(), longitude.doubleValue(),
                 imageEntity.getLatitude().doubleValue(), imageEntity.getLongitude().doubleValue(),
-                5.0);
+                radius);
           } else {
             return true;
           }
@@ -62,7 +62,7 @@ public class ImagePostgreAdapter implements ImageDatabase {
 
   @Override
   public Flux<Image> getPublicImages(final Integer size, final Integer page, final String sortBy,
-      final BigDecimal latitude, final BigDecimal longitude) {
+      final BigDecimal latitude, final BigDecimal longitude, Double radius) {
     final PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortBy));
     return this.repository.findAllByIsPublicTrue()
         .filter(imageEntity -> {
@@ -70,7 +70,7 @@ public class ImagePostgreAdapter implements ImageDatabase {
               BigDecimal.ZERO)) {
             return isWithinRadius(latitude.doubleValue(), longitude.doubleValue(),
                 imageEntity.getLatitude().doubleValue(), imageEntity.getLongitude().doubleValue(),
-                5.0);
+                radius);
           } else {
             return true;
           }

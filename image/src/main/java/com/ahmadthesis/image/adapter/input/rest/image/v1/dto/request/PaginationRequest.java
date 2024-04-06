@@ -15,4 +15,5 @@ public class PaginationRequest {
   private String title;
   private BigDecimal latitude;
   private BigDecimal longitude;
+  private Double radius;
 }
