@@ -18,7 +18,7 @@ public interface PaymentRepository extends R2dbcRepository<PaymentEntity, String
       String userId, String paymentStatus, Instant today
   );
 
-  @Query("SELECT package_id, COUNT(DISTINCT user_id) AS user_count FROM payment WHERE payment_status = 'PAID' AND valid_date < :today GROUP BY package_id")
+  @Query("SELECT package_id, COUNT(DISTINCT user_id) AS user_count FROM payment WHERE payment_status = 'PAID' AND valid_date > :today GROUP BY package_id")
   Flux<PaymentPackageSummaryEntity> getLatestPaidPaymentSummaryForPackages(@Param("today") Instant today);
 
 }
