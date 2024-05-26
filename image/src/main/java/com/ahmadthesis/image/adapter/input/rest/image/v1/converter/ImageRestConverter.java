@@ -3,11 +3,22 @@ package com.ahmadthesis.image.adapter.input.rest.image.v1.converter;
 import com.ahmadthesis.image.adapter.input.rest.common.parser.FilePartParser;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.PaginationRequest;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.SaveImageRequest;
+import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.preorder.BBoxRequest;
+import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.preorder.PreOrderRequest;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.ImageUploadResponse;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.PaginationInfo;
+import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.preorder.BBoxResponse;
+import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.preorder.CoordinateResponse;
+import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.preorder.PreOrderResponse;
+import com.ahmadthesis.image.domain.image.BBox;
+import com.ahmadthesis.image.domain.image.Coordinate;
 import com.ahmadthesis.image.domain.image.Image;
+import com.ahmadthesis.image.domain.image.PreOrder;
+import com.ahmadthesis.image.domain.image.TokenInfo;
+import com.ahmadthesis.image.global.utils.DateUtils;
 import java.io.File;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.UUID;
@@ -140,11 +151,64 @@ public final class ImageRestConverter {
           String token = headerValue.replace("Bearer ", "");
           Jwt jwt = parseJwt(token);
           JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(jwt);
-          return jwtAuthenticationToken.getToken().getClaimAsString(StandardClaimNames.PREFERRED_USERNAME);
+          return jwtAuthenticationToken.getToken()
+              .getClaimAsString(StandardClaimNames.PREFERRED_USERNAME);
         }).orElse(null);
   }
 
   private static Jwt parseJwt(String token) {
     return Jwt.withTokenValue(token).build();
+  }
+
+  public static PreOrderResponse generatePreOrderResponse(final PreOrder preOrder) {
+    return PreOrderResponse.builder()
+        .id(preOrder.getId())
+        .bBoxResponse(BBoxResponse.builder()
+            .maxLongitude(preOrder.getBBox().getMaxLongitude())
+            .maxLatitude(preOrder.getBBox().getMaxLatitude())
+            .minLongitude(preOrder.getBBox().getMinLongitude())
+            .minLatitude(preOrder.getBBox().getMinLatitude())
+            .build())
+        .centerCoordinateResponse(CoordinateResponse.builder()
+            .latitude(preOrder.getCenterCoordinate().getLatitude())
+            .longitude(preOrder.getCenterCoordinate().getLongitude())
+            .build())
+        .isActive(preOrder.getIsActive())
+        .createdAt(preOrder.getCreatedAt() == null ? null
+            : DateUtils.millisecondsToDateString(preOrder.getCreatedAt()))
+        .deliveredAt(preOrder.getDeliveredAt() == null ? null
+            : DateUtils.millisecondsToDateString(preOrder.getDeliveredAt()))
+        .build();
+  }
+
+  public static Mono<PreOrderRequest> generatePreOrderRequest(final ServerRequest request) {
+    return request.bodyToMono(PreOrderRequest.class);
+  }
+
+  public static Mono<BBoxRequest> generateBBoxRequest(final ServerRequest request) {
+    return request.bodyToMono(BBoxRequest.class);
+  }
+
+  public static Mono<PreOrder> generatePreOrderFromRequest(final PreOrderRequest preOrderRequest,
+      final TokenInfo tokenInfo) {
+    return Mono.just(PreOrder.builder()
+        .requesterId(tokenInfo.getUserId())
+        .requesterEmail(tokenInfo.getEmail())
+        .requesterUsername(tokenInfo.getPreferredUsername())
+        .bBox(BBox.builder()
+            .maxLongitude(preOrderRequest.getBBox().getMaxLongitude())
+            .maxLatitude(preOrderRequest.getBBox().getMaxLatitude())
+            .minLongitude(preOrderRequest.getBBox().getMinLongitude())
+            .minLatitude(preOrderRequest.getBBox().getMinLatitude())
+            .build())
+        .isActive(true)
+        .centerCoordinate(Coordinate.builder()
+            .latitude(preOrderRequest.getBBox().getMinLatitude().add(preOrderRequest.getBBox()
+                .getMaxLatitude()).divide(new BigDecimal(2), RoundingMode.HALF_UP))
+            .longitude(preOrderRequest.getBBox().getMinLongitude().add(preOrderRequest.getBBox()
+                .getMaxLongitude()).divide(new BigDecimal(2), RoundingMode.HALF_UP))
+            .build())
+        .createdAt(DateUtils.now())
+        .build());
   }
 }

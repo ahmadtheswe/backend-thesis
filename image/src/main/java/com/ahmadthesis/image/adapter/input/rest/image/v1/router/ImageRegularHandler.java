@@ -2,17 +2,24 @@ package com.ahmadthesis.image.adapter.input.rest.image.v1.router;
 
 import com.ahmadthesis.image.adapter.input.rest.common.dto.DataResponse;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.converter.ImageRestConverter;
+import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.ImageResponse;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.PaginationResponse;
+import com.ahmadthesis.image.application.usecase.CopernicusWebClientService;
 import com.ahmadthesis.image.application.usecase.ImageService;
-import com.ahmadthesis.image.application.usecase.PaymentService;
 import com.ahmadthesis.image.application.usecase.PaymentWebClientService;
+import com.ahmadthesis.image.domain.image.BBox;
 import com.ahmadthesis.image.domain.image.Image;
 import com.ahmadthesis.image.domain.image.ProductLevel;
 import com.ahmadthesis.image.domain.payment.PackageType;
+import com.ahmadthesis.image.global.utils.TokenUtils;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -23,14 +30,18 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Component("ImageRegularHandler")
 @RequiredArgsConstructor
 public class ImageRegularHandler {
 
   private final ImageService imageService;
-  private final PaymentService paymentService;
   private final PaymentWebClientService paymentWebClientService;
+  private final CopernicusWebClientService copernicusWebClientService;
+
+  @Value("${directory.image}")
+  private String UPLOAD_DIRECTORY;
 
   Mono<ServerResponse> getImagesPagination(final ServerRequest request) {
     return ImageRestConverter.generatePaginationRequest(request)
@@ -160,7 +171,8 @@ public class ImageRegularHandler {
       Jwt credentials = (Jwt) authentication.getCredentials();
       return credentials.getTokenValue();
     } catch (Exception e) {
-      throw new IllegalArgumentException("Unable to extract JWT token from authentication credentials.", e);
+      throw new IllegalArgumentException(
+          "Unable to extract JWT token from authentication credentials.", e);
     }
   }
 
@@ -174,5 +186,90 @@ public class ImageRegularHandler {
               .bodyValue(resource);
         })
         .switchIfEmpty(Mono.defer(() -> ServerResponse.status(HttpStatus.NOT_FOUND).build()));
+  }
+
+  Mono<ServerResponse> getImageById(final ServerRequest request) {
+    final String imageId = request.queryParam("id").orElse(null);
+    if (imageId == null) {
+      return ServerResponse.status(HttpStatus.BAD_REQUEST).bodyValue(
+          new DataResponse<>(null, List.of("Image ID should not be null"))
+      );
+    }
+    return imageService.getPublicImageById(imageId)
+        .flatMap(image -> ServerResponse.ok().bodyValue(
+            new DataResponse<>(
+                ImageResponse.builder()
+                    .title(image.getTitle())
+                    .mediaType(image.getMediaType())
+                    .filename(image.getFilename())
+                    .productLevel(image.getProductLevel().name())
+                    .latitude(image.getLatitude())
+                    .longitude(image.getLongitude())
+                    .build(),
+                new ArrayList<>()
+            )
+        )).switchIfEmpty(Mono.defer(() -> ServerResponse.status(HttpStatus.NOT_FOUND).build()));
+  }
+
+  Mono<ServerResponse> savePreOrderRequest(final ServerRequest request) {
+    return request.principal().flatMap(principal -> {
+          return Mono.just(TokenUtils.generateTokenInfo(principal));
+        })
+        .flatMap(tokenInfo -> ImageRestConverter.generatePreOrderRequest(request)
+            .flatMap(
+                preOrderRequest -> ImageRestConverter.generatePreOrderFromRequest(preOrderRequest,
+                    tokenInfo)))
+        .flatMap(imageService::savePreOrder)
+        .doOnSuccess(preOrder -> {
+          Mono<byte[]> generatedImage = copernicusWebClientService.generateImage(
+                  BBox.builder().minLongitude(preOrder.getBBox().getMinLongitude())
+                      .minLatitude(preOrder.getBBox().getMinLatitude())
+                      .maxLongitude(preOrder.getBBox().getMaxLongitude())
+                      .maxLatitude(preOrder.getBBox().getMaxLatitude()).build())
+              .flatMap(Mono::just);
+
+          generatedImage.flatMap(
+              bytes -> saveBytesToFile(bytes, preOrder.getId()).thenReturn(preOrder)).subscribeOn(
+              Schedulers.boundedElastic()).subscribe();
+        })
+        .then(Mono.defer(() -> ServerResponse.ok()
+            .bodyValue(new DataResponse<>(null, List.of()))));
+  }
+
+  private Mono<Void> saveBytesToFile(byte[] bytes, final String preOrderId) {
+    return Mono.fromCallable(() -> {
+      // Ensure the upload directory exists
+      Path uploadPath = Paths.get(UPLOAD_DIRECTORY);
+      if (!Files.exists(uploadPath)) {
+        Files.createDirectories(uploadPath);
+      }
+
+      // Create a path for the file
+      String filename = preOrderId + ".png";  // You can generate a unique filename if needed
+      Path filePath = uploadPath.resolve(filename);
+
+      // Write the bytes to the file
+      Files.write(filePath, bytes);
+      return null;
+    }).then();
+  }
+
+  Mono<ServerResponse> getPreOrderList(final ServerRequest request) {
+    return request.principal().flatMap(principal -> Mono.just(principal.getName()))
+        .flatMap(userId -> imageService.getPreOrderList(userId)
+            .map(ImageRestConverter::generatePreOrderResponse)
+            .collectList()
+            .flatMap(preOrderResponses -> ServerResponse.ok()
+                .bodyValue(new DataResponse<>(preOrderResponses, List.of()))));
+  }
+
+  Mono<ServerResponse> generateImage(final ServerRequest request) {
+    return ImageRestConverter.generateBBoxRequest(request)
+        .flatMap(bBoxRequest -> copernicusWebClientService.generateImage(
+                BBox.builder().minLongitude(bBoxRequest.getMinLongitude())
+                    .minLatitude(bBoxRequest.getMinLatitude())
+                    .maxLongitude(bBoxRequest.getMaxLongitude())
+                    .maxLatitude(bBoxRequest.getMaxLatitude()).build())
+            .flatMap(bytes -> ServerResponse.ok().bodyValue(bytes)));
   }
 }

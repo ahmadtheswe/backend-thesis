@@ -1,6 +1,7 @@
 package com.ahmadthesis.image.adapter.output.persistence.postgresql.image;
 
 import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.converter.PreOrderConverter;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.data.PreOrderEntity;
 import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.sql.PreOrderRepository;
 import com.ahmadthesis.image.application.port.output.PreOrderDatabase;
 import com.ahmadthesis.image.domain.image.PreOrder;
@@ -17,7 +18,9 @@ public class PreOrderAdapter implements PreOrderDatabase {
 
   @Override
   public Mono<PreOrder> save(PreOrder preOrder) {
-    return this.preOrderRepository.save(PreOrderConverter.toEntity(preOrder))
+    PreOrderEntity preOrderEntity = PreOrderConverter.toEntity(preOrder);
+    preOrderEntity.setNew(true);
+    return this.preOrderRepository.save(preOrderEntity)
         .map(PreOrderConverter::toDomain);
   }
 

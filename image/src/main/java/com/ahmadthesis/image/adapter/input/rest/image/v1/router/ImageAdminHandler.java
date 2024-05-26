@@ -29,23 +29,26 @@ public class ImageAdminHandler {
   private final ImageService imageService;
 
   Mono<ServerResponse> uploadImage(final ServerRequest request) {
-    return ImageRestConverter.extractUploadRequest(request).flatMap(saveImageRequest ->
-        imageUploadService.upload(
-                saveImageRequest.getImage(),
-                saveImageRequest.getThumbnail(),
-                saveImageRequest.getFilename())
-            .then(Mono.defer(() -> {
-              final Image image = ImageMapper.mapRequestToImage(saveImageRequest);
-              return imageService.save(image)
-                  .flatMap(response -> ServerResponse.ok().bodyValue(
-                      new DataResponse<>(
-                          ImageRestConverter.generateUploadResponse(image),
-                          new ArrayList<>()
-                      )
-                  ));
-            }))
-            .onErrorResume(throwable -> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .bodyValue("An error occurred during image upload or processing.")));
+    return request.principal().flatMap(principal -> Mono.just(principal.getName()))
+        .flatMap(
+            userId -> ImageRestConverter.extractUploadRequest(request).flatMap(saveImageRequest ->
+                imageUploadService.upload(
+                        saveImageRequest.getImage(),
+                        saveImageRequest.getThumbnail(),
+                        saveImageRequest.getFilename())
+                    .then(Mono.defer(() -> {
+                      final Image image = ImageMapper.mapRequestToImage(saveImageRequest, userId);
+                      return imageService.save(image)
+                          .flatMap(response -> ServerResponse.ok().bodyValue(
+                              new DataResponse<>(
+                                  ImageRestConverter.generateUploadResponse(image),
+                                  new ArrayList<>()
+                              )
+                          ));
+                    }))
+                    .onErrorResume(
+                        throwable -> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .bodyValue("An error occurred during image upload or processing."))));
   }
 
   Mono<ServerResponse> getImageById(final ServerRequest request) {
@@ -151,4 +154,11 @@ public class ImageAdminHandler {
         });
   }
 
+  Mono<ServerResponse> getPreOrderList(final ServerRequest request) {
+    return imageService.getAllPreOrderList()
+        .map(ImageRestConverter::generatePreOrderResponse)
+        .collectList()
+        .flatMap(preOrderResponses -> ServerResponse.ok()
+            .bodyValue(new DataResponse<>(preOrderResponses, List.of())));
+  }
 }

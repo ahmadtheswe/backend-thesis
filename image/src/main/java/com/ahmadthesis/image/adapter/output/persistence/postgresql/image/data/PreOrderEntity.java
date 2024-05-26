@@ -22,16 +22,14 @@ public class PreOrderEntity implements Persistable<String> {
   @Id
   private String id;
   private String requesterId;
+  private String requesterEmail;
+  private String requesterUsername;
   private BigDecimal centerLatitude;
   private BigDecimal centerLongitude;
-  private BigDecimal topLeftLatitude;
-  private BigDecimal topLeftLongitude;
-  private BigDecimal topRightLatitude;
-  private BigDecimal topRightLongitude;
-  private BigDecimal bottomRightLatitude;
-  private BigDecimal bottomRightLongitude;
-  private BigDecimal bottomLeftLatitude;
-  private BigDecimal bottomLeftLongitude;
+  private BigDecimal maxLatitude;
+  private BigDecimal maxLongitude;
+  private BigDecimal minLatitude;
+  private BigDecimal minLongitude;
   private Boolean isActive;
   private Long createdAt;
   private Long deliveredAt;

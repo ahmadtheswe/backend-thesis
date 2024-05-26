@@ -6,7 +6,8 @@ import static org.mockito.Mockito.when;
 
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.SaveImageRequest;
 import com.ahmadthesis.image.domain.image.Image;
-import com.ahmadthesis.image.global.utils.dates.DateUtils;
+import com.ahmadthesis.image.global.utils.DateUtils;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ class ImageMapperTest {
   @DisplayName("should map SaveImageRequest to Image")
   public void mapRequestToImageTest() {
     // Arrange
+    String userId = UUID.randomUUID().toString();
     SaveImageRequest request = SaveImageRequest.builder()
         .title("Test Image")
         .mediaType("image/jpeg")
@@ -40,7 +42,7 @@ class ImageMapperTest {
       when(DateUtils.now()).thenReturn(1679827200000L); // Example timestamp
 
       // Act
-      Image result = ImageMapper.mapRequestToImage(request);
+      Image result = ImageMapper.mapRequestToImage(request, userId);
 
       // Assert
       assertEquals("Test Image", result.getTitle());

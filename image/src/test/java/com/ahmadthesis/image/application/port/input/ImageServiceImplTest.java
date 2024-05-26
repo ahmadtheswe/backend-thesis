@@ -1,7 +1,9 @@
 package com.ahmadthesis.image.application.port.input;
 
 import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.ImagePostgreAdapter;
+import com.ahmadthesis.image.adapter.output.persistence.postgresql.image.PreOrderAdapter;
 import com.ahmadthesis.image.application.port.output.ImageDatabase;
+import com.ahmadthesis.image.application.port.output.PreOrderDatabase;
 import com.ahmadthesis.image.application.usecase.ImageService;
 import com.ahmadthesis.image.domain.image.Image;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,14 +20,18 @@ import java.util.UUID;
 @SpringBootTest
 public class ImageServiceImplTest {
   @Mock
-  private ImageDatabase database;
+  private ImageDatabase imageDatabase;
+
+  @Mock
+  private PreOrderDatabase preOrderDatabase;
 
   private ImageService service;
 
   @BeforeEach
   void setup() {
-    database = Mockito.mock(ImagePostgreAdapter.class);
-    service = new ImageServiceImpl(database);
+    imageDatabase = Mockito.mock(ImagePostgreAdapter.class);
+    preOrderDatabase = Mockito.mock(PreOrderAdapter.class);
+    service = new ImageServiceImpl(imageDatabase, preOrderDatabase);
   }
 
   @Test
@@ -46,9 +52,9 @@ public class ImageServiceImplTest {
     image.setIsPublic(true);
 
     // Act
-    Mockito.when(database.save(image)).thenReturn(Mono.just(image));
+    Mockito.when(imageDatabase.save(image)).thenReturn(Mono.just(image));
     Mono<Image> savedImage = service.save(image);
-    Mockito.verify(database, Mockito.times(1)).save(image);
+    Mockito.verify(imageDatabase, Mockito.times(1)).save(image);
 
     // Assert
     StepVerifier.create(savedImage)
@@ -74,7 +80,7 @@ public class ImageServiceImplTest {
     image.setIsPublic(true);
 
     // Act
-    Mockito.when(database.getImageById(id)).thenReturn(Mono.just(image));
+    Mockito.when(imageDatabase.getImageById(id)).thenReturn(Mono.just(image));
     Mono<Image> foundImage = service.getImageById(id);
 
     // Assert
@@ -90,7 +96,7 @@ public class ImageServiceImplTest {
     String id = UUID.randomUUID().toString();
 
     // Act
-    Mockito.when(database.getImageById(id)).thenReturn(Mono.empty());
+    Mockito.when(imageDatabase.getImageById(id)).thenReturn(Mono.empty());
     Mono<Image> notFoundImage = service.getImageById(id);
 
     // Assert

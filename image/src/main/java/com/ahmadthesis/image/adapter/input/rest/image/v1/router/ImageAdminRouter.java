@@ -30,6 +30,8 @@ public class ImageAdminRouter {
         .andRoute(GET("/image/v1/admin/view/thumbnail")
             .and(accept(MediaType.APPLICATION_OCTET_STREAM)), handler::viewImageThumbnailFile)
         .andRoute(GET("/image/v1/admin/user-detail")
-            .and(accept(MediaType.APPLICATION_JSON)), handler::handleRequest);
+            .and(accept(MediaType.APPLICATION_JSON)), handler::handleRequest)
+        .andRoute(GET("/image/v1/admin/pre-order")
+            .and(accept(MediaType.APPLICATION_JSON)), handler::getPreOrderList);
   }
 }
