@@ -1,9 +1,9 @@
 package com.ahmadthesis.payment.business;
 
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
-@Builder
+@SuperBuilder
 @Data
 public class Charge {
   private String redirectUrl;

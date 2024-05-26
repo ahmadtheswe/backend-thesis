@@ -5,7 +5,7 @@ import com.ahmadthesis.payment.controller.dto.ChargeDTO;
 import com.ahmadthesis.payment.controller.dto.MidtransCallBackDTO;
 import com.ahmadthesis.payment.controller.dto.PackageCountDTO;
 import com.ahmadthesis.payment.controller.dto.PaymentDTO;
-import com.ahmadthesis.payment.controller.dto.TransactionsDTO;
+import com.ahmadthesis.payment.controller.dto.PaymentTransactionsDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
@@ -30,7 +30,7 @@ public class PaymentController {
 
   @PostMapping("/charge")
   public Mono<ChargeDTO> createCharge(
-      @RequestBody final TransactionsDTO transactionRequest,
+      @RequestBody final PaymentTransactionsDTO transactionRequest,
       final JwtAuthenticationToken auth
   ) {
     String userId = auth.getToken().getClaimAsString(StandardClaimNames.PREFERRED_USERNAME);

@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class TransactionsDTO {
+public class PaymentTransactionsDTO {
   private String email;
   private String paymentType;
   private String bank;

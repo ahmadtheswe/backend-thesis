@@ -3,14 +3,14 @@ package com.ahmadthesis.payment.controller;
 import com.ahmadthesis.payment.business.PackageType;
 import com.ahmadthesis.payment.business.Payment;
 import com.ahmadthesis.payment.controller.dto.PaymentDTO;
-import com.ahmadthesis.payment.controller.dto.TransactionsDTO;
+import com.ahmadthesis.payment.controller.dto.PaymentTransactionsDTO;
 
 public class PaymentConverter {
-  public static Payment toPayment(TransactionsDTO transactionsDTO) {
+  public static Payment toPayment(PaymentTransactionsDTO paymentTransactionsDTO) {
     return Payment.builder()
-        .email(transactionsDTO.getEmail())
-        .paymentType(transactionsDTO.getPaymentType())
-        .packageType(PackageType.valueOf(transactionsDTO.getPackageType()))
+        .email(paymentTransactionsDTO.getEmail())
+        .paymentType(paymentTransactionsDTO.getPaymentType())
+        .packageType(PackageType.valueOf(paymentTransactionsDTO.getPackageType()))
         .build();
   }
 

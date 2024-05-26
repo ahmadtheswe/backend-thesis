@@ -5,12 +5,12 @@ import com.ahmadthesis.payment.controller.dto.ChargeDTO;
 import com.ahmadthesis.payment.controller.dto.MidtransCallBackDTO;
 import com.ahmadthesis.payment.controller.dto.PackageCountDTO;
 import com.ahmadthesis.payment.controller.dto.PaymentDTO;
-import com.ahmadthesis.payment.controller.dto.TransactionsDTO;
+import com.ahmadthesis.payment.controller.dto.PaymentTransactionsDTO;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface PersistPayment {
-  Mono<ChargeDTO> saveCharge(TransactionsDTO transactionsDTO, String userId);
+  Mono<ChargeDTO> saveCharge(PaymentTransactionsDTO paymentTransactionsDTO, String userId);
   Mono<Object> checkCharge(String orderId);
   Mono<Boolean> paymentCallBack(MidtransCallBackDTO midtransCallBackDTO);
   Mono<ActivePackageDTO> getActivePayment(String userId);

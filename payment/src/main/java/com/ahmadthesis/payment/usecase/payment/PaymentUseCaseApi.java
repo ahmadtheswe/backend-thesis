@@ -13,7 +13,7 @@ import com.ahmadthesis.payment.controller.dto.MidtransCallBackDTO;
 import com.ahmadthesis.payment.controller.dto.PackageCountDTO;
 import com.ahmadthesis.payment.controller.dto.PaymentDTO;
 import com.ahmadthesis.payment.controller.PersistPayment;
-import com.ahmadthesis.payment.controller.dto.TransactionsDTO;
+import com.ahmadthesis.payment.controller.dto.PaymentTransactionsDTO;
 import com.ahmadthesis.payment.usecase.MidtransPersister;
 import com.ahmadthesis.payment.usecase.MidtransRetriever;
 import com.ahmadthesis.payment.usecase.PaymentPersister;
@@ -39,16 +39,16 @@ public class PaymentUseCaseApi implements PersistPayment {
   private final PaymentRetriever paymentRetriever;
 
   @Override
-  public Mono<ChargeDTO> saveCharge(final TransactionsDTO transactionsDTO, final String userId) {
-    return Mono.fromSupplier(() -> midtransPersister.charge(
-            PaymentConverter.toPayment(transactionsDTO)))
+  public Mono<ChargeDTO> saveCharge(final PaymentTransactionsDTO paymentTransactionsDTO, final String userId) {
+    return Mono.fromSupplier(() -> midtransPersister.paymentCharge(
+            PaymentConverter.toPayment(paymentTransactionsDTO)))
         .flatMap(charge -> {
           final Payment payment = Payment.builder()
               .id(charge.getOrderId())
-              .email(transactionsDTO.getEmail())
+              .email(paymentTransactionsDTO.getEmail())
               .userId(userId)
-              .packageType(PackageType.valueOf(transactionsDTO.getPackageType()))
-              .paymentType(transactionsDTO.getPaymentType())
+              .packageType(PackageType.valueOf(paymentTransactionsDTO.getPackageType()))
+              .paymentType(paymentTransactionsDTO.getPaymentType())
               .paymentStatus(PaymentStatus.UNPAID)
               .redirectUrl(charge.getRedirectUrl())
               .midtransToken(charge.getMidtransToken())

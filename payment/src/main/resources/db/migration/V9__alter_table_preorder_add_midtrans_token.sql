@@ -1,0 +1,1 @@
+alter table "public".preorder add column midtrans_token varchar(36);

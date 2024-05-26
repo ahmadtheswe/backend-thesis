@@ -2,6 +2,8 @@ package com.ahmadthesis.payment.provider.midtrans;
 
 import com.ahmadthesis.payment.business.Charge;
 import com.ahmadthesis.payment.business.Payment;
+import com.ahmadthesis.payment.business.PreOrder;
+import com.ahmadthesis.payment.business.PreOrderCharge;
 import com.ahmadthesis.payment.usecase.MidtransPersister;
 import com.ahmadthesis.payment.usecase.MidtransRetriever;
 import com.midtrans.httpclient.error.MidtransError;
@@ -22,7 +24,7 @@ public class MidtransProvider implements MidtransPersister, MidtransRetriever {
   private final MidtransSnapApi midtransSnapApi;
 
   @Override
-  public Charge charge(Payment payment) {
+  public Charge paymentCharge(Payment payment) {
     try {
       final String orderId = UUID.randomUUID().toString();
       final Map<String, Object> transactionDetails = new HashMap<>();
@@ -38,6 +40,30 @@ public class MidtransProvider implements MidtransPersister, MidtransRetriever {
           .orderId(orderId)
           .redirectUrl(midtransSnapApi.createTransactionRedirectUrl(chargeRequest))
           .midtransToken(midtransSnapApi.createTransactionToken(chargeRequest))
+          .build();
+    } catch (MidtransError e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public PreOrderCharge preOrderCharge(PreOrder preOrder) {
+    try {
+      final String orderId = UUID.randomUUID().toString();
+      final Map<String, Object> transactionDetails = new HashMap<>();
+      final double price = preOrder.getPrice().intValue() * preOrder.getImageSize();
+      transactionDetails.put("order_id", orderId);
+      transactionDetails.put("gross_amount", price);
+      transactionDetails.put("email", preOrder.getUserEmail());
+
+      final Map<String, Object> chargeRequest = new HashMap<>();
+      chargeRequest.put("transaction_details", transactionDetails);
+
+      return PreOrderCharge.builder()
+          .orderId(orderId)
+          .redirectUrl(midtransSnapApi.createTransactionRedirectUrl(chargeRequest))
+          .midtransToken(midtransSnapApi.createTransactionToken(chargeRequest))
+          .price(price)
           .build();
     } catch (MidtransError e) {
       throw new RuntimeException(e);
