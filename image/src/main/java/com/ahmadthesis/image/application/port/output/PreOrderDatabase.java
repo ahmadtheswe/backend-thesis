@@ -6,6 +6,7 @@ import reactor.core.publisher.Mono;
 
 public interface PreOrderDatabase {
   Mono<PreOrder> save (PreOrder preOrder);
+  Mono<PreOrder> getPreorderByPreorderId (String preorderId);
   Flux<PreOrder> getPreOrders();
   Flux<PreOrder> getPreOrderByRequesterId(String userId);
 }

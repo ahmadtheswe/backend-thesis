@@ -18,3 +18,7 @@ midtrans:
   merchant-id: ${MIDTRANS_MERCHANT_ID}
   server-key: ${MIDTRANS_SERVER_KEY}
   client-key: ${MIDTRANS_CLIENT_KEY}
+
+api:
+  image:
+    preorder-callback: 'http://localhost:9092/image/v1/regular/pre-order/callback'

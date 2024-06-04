@@ -33,10 +33,11 @@ public class PreOrderEntity implements Persistable<String> {
   private Boolean isActive;
   private Long createdAt;
   private Long deliveredAt;
+  private String paymentPreorderId;
 
-  @Setter
   @Transient
   private boolean isNew = true;
 
+  public void setIsNew(boolean isNew) { this.isNew = isNew; }
   public boolean isNew() { return isNew; }
 }

@@ -1,5 +1,6 @@
 package com.ahmadthesis.payment.business;
 
+import java.math.BigInteger;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
@@ -8,5 +9,5 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Data
 public class PreOrderCharge extends Charge {
-  private Double price;
+  private BigInteger price;
 }

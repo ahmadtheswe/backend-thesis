@@ -14,6 +14,7 @@ public class TokenUtils {
         .userId(jwt.getSubject())
         .email(jwt.getClaimAsString("email"))
         .preferredUsername(jwt.getClaimAsString("preferred_username"))
+        .token(jwt.getTokenValue())
         .build();
   }
 }

@@ -50,3 +50,6 @@ copernicus:
   grant-type: ${COPERNICUS_GRANT_TYPE}
   client-id: ${COPERNICUS_CLIENT_ID}
   client-secret: ${COPERNICUS_CLIENT_SECRET}
+
+midtrans:
+  server-key: ${MIDTRANS_SERVER_KEY}

@@ -7,5 +7,4 @@ import reactor.core.publisher.Mono;
 public interface PaymentPersister {
   Mono<Void> savePayment(Payment payment, Boolean isNew);
   Mono<Void> deleteActivePayment(String userId);
-  Mono<Boolean> updatePaymentStatus(PaymentCallBack paymentCallBack);
 }

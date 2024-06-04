@@ -8,11 +8,13 @@ import lombok.NoArgsConstructor;
 
 @Builder
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class PreOrderRequest {
-  @JsonProperty("bBox")
-  private BBoxRequest bBox;
-  @JsonProperty("imageSize")
-  private Double imageSize;
+@AllArgsConstructor
+public class PreOrderCallBackRequest {
+
+  @JsonProperty("preorderId")
+  private String preorderId;
+
+  @JsonProperty("preorderSignature")
+  private String preorderSignature;
 }

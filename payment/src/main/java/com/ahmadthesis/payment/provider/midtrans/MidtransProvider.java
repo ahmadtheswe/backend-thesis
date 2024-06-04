@@ -9,6 +9,7 @@ import com.ahmadthesis.payment.usecase.MidtransRetriever;
 import com.midtrans.httpclient.error.MidtransError;
 import com.midtrans.service.MidtransCoreApi;
 import com.midtrans.service.MidtransSnapApi;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -34,7 +35,8 @@ public class MidtransProvider implements MidtransPersister, MidtransRetriever {
 
       final Map<String, Object> chargeRequest = new HashMap<>();
       chargeRequest.put("transaction_details", transactionDetails);
-      chargeRequest.put("payment_type", payment.getPaymentType());
+      if(payment.getPaymentType() != null)
+        chargeRequest.put("payment_type", payment.getPaymentType());
 
       return Charge.builder()
           .orderId(orderId)
@@ -51,7 +53,7 @@ public class MidtransProvider implements MidtransPersister, MidtransRetriever {
     try {
       final String orderId = UUID.randomUUID().toString();
       final Map<String, Object> transactionDetails = new HashMap<>();
-      final double price = preOrder.getPrice().intValue() * preOrder.getImageSize();
+      final BigInteger price = BigInteger.valueOf(preOrder.getImageSize().intValue());
       transactionDetails.put("order_id", orderId);
       transactionDetails.put("gross_amount", price);
       transactionDetails.put("email", preOrder.getUserEmail());

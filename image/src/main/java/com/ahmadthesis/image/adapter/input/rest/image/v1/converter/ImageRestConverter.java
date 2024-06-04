@@ -4,6 +4,7 @@ import com.ahmadthesis.image.adapter.input.rest.common.parser.FilePartParser;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.PaginationRequest;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.SaveImageRequest;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.preorder.BBoxRequest;
+import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.preorder.PreOrderCallBackRequest;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.request.preorder.PreOrderRequest;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.ImageUploadResponse;
 import com.ahmadthesis.image.adapter.input.rest.image.v1.dto.response.PaginationInfo;
@@ -187,6 +188,10 @@ public final class ImageRestConverter {
 
   public static Mono<BBoxRequest> generateBBoxRequest(final ServerRequest request) {
     return request.bodyToMono(BBoxRequest.class);
+  }
+
+  public static Mono<PreOrderCallBackRequest> generatePreorderCallBackRequest(final ServerRequest request) {
+    return request.bodyToMono(PreOrderCallBackRequest.class);
   }
 
   public static Mono<PreOrder> generatePreOrderFromRequest(final PreOrderRequest preOrderRequest,

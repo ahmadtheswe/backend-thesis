@@ -12,7 +12,6 @@ import reactor.core.publisher.Mono;
 public interface PersistPayment {
   Mono<ChargeDTO> saveCharge(PaymentTransactionsDTO paymentTransactionsDTO, String userId);
   Mono<Object> checkCharge(String orderId);
-  Mono<Boolean> paymentCallBack(MidtransCallBackDTO midtransCallBackDTO);
   Mono<ActivePackageDTO> getActivePayment(String userId);
   Mono<PaymentDTO> getOnProgressPayment(String userId);
   Mono<Void> cancelActivePayment(String userId);

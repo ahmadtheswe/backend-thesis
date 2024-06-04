@@ -4,18 +4,15 @@ import com.ahmadthesis.payment.business.ActivePackage;
 import com.ahmadthesis.payment.business.PackageCount;
 import com.ahmadthesis.payment.business.PackageType;
 import com.ahmadthesis.payment.business.Payment;
-import com.ahmadthesis.payment.business.PaymentCallBack;
 import com.ahmadthesis.payment.business.PaymentStatus;
+import com.ahmadthesis.payment.provider.preorder.PreOrderRepository;
 import com.ahmadthesis.payment.usecase.PaymentPersister;
 import com.ahmadthesis.payment.usecase.PaymentRetriever;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.token.Sha512DigestUtils;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -25,12 +22,13 @@ import reactor.core.publisher.Mono;
 public class PaymentDBProvider implements PaymentPersister, PaymentRetriever {
 
   @Value("${midtrans.server-key}")
-  private String serverKey;
+  private String MIDTRANS_SERVER_KEY;
 
   @Value("${time.zone}")
-  private String zoneDateTime;
+  private String ZONE_DATE_TIME_ID;
 
   private final PaymentRepository paymentRepository;
+  private final PreOrderRepository preOrderRepository;
 
   @Override
   public Mono<Void> savePayment(Payment payment, Boolean isNew) {
@@ -55,7 +53,8 @@ public class PaymentDBProvider implements PaymentPersister, PaymentRetriever {
             paymentEntity -> paymentEntity.getPackageId().contains(PackageType.PREMIUM.getName()))
         .next().flatMap(paymentEntity -> Mono.just(
             ActivePackage.builder().activePackage(PackageType.PREMIUM)
-                .activeUntil(paymentEntity.getValidDate().atZone(ZoneId.of(zoneDateTime))).build()))
+                .activeUntil(paymentEntity.getValidDate().atZone(ZoneId.of(ZONE_DATE_TIME_ID)))
+                .build()))
         .switchIfEmpty(
             paymentRepository.getPaymentEntitiesByUserIdAndPaymentStatusAndValidDateIsAfter(
                     userId, PaymentStatus.PAID.getStatus(), today
@@ -65,7 +64,8 @@ public class PaymentDBProvider implements PaymentPersister, PaymentRetriever {
                     .contains(PackageType.PRO.getName()))
                 .next().flatMap(paymentEntity -> Mono.just(
                     ActivePackage.builder().activePackage(PackageType.PRO)
-                        .activeUntil(paymentEntity.getValidDate().atZone(ZoneId.of(zoneDateTime)))
+                        .activeUntil(paymentEntity.getValidDate().atZone(ZoneId.of(
+                            ZONE_DATE_TIME_ID)))
                         .build()))
                 .switchIfEmpty(
                     // Return FREE if not contain PREMIUM or PRO
@@ -98,33 +98,5 @@ public class PaymentDBProvider implements PaymentPersister, PaymentRetriever {
             userId,
             PaymentStatus.UNPAID.getStatus(), today)
         .flatMap(paymentRepository::delete);
-  }
-
-  @Override
-  public Mono<Boolean> updatePaymentStatus(PaymentCallBack paymentCallBack) {
-    final String paymentSHA = Sha512DigestUtils.shaHex(
-        paymentCallBack.getOrderId() + paymentCallBack.getStatusCode()
-            + paymentCallBack.getGrossAmount() + serverKey);
-
-    if (paymentSHA.equals(paymentCallBack.getSignatureKey())) {
-      if (paymentCallBack.getTransactionStatus().equalsIgnoreCase("settlement")) {
-        return paymentRepository.getPaymentEntityById(paymentCallBack.getOrderId())
-            .flatMap(paymentEntity -> {
-              paymentEntity.setPaymentStatus(PaymentStatus.PAID.getStatus());
-              DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-              LocalDateTime localDateTime = LocalDateTime.parse(
-                  paymentCallBack.getTransactionTime(), formatter);
-              ZonedDateTime payDate = ZonedDateTime.of(localDateTime, ZoneId.of("Asia/Jakarta"));
-
-              System.out.println("Payment time: " + payDate);
-              paymentEntity.setPayDate(payDate.toInstant());
-              paymentEntity.setValidDate(payDate.plusDays(30).toInstant());
-              paymentEntity.setIsNew(false);
-              return paymentRepository.save(paymentEntity).then(Mono.defer(() -> Mono.just(true)));
-            });
-      }
-    }
-
-    return Mono.just(false);
   }
 }

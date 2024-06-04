@@ -22,4 +22,6 @@ public class PreOrder {
   private Boolean isActive;
   private Long createdAt;
   private Long deliveredAt;
+  private String paymentPreorderId;
+  private Boolean isNew;
 }

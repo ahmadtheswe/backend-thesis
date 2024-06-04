@@ -85,12 +85,6 @@ public class PaymentUseCaseApi implements PersistPayment {
   }
 
   @Override
-  public Mono<Boolean> paymentCallBack(MidtransCallBackDTO midtransCallBackDTO) {
-    return paymentPersister.updatePaymentStatus(
-        PaymentCallBackConverter.toBusiness(midtransCallBackDTO));
-  }
-
-  @Override
   public Mono<ActivePackageDTO> getActivePayment(final String userId) {
     return paymentRetriever.getActivePackage(userId).map(ActivePackageConverter::toDTO);
   }

@@ -1,0 +1,1 @@
+alter table "public".preorder add column payment_preorder_id varchar(36);

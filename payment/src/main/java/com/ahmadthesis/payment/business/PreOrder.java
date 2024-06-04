@@ -1,6 +1,7 @@
 package com.ahmadthesis.payment.business;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.ZonedDateTime;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +13,7 @@ public class PreOrder {
   private String id;
   private String userId;
   private String userEmail;
-  private BigDecimal price;
+  private BigInteger price;
   private Double imageSize;
   private Boolean isPaid;
   private ZonedDateTime createdAt;

@@ -38,6 +38,7 @@ public class ResourceServerConfig {
             authorizeExchangeSpec
                 .pathMatchers("/public/**").permitAll()
                 .pathMatchers("/testing/**").permitAll()
+                .pathMatchers("/image/v1/regular/pre-order/callback").permitAll()
                 .pathMatchers("/image/v1/admin/**").hasRole("ADMIN")
                 .pathMatchers("/image/v1/regular/**").hasRole("REGULAR")
                 .anyExchange().authenticated())

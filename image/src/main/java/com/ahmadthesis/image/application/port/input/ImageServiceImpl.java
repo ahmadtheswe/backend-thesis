@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
+
   private final ImageDatabase imageDatabase;
   private final PreOrderDatabase preOrderDatabase;
 
@@ -35,20 +36,21 @@ public class ImageServiceImpl implements ImageService {
   }
 
   @Override
-  public Flux<Image> getImagesPagination(final Integer size, final Integer page, final String sortBy,
+  public Flux<Image> getImagesPagination(final Integer size, final Integer page,
+      final String sortBy,
       final String title, final BigDecimal latitude, final BigDecimal longitude, Double radius) {
     return imageDatabase.getImages(size, page, sortBy, title, latitude, longitude, radius);
   }
 
   @Override
-  public Flux<Image> getPublicImagesPagination(final Integer size, final  Integer page,
+  public Flux<Image> getPublicImagesPagination(final Integer size, final Integer page,
       final String sortBy, BigDecimal latitude, BigDecimal longitude, Double radius) {
     return imageDatabase.getPublicImages(size, page, sortBy, latitude, longitude, radius);
   }
 
   @Override
   public Flux<Image> getUserImagesCollectionPagination(
-          final Integer size, final Integer page, final String sortBy, final String ownerId,
+      final Integer size, final Integer page, final String sortBy, final String ownerId,
       BigDecimal latitude, BigDecimal longitude) {
     return imageDatabase.getUserImagesCollection(size, page, sortBy, ownerId, latitude, longitude);
   }
@@ -56,6 +58,11 @@ public class ImageServiceImpl implements ImageService {
   @Override
   public Mono<Long> getImagesCount() {
     return imageDatabase.getTotalImagesCount();
+  }
+
+  @Override
+  public Mono<PreOrder> getPreOrderByPreorderId(String preorderId) {
+    return preOrderDatabase.getPreorderByPreorderId(preorderId);
   }
 
   @Override
@@ -70,7 +77,9 @@ public class ImageServiceImpl implements ImageService {
 
   @Override
   public Mono<PreOrder> savePreOrder(PreOrder preOrder) {
-    preOrder.setId(UUID.randomUUID().toString());
+    if (preOrder.getIsNew()) {
+      preOrder.setId(UUID.randomUUID().toString());
+    }
     return preOrderDatabase.save(preOrder);
   }
 }

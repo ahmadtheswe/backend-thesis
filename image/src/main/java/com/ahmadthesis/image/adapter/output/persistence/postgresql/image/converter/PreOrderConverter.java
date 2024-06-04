@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PreOrderConverter {
+
   public static PreOrder toDomain(PreOrderEntity entity) {
     return PreOrder.builder()
         .id(entity.getId())
@@ -27,6 +28,8 @@ public class PreOrderConverter {
         .isActive(entity.getIsActive())
         .createdAt(entity.getCreatedAt())
         .deliveredAt(entity.getDeliveredAt())
+        .paymentPreorderId(entity.getPaymentPreorderId())
+        .isNew(entity.isNew())
         .build();
   }
 
@@ -45,6 +48,8 @@ public class PreOrderConverter {
         .isActive(domain.getIsActive())
         .createdAt(domain.getCreatedAt())
         .deliveredAt(domain.getDeliveredAt())
+        .paymentPreorderId(domain.getPaymentPreorderId())
+        .isNew(domain.getIsNew())
         .build();
   }
 }

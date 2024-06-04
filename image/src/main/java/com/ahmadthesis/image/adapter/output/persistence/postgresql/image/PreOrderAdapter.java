@@ -19,8 +19,14 @@ public class PreOrderAdapter implements PreOrderDatabase {
   @Override
   public Mono<PreOrder> save(PreOrder preOrder) {
     PreOrderEntity preOrderEntity = PreOrderConverter.toEntity(preOrder);
-    preOrderEntity.setNew(true);
+//    preOrderEntity.setIsNew(true);
     return this.preOrderRepository.save(preOrderEntity)
+        .map(PreOrderConverter::toDomain);
+  }
+
+  @Override
+  public Mono<PreOrder> getPreorderByPreorderId(String preorderId) {
+    return this.preOrderRepository.getPreOrderEntityByPaymentPreorderId(preorderId)
         .map(PreOrderConverter::toDomain);
   }
 

@@ -1,6 +1,7 @@
 package com.ahmadthesis.payment.provider.preorder;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +25,7 @@ public class PreOrderEntity implements Persistable<String> {
   private String id;
   private String userId;
   private String userEmail;
-  private BigDecimal price;
+  private BigInteger price;
   private Boolean isPaid;
   private Instant createdAt;
   private Instant paidAt;

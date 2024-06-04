@@ -1,7 +1,5 @@
 package com.ahmadthesis.payment.usecase.preorder;
 
-import com.ahmadthesis.payment.business.PackageType;
-import com.ahmadthesis.payment.business.PaymentStatus;
 import com.ahmadthesis.payment.business.PreOrder;
 import com.ahmadthesis.payment.controller.ChargeConverter;
 import com.ahmadthesis.payment.controller.PersistPreOrder;
@@ -11,7 +9,6 @@ import com.ahmadthesis.payment.controller.dto.PreOrderTransactionDTO;
 import com.ahmadthesis.payment.usecase.MidtransPersister;
 import com.ahmadthesis.payment.usecase.MidtransRetriever;
 import com.ahmadthesis.payment.usecase.PreOrderPersister;
-import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -33,7 +30,7 @@ public class PreOrderUseCaseApi implements PersistPreOrder {
               .id(charge.getOrderId())
               .userId(userId)
               .userEmail(preOrderTransactionDTO.getEmail())
-              .price(BigDecimal.valueOf(charge.getPrice()))
+              .price(charge.getPrice())
               .isPaid(false)
               .redirectUrl(charge.getRedirectUrl())
               .midtransToken(charge.getMidtransToken())

@@ -35,6 +35,8 @@ public class ImageRegularRouter {
             .and(accept(MediaType.APPLICATION_JSON)), handler::getPreOrderList)
         .andRoute(POST("/image/v1/regular/pre-order")
             .and(accept(MediaType.APPLICATION_JSON)), handler::savePreOrderRequest)
+        .andRoute(POST("/image/v1/regular/pre-order/callback")
+            .and(accept(MediaType.APPLICATION_JSON)), handler::preorderCallBack)
         .andRoute(POST("/image/v1/regular/copernicus")
             .and(accept(MediaType.APPLICATION_OCTET_STREAM)), handler::generateImage);
   }

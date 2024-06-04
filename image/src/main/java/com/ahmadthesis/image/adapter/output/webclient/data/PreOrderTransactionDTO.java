@@ -1,4 +1,4 @@
-package com.ahmadthesis.payment.controller.dto;
+package com.ahmadthesis.image.adapter.output.webclient.data;
 
 import lombok.Builder;
 import lombok.Data;
