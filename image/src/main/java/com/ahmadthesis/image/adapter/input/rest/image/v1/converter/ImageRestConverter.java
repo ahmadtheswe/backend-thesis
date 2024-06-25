@@ -179,6 +179,8 @@ public final class ImageRestConverter {
             : DateUtils.millisecondsToDateString(preOrder.getCreatedAt()))
         .deliveredAt(preOrder.getDeliveredAt() == null ? null
             : DateUtils.millisecondsToDateString(preOrder.getDeliveredAt()))
+        .isPaid(preOrder.getIsPaid())
+        .redirectUrl(preOrder.getIsPaid() ? null : preOrder.getRedirectUrl())
         .build();
   }
 
@@ -190,7 +192,8 @@ public final class ImageRestConverter {
     return request.bodyToMono(BBoxRequest.class);
   }
 
-  public static Mono<PreOrderCallBackRequest> generatePreorderCallBackRequest(final ServerRequest request) {
+  public static Mono<PreOrderCallBackRequest> generatePreorderCallBackRequest(
+      final ServerRequest request) {
     return request.bodyToMono(PreOrderCallBackRequest.class);
   }
 

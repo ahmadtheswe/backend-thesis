@@ -15,4 +15,6 @@ public class PreOrderRequest {
   private BBoxRequest bBox;
   @JsonProperty("imageSize")
   private Double imageSize;
+  @JsonProperty("probeType")
+  private String probeType;
 }

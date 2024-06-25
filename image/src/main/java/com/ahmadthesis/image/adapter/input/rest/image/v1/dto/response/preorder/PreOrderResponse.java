@@ -12,4 +12,6 @@ public class PreOrderResponse {
   private Boolean isActive;
   private String createdAt;
   private String deliveredAt;
+  private Boolean isPaid;
+  private String redirectUrl;
 }

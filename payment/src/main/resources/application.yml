@@ -4,3 +4,7 @@ server:
 time:
   zone: 'Asia/Jakarta'
   pattern: 'yyyy-MM-dd HH:mm:ss z'
+
+email:
+  sender-address: ${AUTH_EMAIL}
+  sender-password: ${AUTH_PASS}

@@ -1,7 +1,9 @@
 package com.ahmadthesis.payment.provider.payment;
 
+import com.ahmadthesis.payment.business.Email;
 import com.ahmadthesis.payment.business.PaymentCallBack;
 import com.ahmadthesis.payment.business.PaymentStatus;
+import com.ahmadthesis.payment.provider.email.EmailClient;
 import com.ahmadthesis.payment.provider.image.ImageWebClient;
 import com.ahmadthesis.payment.provider.image.PreOrderCallBackRequest;
 import com.ahmadthesis.payment.provider.preorder.PreOrderEntity;
@@ -31,6 +33,7 @@ public class CallBackDBProvider implements CallBackPersister {
   private final PaymentRepository paymentRepository;
   private final PreOrderRepository preOrderRepository;
   private final ImageWebClient imageWebClient;
+  private final EmailClient emailClient;
 
   @Override
   public Mono<Boolean> updatePaymentStatus(PaymentCallBack paymentCallBack) {
@@ -45,7 +48,14 @@ public class CallBackDBProvider implements CallBackPersister {
               .flatMap(paymentEntity -> updatePaymentEntity(paymentEntity, paymentCallBack))
               .switchIfEmpty(preOrderRepository.getPreOrderEntityById(paymentCallBack.getOrderId())
                   .flatMap(
-                      preOrderEntity -> updatePreOrderEntity(preOrderEntity, paymentCallBack)));
+                      preOrderEntity -> updatePreOrderEntity(preOrderEntity, paymentCallBack)
+
+                          .flatMap(success -> {
+                            return sendEmail(preOrderEntity.getUserEmail(),
+                              "Payment Success",
+                              "Your payment has been successfully processed.")
+                                .then(Mono.defer(() -> Mono.just(success)));
+                          })));
         }
       }
       return Mono.just(false);
@@ -89,5 +99,13 @@ public class CallBackDBProvider implements CallBackPersister {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     LocalDateTime localDateTime = LocalDateTime.parse(transactionTime, formatter);
     return ZonedDateTime.of(localDateTime, ZoneId.of(ZONE_DATE_TIME_ID));
+  }
+
+  private Mono<Void> sendEmail(String email, String subject, String content) {
+    return emailClient.sendEmail(Email.builder()
+        .to(email)
+        .subject(subject)
+        .content(content)
+        .build());
   }
 }

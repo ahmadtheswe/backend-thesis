@@ -34,6 +34,12 @@ public class PreOrderEntity implements Persistable<String> {
   private Long createdAt;
   private Long deliveredAt;
   private String paymentPreorderId;
+  private String mediaType;
+  private String filename;
+  private String originalImageDir;
+  private Boolean isPaid;
+  private String redirectUrl;
+  private String probeType;
 
   @Transient
   private boolean isNew = true;

@@ -4,5 +4,5 @@ import com.ahmadthesis.image.domain.image.BBox;
 import reactor.core.publisher.Mono;
 
 public interface CopernicusWebClientService {
-  Mono<byte[]> generateImage(BBox bBox);
+  Mono<byte[]> generateImage(BBox bBox, String probeType);
 }

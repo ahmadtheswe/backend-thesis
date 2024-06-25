@@ -33,11 +33,15 @@ public class ImageRegularRouter {
             .and(accept(MediaType.APPLICATION_JSON)), handler::viewPublicImageFile)
         .andRoute(GET("/image/v1/regular/pre-order")
             .and(accept(MediaType.APPLICATION_JSON)), handler::getPreOrderList)
+        .andRoute(GET("/image/v1/regular/pre-order/detail")
+            .and(accept(MediaType.APPLICATION_JSON)), handler::getPreOrderById)
         .andRoute(POST("/image/v1/regular/pre-order")
             .and(accept(MediaType.APPLICATION_JSON)), handler::savePreOrderRequest)
         .andRoute(POST("/image/v1/regular/pre-order/callback")
             .and(accept(MediaType.APPLICATION_JSON)), handler::preorderCallBack)
-        .andRoute(POST("/image/v1/regular/copernicus")
-            .and(accept(MediaType.APPLICATION_OCTET_STREAM)), handler::generateImage);
+        .andRoute(GET("/image/v1/regular/pre-order/view")
+            .and(accept(MediaType.APPLICATION_OCTET_STREAM)), handler::viewPreOrderImageFile);
+//        .andRoute(POST("/image/v1/regular/copernicus")
+//            .and(accept(MediaType.APPLICATION_OCTET_STREAM)), handler::generateImage);
   }
 }

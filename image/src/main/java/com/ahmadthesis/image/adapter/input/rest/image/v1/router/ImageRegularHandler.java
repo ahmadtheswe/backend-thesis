@@ -12,6 +12,7 @@ import com.ahmadthesis.image.application.usecase.PaymentWebClientService;
 import com.ahmadthesis.image.domain.image.BBox;
 import com.ahmadthesis.image.domain.image.Email;
 import com.ahmadthesis.image.domain.image.Image;
+import com.ahmadthesis.image.domain.image.PreOrder;
 import com.ahmadthesis.image.domain.image.ProductLevel;
 import com.ahmadthesis.image.domain.payment.PackageType;
 import com.ahmadthesis.image.global.utils.DateUtils;
@@ -220,6 +221,28 @@ public class ImageRegularHandler {
         )).switchIfEmpty(Mono.defer(() -> ServerResponse.status(HttpStatus.NOT_FOUND).build()));
   }
 
+  Mono<ServerResponse> getPreOrderById(final ServerRequest request) {
+    return request.principal()
+        .flatMap(principal -> Mono.just(TokenUtils.generateTokenInfo(principal)))
+        .flatMap(tokenInfo -> ImageRestConverter.extractIdRequest(request)
+            .flatMap(preOrderId -> imageService.getPreOrderById(preOrderId)
+                .flatMap(preOrder -> {
+                  if (!preOrder.getIsPaid()) {
+                    return ServerResponse.status(HttpStatus.NOT_FOUND).build();
+                  }
+                  if (preOrder.getRequesterId().equals(tokenInfo.getUserId())) {
+                    return ServerResponse.ok()
+                        .bodyValue(new DataResponse<>(
+                            ImageRestConverter.generatePreOrderResponse(preOrder), List.of()));
+                  } else {
+                    return ServerResponse.status(HttpStatus.NOT_FOUND).build();
+                  }
+                })
+                .switchIfEmpty(ServerResponse.status(HttpStatus.NOT_FOUND).build())
+            )
+        );
+  }
+
   Mono<ServerResponse> savePreOrderRequest(final ServerRequest request) {
     return request.principal().flatMap(principal -> {
           return Mono.just(TokenUtils.generateTokenInfo(principal));
@@ -229,7 +252,6 @@ public class ImageRegularHandler {
                 preOrderRequest -> {
                   return ImageRestConverter.generatePreOrderFromRequest(preOrderRequest,
                           tokenInfo)
-//                      .flatMap(imageService::savePreOrder)
                       .flatMap(preOrder -> {
                         return paymentWebClientService.chargePreOrder(
                             PreOrderTransactionDTO.builder()
@@ -239,7 +261,9 @@ public class ImageRegularHandler {
                             tokenInfo.getToken()
                         ).flatMap(chargeDTO -> {
                           preOrder.setPaymentPreorderId(chargeDTO.getOrderId());
+                          preOrder.setIsPaid(false);
                           preOrder.setIsNew(true);
+                          preOrder.setRedirectUrl(chargeDTO.getRedirectUrl());
                           return imageService.savePreOrder(preOrder)
                               .flatMap(preOrder1 -> {
                                 return Mono.just(chargeDTO);
@@ -264,22 +288,6 @@ public class ImageRegularHandler {
                             .bodyValue(new DataResponse<>(preOrderTransactionDTO, List.of()));
                       });
                 }));
-//        )
-//        .flatMap(imageService::savePreOrder);
-//        .doOnSuccess(preOrder -> {
-//          Mono<byte[]> generatedImage = copernicusWebClientService.generateImage(
-//                  BBox.builder().minLongitude(preOrder.getBBox().getMinLongitude())
-//                      .minLatitude(preOrder.getBBox().getMinLatitude())
-//                      .maxLongitude(preOrder.getBBox().getMaxLongitude())
-//                      .maxLatitude(preOrder.getBBox().getMaxLatitude()).build())
-//              .flatMap(Mono::just);
-//
-//          generatedImage.flatMap(
-//              bytes -> saveBytesToFile(bytes, preOrder.getId()).thenReturn(preOrder)).subscribeOn(
-//              Schedulers.boundedElastic()).subscribe();
-//        })
-//        .then(Mono.defer(() -> ServerResponse.ok()
-//            .bodyValue(new DataResponse<>(null, List.of()))));
   }
 
   public Mono<ServerResponse> preorderCallBack(ServerRequest request) {
@@ -297,22 +305,22 @@ public class ImageRegularHandler {
                 }
 
                 preOrder.setDeliveredAt(DateUtils.now());
+                preOrder.setIsPaid(true);
                 preOrder.setIsNew(false);
 
                 return imageService.savePreOrder(preOrder)
-                    .doOnSuccess(preOrderImage -> {
-                      Mono<byte[]> generatedImage = copernicusWebClientService.generateImage(
+                    .flatMap(preOrderImage -> {
+                      return copernicusWebClientService.generateImage(
                               BBox.builder().minLongitude(preOrderImage.getBBox().getMinLongitude())
                                   .minLatitude(preOrderImage.getBBox().getMinLatitude())
                                   .maxLongitude(preOrderImage.getBBox().getMaxLongitude())
-                                  .maxLatitude(preOrderImage.getBBox().getMaxLatitude()).build())
-                          .flatMap(Mono::just);
-
-                      generatedImage.flatMap(
-                              bytes -> saveBytesToFile(bytes, preOrderImage.getId()).thenReturn(preOrderImage))
-                          .subscribeOn(
-                              Schedulers.boundedElastic()).subscribe();
+                                  .maxLatitude(preOrderImage.getBBox().getMaxLatitude()).build(),
+                              preOrderImage.getProbeType()
+                          )
+                          .flatMap(bytes -> saveBytesToFile(bytes, preOrder))
+                          .thenReturn(preOrderImage);
                     })
+                    .subscribeOn(Schedulers.boundedElastic())
                     .then(Mono.defer(() -> ServerResponse.ok()
                         .bodyValue(new DataResponse<>(null, List.of()))));
               });
@@ -321,25 +329,57 @@ public class ImageRegularHandler {
             .bodyValue(new DataResponse<>(null, List.of("Preorder not found"))));
   }
 
-  private Mono<Void> saveBytesToFile(byte[] bytes, final String preOrderId) {
+  private Mono<Void> saveBytesToFile(byte[] bytes, final PreOrder preOrder) {
     return Mono.fromCallable(() -> {
-      // Ensure the upload directory exists
-      Path uploadPath = Paths.get(UPLOAD_DIRECTORY);
-      if (!Files.exists(uploadPath)) {
-        Files.createDirectories(uploadPath);
-      }
+          Path uploadPath = Paths.get(UPLOAD_DIRECTORY);
+          if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+          }
 
-      // Create a path for the file
-      String filename = preOrderId + ".png";  // You can generate a unique filename if needed
-      Path filePath = uploadPath.resolve(filename);
+          String filename = preOrder.getId() + ".png";
+          Path filePath = uploadPath.resolve(filename);
 
-      // Write the bytes to the file
-      Files.write(filePath, bytes);
-      return null;
-    }).then();
+          Files.write(filePath, bytes);
+          preOrder.setOriginalImageDir(filePath.toString());
+          preOrder.setFilename(filename);
+          preOrder.setMediaType("png");
+          preOrder.setIsNew(false);
+
+          return preOrder;
+        }).flatMap(imageService::savePreOrder)
+        .flatMap(preOrder1 -> emailService.sendEmail(
+                Email.builder()
+                    .to(preOrder1.getRequesterEmail())
+                    .subject("Pre Order Image")
+                    .content(
+                        "Your image is ready to download. Please click the link below to download the image.\n"
+                            +
+                            "http://localhost:4200/#/your-orders/" + preOrder1.getId())
+                    .build())
+            .then());
   }
 
-  Mono<ServerResponse> getPreOrderList(final ServerRequest request) {
+  public Mono<ServerResponse> viewPreOrderImageFile(final ServerRequest request) {
+    return request.principal()
+        .flatMap(principal -> Mono.just(TokenUtils.generateTokenInfo(principal))
+            .flatMap(tokenInfo -> {
+              return ImageRestConverter.extractIdRequest(request)
+                  .flatMap(preorderId -> imageService.getPreOrderByIdAndRequesterId(preorderId,
+                          tokenInfo.getUserId())
+                      .flatMap(preOrder -> {
+                        final File file = new File(preOrder.getOriginalImageDir());
+                        final Resource resource = new FileSystemResource(file);
+                        return ServerResponse.ok()
+                            .bodyValue(resource);
+                      })
+                      .switchIfEmpty(
+                          Mono.defer(() -> ServerResponse.status(HttpStatus.NOT_FOUND).build()))
+                      .switchIfEmpty(
+                          Mono.defer(() -> ServerResponse.status(HttpStatus.NOT_FOUND).build())));
+            }));
+  }
+
+  public Mono<ServerResponse> getPreOrderList(final ServerRequest request) {
     return request.principal().flatMap(principal -> Mono.just(principal.getName()))
         .flatMap(userId -> imageService.getPreOrderList(userId)
             .map(ImageRestConverter::generatePreOrderResponse)
@@ -348,13 +388,13 @@ public class ImageRegularHandler {
                 .bodyValue(new DataResponse<>(preOrderResponses, List.of()))));
   }
 
-  Mono<ServerResponse> generateImage(final ServerRequest request) {
-    return ImageRestConverter.generateBBoxRequest(request)
-        .flatMap(bBoxRequest -> copernicusWebClientService.generateImage(
-                BBox.builder().minLongitude(bBoxRequest.getMinLongitude())
-                    .minLatitude(bBoxRequest.getMinLatitude())
-                    .maxLongitude(bBoxRequest.getMaxLongitude())
-                    .maxLatitude(bBoxRequest.getMaxLatitude()).build())
-            .flatMap(bytes -> ServerResponse.ok().bodyValue(bytes)));
-  }
+//  private Mono<ServerResponse> generateImage(final ServerRequest request) {
+//    return ImageRestConverter.generateBBoxRequest(request)
+//        .flatMap(bBoxRequest -> copernicusWebClientService.generateImage(
+//                BBox.builder().minLongitude(bBoxRequest.getMinLongitude())
+//                    .minLatitude(bBoxRequest.getMinLatitude())
+//                    .maxLongitude(bBoxRequest.getMaxLongitude())
+//                    .maxLatitude(bBoxRequest.getMaxLatitude()).build(), )
+//            .flatMap(bytes -> ServerResponse.ok().bodyValue(bytes)));
+//  }
 }

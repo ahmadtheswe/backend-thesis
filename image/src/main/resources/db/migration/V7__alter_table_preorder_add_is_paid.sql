@@ -1,0 +1,1 @@
+alter table "public".preorder add column "is_paid" bool default false;

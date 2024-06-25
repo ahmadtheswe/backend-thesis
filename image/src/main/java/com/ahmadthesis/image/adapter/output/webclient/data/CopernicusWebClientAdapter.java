@@ -56,7 +56,7 @@ public class CopernicusWebClientAdapter implements CopernicusWebClient {
   }
 
   @Override
-  public Mono<byte[]> getCopernicusImage(String token, BBox bBox) {
+  public Mono<byte[]> getCopernicusImage(final String token, BBox bBox, final String probeType) {
     final WebClient webClient = WebClient.builder()
         .baseUrl(copernicusProcessAPI)
         .defaultHeader("Authorization", "Bearer " + token)
@@ -80,7 +80,7 @@ public class CopernicusWebClientAdapter implements CopernicusWebClient {
         "    },\n" +
         "    \"data\": [\n" +
         "      {\n" +
-        "        \"type\": \"sentinel-2-l2a\",\n" +
+        "        \"type\": \"" + probeType + "\",\n" +
         "        \"dataFilter\": {\n" +
         "          \"timeRange\": {\n" +
         "            \"from\": \"2022-10-01T00:00:00Z\",\n" +
@@ -106,13 +106,15 @@ public class CopernicusWebClientAdapter implements CopernicusWebClient {
         .timeout(Duration.ofMinutes(5));
   }
 
-  public static BigDecimal[] calculatePixelDimensions(BBox bbox, double metersPerPixel, int maxDimension) {
+  public static BigDecimal[] calculatePixelDimensions(BBox bbox, double metersPerPixel,
+      int maxDimension) {
     MathContext mc = new MathContext(20, RoundingMode.HALF_UP);
 
     BigDecimal lonDiff = bbox.getMaxLongitude().subtract(bbox.getMinLongitude(), mc);
     BigDecimal latDiff = bbox.getMaxLatitude().subtract(bbox.getMinLatitude(), mc);
 
-    BigDecimal latAvg = bbox.getMinLatitude().add(bbox.getMaxLatitude(), mc).divide(BigDecimal.valueOf(2), mc);
+    BigDecimal latAvg = bbox.getMinLatitude().add(bbox.getMaxLatitude(), mc)
+        .divide(BigDecimal.valueOf(2), mc);
 
     BigDecimal widthMeters = lonDiff.multiply(DEG_TO_RAD, mc)
         .multiply(EARTH_RADIUS_METERS, mc)
@@ -123,7 +125,9 @@ public class CopernicusWebClientAdapter implements CopernicusWebClient {
     BigDecimal widthPixels = widthMeters.divide(BigDecimal.valueOf(metersPerPixel), mc);
     BigDecimal heightPixels = heightMeters.divide(BigDecimal.valueOf(metersPerPixel), mc);
 
-    BigDecimal scale = BigDecimal.valueOf(maxDimension).min(BigDecimal.valueOf(maxDimension).divide(widthPixels, mc)).min(BigDecimal.valueOf(maxDimension).divide(heightPixels, mc));
+    BigDecimal scale = BigDecimal.valueOf(maxDimension)
+        .min(BigDecimal.valueOf(maxDimension).divide(widthPixels, mc))
+        .min(BigDecimal.valueOf(maxDimension).divide(heightPixels, mc));
 
     BigDecimal scaledWidth = widthPixels.multiply(scale, mc).setScale(0, RoundingMode.HALF_UP);
     BigDecimal scaledHeight = heightPixels.multiply(scale, mc).setScale(0, RoundingMode.HALF_UP);

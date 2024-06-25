@@ -1,0 +1,1 @@
+alter table "public".preorder add column probe_type varchar(200);

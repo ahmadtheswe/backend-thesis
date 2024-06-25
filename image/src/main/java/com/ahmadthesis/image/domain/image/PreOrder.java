@@ -24,4 +24,10 @@ public class PreOrder {
   private Long deliveredAt;
   private String paymentPreorderId;
   private Boolean isNew;
+  private String mediaType;
+  private String filename;
+  private String originalImageDir;
+  private Boolean isPaid;
+  private String redirectUrl;
+  private String probeType;
 }

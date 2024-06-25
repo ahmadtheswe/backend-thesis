@@ -14,10 +14,10 @@ public class CopernicusWebClientServiceImpl implements CopernicusWebClientServic
   private final CopernicusWebClientAdapter copernicusWebClientAdapter;
 
   @Override
-  public Mono<byte[]> generateImage(BBox bBox) {
+  public Mono<byte[]> generateImage(BBox bBox, String probeType) {
     return copernicusWebClientAdapter.generateCopernicusToken()
         .flatMap(copernicusTokenDTO -> {
-          return copernicusWebClientAdapter.getCopernicusImage(copernicusTokenDTO.getAccessToken(), bBox);
+          return copernicusWebClientAdapter.getCopernicusImage(copernicusTokenDTO.getAccessToken(), bBox, probeType);
         });
   }
 }

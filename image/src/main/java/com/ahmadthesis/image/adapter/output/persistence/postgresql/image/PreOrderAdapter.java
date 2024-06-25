@@ -25,8 +25,20 @@ public class PreOrderAdapter implements PreOrderDatabase {
   }
 
   @Override
+  public Mono<PreOrder> getPreorderById(String preorderId) {
+    return this.preOrderRepository.findById(preorderId)
+        .map(PreOrderConverter::toDomain);
+  }
+
+  @Override
   public Mono<PreOrder> getPreorderByPreorderId(String preorderId) {
     return this.preOrderRepository.getPreOrderEntityByPaymentPreorderId(preorderId)
+        .map(PreOrderConverter::toDomain);
+  }
+
+  @Override
+  public Mono<PreOrder> getPreorderByIdAndRequesterId(String id, String requesterId) {
+    return this.preOrderRepository.getPreOrderEntityByIdAndRequesterIdAndIsPaidTrue(id, requesterId)
         .map(PreOrderConverter::toDomain);
   }
 

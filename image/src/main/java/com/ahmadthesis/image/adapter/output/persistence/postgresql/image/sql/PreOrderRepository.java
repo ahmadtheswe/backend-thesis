@@ -10,4 +10,6 @@ import reactor.core.publisher.Mono;
 public interface PreOrderRepository extends R2dbcRepository<PreOrderEntity, String> {
   Flux<PreOrderEntity> findAllByRequesterIdAndIsActiveIsTrue(String userId);
   Mono<PreOrderEntity> getPreOrderEntityByPaymentPreorderId(String paymentPreorderId);
+
+  Mono<PreOrderEntity> getPreOrderEntityByIdAndRequesterIdAndIsPaidTrue(String preorderId, String requesterId);
 }

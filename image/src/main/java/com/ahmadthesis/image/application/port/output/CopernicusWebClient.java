@@ -6,5 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface CopernicusWebClient {
   Mono<CopernicusTokenDTO> generateCopernicusToken();
-  Mono<byte[]> getCopernicusImage(String token, BBox bBox);
+  Mono<byte[]> getCopernicusImage(String token, BBox bBox, String probeType);
 }

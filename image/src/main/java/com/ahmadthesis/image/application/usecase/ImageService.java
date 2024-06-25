@@ -19,7 +19,9 @@ public interface ImageService {
       final Integer size, final Integer page, final String sortBy, final String ownerId,
       BigDecimal latitude, BigDecimal longitude);
   Mono<Long> getImagesCount();
+  Mono<PreOrder> getPreOrderById(String preorderId);
   Mono<PreOrder> getPreOrderByPreorderId(String preorderId);
+  Mono<PreOrder> getPreOrderByIdAndRequesterId(String id, String requesterId);
   Flux<PreOrder> getPreOrderList(String userId);
   Flux<PreOrder> getAllPreOrderList();
   Mono<PreOrder> savePreOrder(PreOrder preOrder);

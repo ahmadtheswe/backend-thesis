@@ -61,8 +61,18 @@ public class ImageServiceImpl implements ImageService {
   }
 
   @Override
+  public Mono<PreOrder> getPreOrderById(String preorderId) {
+    return preOrderDatabase.getPreorderById(preorderId);
+  }
+
+  @Override
   public Mono<PreOrder> getPreOrderByPreorderId(String preorderId) {
     return preOrderDatabase.getPreorderByPreorderId(preorderId);
+  }
+
+  @Override
+  public Mono<PreOrder> getPreOrderByIdAndRequesterId(String id, String requesterId) {
+    return preOrderDatabase.getPreorderByIdAndRequesterId(id, requesterId);
   }
 
   @Override

@@ -30,6 +30,12 @@ public class PreOrderConverter {
         .deliveredAt(entity.getDeliveredAt())
         .paymentPreorderId(entity.getPaymentPreorderId())
         .isNew(entity.isNew())
+        .filename(entity.getFilename())
+        .mediaType(entity.getMediaType())
+        .originalImageDir(entity.getOriginalImageDir())
+        .isPaid(entity.getIsPaid())
+        .redirectUrl(entity.getRedirectUrl())
+        .probeType(entity.getProbeType())
         .build();
   }
 
@@ -50,6 +56,12 @@ public class PreOrderConverter {
         .deliveredAt(domain.getDeliveredAt())
         .paymentPreorderId(domain.getPaymentPreorderId())
         .isNew(domain.getIsNew())
+        .filename(domain.getFilename())
+        .mediaType(domain.getMediaType())
+        .originalImageDir(domain.getOriginalImageDir())
+        .isPaid(domain.getIsPaid())
+        .redirectUrl(domain.getRedirectUrl())
+        .probeType(domain.getProbeType())
         .build();
   }
 }
