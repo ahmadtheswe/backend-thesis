@@ -5,6 +5,7 @@ import com.ahmadthesis.payment.usecase.CopernicusPricePersister;
 import com.ahmadthesis.payment.usecase.CopernicusPriceRetriever;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -15,7 +16,14 @@ public class CopernicusDBProvider implements CopernicusPriceRetriever, Copernicu
 
   @Override
   public Mono<Void> updatePrice(CopernicusPrice copernicusPrice) {
-    return copernicusPriceRepository.save(CopernicusPriceConverter.toEntity(copernicusPrice, false)).then();
+    return copernicusPriceRepository.save(CopernicusPriceConverter.toEntity(copernicusPrice, false))
+        .then();
+  }
+
+  @Override
+  public Flux<CopernicusPrice> getCopernicusPrices() {
+    return copernicusPriceRepository.findAll()
+        .map(CopernicusPriceConverter::toBusiness);
   }
 
   @Override

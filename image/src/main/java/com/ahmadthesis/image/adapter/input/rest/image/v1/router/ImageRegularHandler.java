@@ -388,13 +388,4 @@ public class ImageRegularHandler {
                 .bodyValue(new DataResponse<>(preOrderResponses, List.of()))));
   }
 
-//  private Mono<ServerResponse> generateImage(final ServerRequest request) {
-//    return ImageRestConverter.generateBBoxRequest(request)
-//        .flatMap(bBoxRequest -> copernicusWebClientService.generateImage(
-//                BBox.builder().minLongitude(bBoxRequest.getMinLongitude())
-//                    .minLatitude(bBoxRequest.getMinLatitude())
-//                    .maxLongitude(bBoxRequest.getMaxLongitude())
-//                    .maxLatitude(bBoxRequest.getMaxLatitude()).build(), )
-//            .flatMap(bytes -> ServerResponse.ok().bodyValue(bytes)));
-//  }
 }
