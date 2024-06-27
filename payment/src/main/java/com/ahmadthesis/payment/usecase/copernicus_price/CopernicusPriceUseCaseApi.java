@@ -3,6 +3,7 @@ package com.ahmadthesis.payment.usecase.copernicus_price;
 import com.ahmadthesis.payment.controller.CopernicusPriceConverter;
 import com.ahmadthesis.payment.controller.PersistCopernicusPrice;
 import com.ahmadthesis.payment.controller.dto.CopernicusPriceDTO;
+import com.ahmadthesis.payment.controller.dto.CopernicusPriceUpdateDTO;
 import com.ahmadthesis.payment.usecase.CopernicusPricePersister;
 import com.ahmadthesis.payment.usecase.CopernicusPriceRetriever;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class CopernicusPriceUseCaseApi implements PersistCopernicusPrice {
   private final CopernicusPricePersister copernicusPricePersister;
 
   @Override
-  public Mono<Void> updatePrice(CopernicusPriceDTO copernicusPrice) {
+  public Mono<Void> updatePrice(CopernicusPriceUpdateDTO copernicusPrice) {
     return copernicusPricePersister.updatePrice(CopernicusPriceConverter.toBusiness(copernicusPrice));
   }
 

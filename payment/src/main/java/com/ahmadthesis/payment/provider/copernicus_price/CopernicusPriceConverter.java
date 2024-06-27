@@ -2,6 +2,7 @@ package com.ahmadthesis.payment.provider.copernicus_price;
 
 import com.ahmadthesis.payment.business.CopernicusPrice;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public class CopernicusPriceConverter {
 
@@ -10,8 +11,7 @@ public class CopernicusPriceConverter {
         .id(copernicusPrice.getId())
         .name(copernicusPrice.getName())
         .price(copernicusPrice.getPrice())
-        .updatedAt(copernicusPrice.getUpdatedAt() == null ? null
-            : copernicusPrice.getUpdatedAt().toInstant())
+        .updatedAt(ZonedDateTime.now(ZoneId.of("Asia/Jakarta")).toInstant())
         .isNew(isNew)
         .build();
   }

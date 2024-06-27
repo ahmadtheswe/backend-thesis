@@ -181,6 +181,7 @@ public final class ImageRestConverter {
             : DateUtils.millisecondsToDateString(preOrder.getDeliveredAt()))
         .isPaid(preOrder.getIsPaid())
         .redirectUrl(preOrder.getIsPaid() ? null : preOrder.getRedirectUrl())
+        .probeType(preOrder.getProbeType())
         .build();
   }
 

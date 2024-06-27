@@ -1,6 +1,7 @@
 package com.ahmadthesis.payment.controller;
 
 import com.ahmadthesis.payment.controller.dto.CopernicusPriceDTO;
+import com.ahmadthesis.payment.controller.dto.CopernicusPriceUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,7 +30,7 @@ public class CopernicusPriceController {
   }
 
   @PutMapping("/update")
-  Mono<Void> updatePrice(@RequestBody CopernicusPriceDTO copernicusPrice) {
+  Mono<Void> updatePrice(@RequestBody CopernicusPriceUpdateDTO copernicusPrice) {
     return persistCopernicusPrice.updatePrice(copernicusPrice);
   }
 }

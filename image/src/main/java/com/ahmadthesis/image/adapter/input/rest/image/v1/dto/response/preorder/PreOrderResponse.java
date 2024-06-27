@@ -14,4 +14,5 @@ public class PreOrderResponse {
   private String deliveredAt;
   private Boolean isPaid;
   private String redirectUrl;
+  private String probeType;
 }

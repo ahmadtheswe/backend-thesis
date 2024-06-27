@@ -2,6 +2,7 @@ package com.ahmadthesis.payment.controller;
 
 import com.ahmadthesis.payment.business.CopernicusPrice;
 import com.ahmadthesis.payment.controller.dto.CopernicusPriceDTO;
+import com.ahmadthesis.payment.controller.dto.CopernicusPriceUpdateDTO;
 import java.time.ZoneId;
 
 public class CopernicusPriceConverter {
@@ -20,6 +21,13 @@ public class CopernicusPriceConverter {
       .name(copernicusPriceDTO.getName())
       .price(copernicusPriceDTO.getPrice())
       .updatedAt(copernicusPriceDTO.getUpdatedAt())
+      .build();
+  }
+
+  public static CopernicusPrice toBusiness(CopernicusPriceUpdateDTO copernicusPriceUpdateDTO) {
+    return CopernicusPrice.builder()
+      .id(copernicusPriceUpdateDTO.getId())
+      .price(copernicusPriceUpdateDTO.getPrice())
       .build();
   }
 }

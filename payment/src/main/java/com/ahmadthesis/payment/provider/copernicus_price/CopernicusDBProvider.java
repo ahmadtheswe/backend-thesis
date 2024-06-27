@@ -16,7 +16,12 @@ public class CopernicusDBProvider implements CopernicusPriceRetriever, Copernicu
 
   @Override
   public Mono<Void> updatePrice(CopernicusPrice copernicusPrice) {
-    return copernicusPriceRepository.save(CopernicusPriceConverter.toEntity(copernicusPrice, false))
+    return copernicusPriceRepository.getCopernicusPriceEntitiesById(copernicusPrice.getId())
+        .flatMap(copernicusPriceEntity -> {
+          copernicusPriceEntity.setPrice(copernicusPrice.getPrice());
+          copernicusPriceEntity.setIsNew(false);
+          return copernicusPriceRepository.save(copernicusPriceEntity);
+        })
         .then();
   }
 
