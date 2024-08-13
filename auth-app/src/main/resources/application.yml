@@ -52,3 +52,10 @@ email:
 api:
   payment:
     get-subscription-level: 'http://localhost:9093/payment'
+
+allowed:
+  api:
+    domain:
+      list :
+        - 'localhost://9093'
+        - 'localhost:28080'

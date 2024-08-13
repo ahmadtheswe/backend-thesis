@@ -71,7 +71,7 @@ public class CopernicusWebClientAdapter implements CopernicusWebClient {
         "  \"input\": {\n" +
         "    \"bounds\": {\n" +
         "      \"properties\": {\n" +
-        "        \"crs\": \"http://www.opengis.net/def/crs/OGC/1.3/CRS84\"\n" +
+        "        \"crs\": \"" + getProperties(probeType) + "\"\n" +
         "      },\n" +
         "      \"bbox\": [\n" +
         "        " + bBox.getMinLongitude() + ", " + bBox.getMinLatitude() + ", "
@@ -85,6 +85,9 @@ public class CopernicusWebClientAdapter implements CopernicusWebClient {
         "          \"timeRange\": {\n" +
         "            \"from\": \"2022-10-01T00:00:00Z\",\n" +
         "            \"to\": \"2022-10-31T00:00:00Z\"\n" +
+        (probeType.equals("sentinel-3-slstr") ? ",\"orbitDirection\": \"DESCENDING\"" : "") +
+        (probeType.equals("sentinel-1-grd") ? ",\"processing\": {\"orthorectify\": \"true\"}" : "")
+        +
         "          }\n" +
         "        }\n" +
         "      }\n" +
@@ -94,7 +97,8 @@ public class CopernicusWebClientAdapter implements CopernicusWebClient {
         "    \"width\": " + resolutions[0] + ",\n" +
         "    \"height\": " + resolutions[1] + "\n" +
         "  },\n" +
-        "  \"evalscript\": \"//VERSION=3\\nfunction setup() {\\n  return {\\n    input: [\\\"B02\\\", \\\"B03\\\", \\\"B04\\\"],\\n    output: {\\n      bands: 3,\\n      sampleType: \\\"AUTO\\\",\\n    },\\n  }\\n}\\n\\nfunction evaluatePixel(sample) {\\n  return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02]\\n}\\n\"\n"
+//        "  \"evalscript\": \"//VERSION=3\\nfunction setup() {\\n  return {\\n    input: [\\\"B02\\\", \\\"B03\\\", \\\"B04\\\"],\\n    output: {\\n      bands: 3,\\n      sampleType: \\\"AUTO\\\",\\n    },\\n  }\\n}\\n\\nfunction evaluatePixel(sample) {\\n  return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02]\\n}\\n\"\n"
+        "  \"evalscript\": \"" + getEvalScript(probeType) + "\"\n"
         +
         "}";
 
@@ -104,6 +108,34 @@ public class CopernicusWebClientAdapter implements CopernicusWebClient {
         .retrieve()
         .bodyToMono(byte[].class)
         .timeout(Duration.ofMinutes(5));
+  }
+
+  private String getEvalScript(String probeType) {
+    return switch (probeType) {
+      case "sentinel-2-l1c" ->
+          "function setup() {return {input: [\\\"B02\\\", \\\"B03\\\", \\\"B04\\\"],output: {bands: 3,sampleType: \\\"AUTO\\\",},}}function evaluatePixel(sample) {return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02]}";
+      case "sentinel-1-grd" ->
+          "function setup() {return {input: [\\\"VV\\\", \\\"VH\\\"],output: {bands: 2,sampleType: \\\"AUTO\\\",},}}function evaluatePixel(sample) {return [2.5 * sample.VV, 2.5 * sample.VH]}";
+      case "sentinel-2-l2a" ->
+          "function setup() {return {input: [\\\"B02\\\", \\\"B03\\\", \\\"B04\\\"],output: {bands: 3,sampleType: \\\"AUTO\\\",},}}function evaluatePixel(sample) {return [2.5 * sample.B04, 2.5 * sample.B03, 2.5 * sample.B02]}";
+      case "sentinel-3-olci" ->
+          "function setup() {return {input: [\\\"B08\\\", \\\"B06\\\", \\\"B04\\\"],output: {bands: 3,sampleType: \\\"AUTO\\\",},}}function evaluatePixel(sample) {return [2.5 * sample.B08, 2.5 * sample.B06, 2.5 * sample.B04]}";
+      case "sentinel-3-slstr" ->
+          "function setup() {return {input: [\\\"S3\\\", \\\"S2\\\", \\\"S1\\\"],output: {bands: 3,sampleType: \\\"AUTO\\\",},}}function evaluatePixel(sample) {return [2 * sample.S3, 2 * sample.S2, 2 * sample.S1]}";
+      case "sentinel-5p-l2" ->
+          "function setup() {return {input: [\\\"CO\\\", \\\"dataMask\\\"],output: { bands: 4 },}} \\n const minVal = 0.0 \\n const maxVal = 0.1 \\n const diff = maxVal - minVal \\n const rainbowColors = [[minVal, [0, 0, 0.5]],[minVal + 0.125 * diff, [0, 0, 1]],[minVal + 0.375 * diff, [0, 1, 1]],[minVal + 0.625 * diff, [1, 1, 0]],[minVal + 0.875 * diff, [1, 0, 0]],[maxVal, [0.5, 0, 0]],]\\n const viz = new ColorRampVisualizer(rainbowColors) \\n function evaluatePixel(sample) {\\n  var rgba = viz.process(sample.CO) \\n  rgba.push(sample.dataMask)\\n  return rgba}";
+      default -> "";
+    };
+  }
+
+  private String getProperties(String probeType) {
+    return switch (probeType) {
+      case "sentinel-2-l1c", "sentinel-5p-l2", "sentinel-2-l2a", "sentinel-3-olci" ->
+          "http://www.opengis.net/def/crs/OGC/1.3/CRS84";
+      case "sentinel-1-grd" -> "http://www.opengis.net/def/crs/EPSG/0/3857";
+      case "sentinel-3-slstr" -> "http://www.opengis.net/def/crs/EPSG/0/4326";
+      default -> "";
+    };
   }
 
   public static BigDecimal[] calculatePixelDimensions(BBox bbox, double metersPerPixel,

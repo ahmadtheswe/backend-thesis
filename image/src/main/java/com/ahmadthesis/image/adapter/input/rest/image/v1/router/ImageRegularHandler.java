@@ -257,6 +257,7 @@ public class ImageRegularHandler {
                             PreOrderTransactionDTO.builder()
                                 .email(tokenInfo.getEmail())
                                 .imageSize(preOrderRequest.getImageSize())
+                                .probeType(preOrderRequest.getProbeType())
                                 .build(),
                             tokenInfo.getToken()
                         ).flatMap(chargeDTO -> {
@@ -264,6 +265,7 @@ public class ImageRegularHandler {
                           preOrder.setIsPaid(false);
                           preOrder.setIsNew(true);
                           preOrder.setRedirectUrl(chargeDTO.getRedirectUrl());
+                          preOrder.setProbeType(preOrderRequest.getProbeType());
                           return imageService.savePreOrder(preOrder)
                               .flatMap(preOrder1 -> {
                                 return Mono.just(chargeDTO);

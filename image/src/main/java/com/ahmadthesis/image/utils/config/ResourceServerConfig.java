@@ -27,7 +27,6 @@ public class ResourceServerConfig {
   public SecurityWebFilterChain securityWebFilterChain(final ServerHttpSecurity http)
       throws Exception {
     return http
-        .csrf(ServerHttpSecurity.CsrfSpec::disable)
         .cors(corsSpec -> corsSpec.configurationSource(corsConfigurationSource()))
         .exceptionHandling(
             exceptionHandlingSpec -> exceptionHandlingSpec.authenticationEntryPoint(

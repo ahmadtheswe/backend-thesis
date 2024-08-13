@@ -52,8 +52,8 @@ public class CallBackDBProvider implements CallBackPersister {
 
                           .flatMap(success -> {
                             return sendEmail(preOrderEntity.getUserEmail(),
-                              "Payment Success",
-                              "Your payment has been successfully processed.")
+                                "Payment Success",
+                                "Your payment has been successfully processed.")
                                 .then(Mono.defer(() -> Mono.just(success)));
                           })));
         }

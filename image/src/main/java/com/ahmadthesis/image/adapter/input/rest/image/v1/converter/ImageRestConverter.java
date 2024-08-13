@@ -81,6 +81,8 @@ public final class ImageRestConverter {
       final String thumbnailDir = Paths.get(
           THUMBNAIL_DIR + File.separator + filename).toString();
 
+      // ............... (additional code) ...............
+
       return Mono.zip(titleMono, isPublicMono, latitudeMono, longitudeMono, productLevelMono)
           .flatMap(data ->
               Mono.just(

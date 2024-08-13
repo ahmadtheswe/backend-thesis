@@ -8,4 +8,5 @@ import lombok.Data;
 public class PreOrderTransactionDTO {
   private String email;
   private Double imageSize;
+  private String probeType;
 }

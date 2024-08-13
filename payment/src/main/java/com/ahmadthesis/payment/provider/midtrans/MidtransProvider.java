@@ -49,11 +49,11 @@ public class MidtransProvider implements MidtransPersister, MidtransRetriever {
   }
 
   @Override
-  public PreOrderCharge preOrderCharge(PreOrder preOrder) {
+  public PreOrderCharge preOrderCharge(PreOrder preOrder, BigInteger copernicusPrice) {
     try {
       final String orderId = UUID.randomUUID().toString();
       final Map<String, Object> transactionDetails = new HashMap<>();
-      final BigInteger price = BigInteger.valueOf(preOrder.getImageSize().intValue());
+      final BigInteger price = BigInteger.valueOf(preOrder.getImageSize().intValue()).multiply(copernicusPrice);
       transactionDetails.put("order_id", orderId);
       transactionDetails.put("gross_amount", price);
       transactionDetails.put("email", preOrder.getUserEmail());
